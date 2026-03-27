@@ -1,0 +1,970 @@
+{
+  "generated_at": "2026-03-26 21:07",
+  "monthly_kill_quota": 1000000,
+  "snapshots_by_date": [
+    {
+      "date": "2026-03-20",
+      "total_power": 142983524282,
+      "total_kills": 32393135049
+    },
+    {
+      "date": "2026-03-23",
+      "total_power": 154274903099,
+      "total_kills": 32373625503
+    },
+    {
+      "date": "2026-03-25",
+      "total_power": 156466465684,
+      "total_kills": 34302036667
+    },
+    {
+      "date": "2026-03-26",
+      "total_power": 152134294360,
+      "total_kills": 34288432390
+    }
+  ],
+  "members": [
+    {
+      "name": "Izares",
+      "power": 2444756439,
+      "power_str": "2.44B",
+      "kills_this_month": 363032733,
+      "kills_this_month_str": "363.0M",
+      "met_quota": true
+    },
+    {
+      "name": "Tieneko",
+      "power": 1741549425,
+      "power_str": "1.74B",
+      "kills_this_month": 278947677,
+      "kills_this_month_str": "278.9M",
+      "met_quota": true
+    },
+    {
+      "name": "Mr Yichen",
+      "power": 2302632907,
+      "power_str": "2.30B",
+      "kills_this_month": 155961514,
+      "kills_this_month_str": "156.0M",
+      "met_quota": true
+    },
+    {
+      "name": "dsgutrdghg",
+      "power": 2086195425,
+      "power_str": "2.09B",
+      "kills_this_month": 30621880,
+      "kills_this_month_str": "30.6M",
+      "met_quota": true
+    },
+    {
+      "name": "al tetra",
+      "power": 2311384740,
+      "power_str": "2.31B",
+      "kills_this_month": 17949377,
+      "kills_this_month_str": "17.9M",
+      "met_quota": true
+    },
+    {
+      "name": "luckycoin4",
+      "power": 1752284702,
+      "power_str": "1.75B",
+      "kills_this_month": 17399786,
+      "kills_this_month_str": "17.4M",
+      "met_quota": true
+    },
+    {
+      "name": "roman3265438",
+      "power": 2672362594,
+      "power_str": "2.67B",
+      "kills_this_month": 15233769,
+      "kills_this_month_str": "15.2M",
+      "met_quota": true
+    },
+    {
+      "name": "EL DIABL0 85",
+      "power": 2785790575,
+      "power_str": "2.79B",
+      "kills_this_month": 9587815,
+      "kills_this_month_str": "9.6M",
+      "met_quota": true
+    },
+    {
+      "name": "oThePanda",
+      "power": 1233093822,
+      "power_str": "1.23B",
+      "kills_this_month": 7848040,
+      "kills_this_month_str": "7.8M",
+      "met_quota": true
+    },
+    {
+      "name": "I Yumeko",
+      "power": 1588425233,
+      "power_str": "1.59B",
+      "kills_this_month": 6891189,
+      "kills_this_month_str": "6.9M",
+      "met_quota": true
+    },
+    {
+      "name": "ordogfioka",
+      "power": 2439205713,
+      "power_str": "2.44B",
+      "kills_this_month": 6812604,
+      "kills_this_month_str": "6.8M",
+      "met_quota": true
+    },
+    {
+      "name": "DRAGON LH",
+      "power": 2185847609,
+      "power_str": "2.19B",
+      "kills_this_month": 6403661,
+      "kills_this_month_str": "6.4M",
+      "met_quota": true
+    },
+    {
+      "name": "palmeiras87",
+      "power": 1999276828,
+      "power_str": "2.00B",
+      "kills_this_month": 6401565,
+      "kills_this_month_str": "6.4M",
+      "met_quota": true
+    },
+    {
+      "name": "egao",
+      "power": 2526549756,
+      "power_str": "2.53B",
+      "kills_this_month": 6292529,
+      "kills_this_month_str": "6.3M",
+      "met_quota": true
+    },
+    {
+      "name": "EnchanterTTT",
+      "power": 2157472829,
+      "power_str": "2.16B",
+      "kills_this_month": 6084579,
+      "kills_this_month_str": "6.1M",
+      "met_quota": true
+    },
+    {
+      "name": "Looking 4 me",
+      "power": 2175681114,
+      "power_str": "2.18B",
+      "kills_this_month": 6077156,
+      "kills_this_month_str": "6.1M",
+      "met_quota": true
+    },
+    {
+      "name": "PEDASKALI",
+      "power": 1511871939,
+      "power_str": "1.51B",
+      "kills_this_month": 5951994,
+      "kills_this_month_str": "6.0M",
+      "met_quota": true
+    },
+    {
+      "name": "xgalax",
+      "power": 1174592417,
+      "power_str": "1.17B",
+      "kills_this_month": 5109082,
+      "kills_this_month_str": "5.1M",
+      "met_quota": true
+    },
+    {
+      "name": "Beeeast",
+      "power": 2619826630,
+      "power_str": "2.62B",
+      "kills_this_month": 4785750,
+      "kills_this_month_str": "4.8M",
+      "met_quota": true
+    },
+    {
+      "name": "Milk1104",
+      "power": 1439291310,
+      "power_str": "1.44B",
+      "kills_this_month": 4740373,
+      "kills_this_month_str": "4.7M",
+      "met_quota": true
+    },
+    {
+      "name": "SK Genderuwo",
+      "power": 897102145,
+      "power_str": "897.1M",
+      "kills_this_month": 4690743,
+      "kills_this_month_str": "4.7M",
+      "met_quota": true
+    },
+    {
+      "name": "Wibrahim",
+      "power": 1196765989,
+      "power_str": "1.20B",
+      "kills_this_month": 4646954,
+      "kills_this_month_str": "4.6M",
+      "met_quota": true
+    },
+    {
+      "name": "RIGSSS",
+      "power": 1880352865,
+      "power_str": "1.88B",
+      "kills_this_month": 4510940,
+      "kills_this_month_str": "4.5M",
+      "met_quota": true
+    },
+    {
+      "name": "OliveiraPY",
+      "power": 1265737706,
+      "power_str": "1.27B",
+      "kills_this_month": 4421533,
+      "kills_this_month_str": "4.4M",
+      "met_quota": true
+    },
+    {
+      "name": "D A H L I A",
+      "power": 2309816372,
+      "power_str": "2.31B",
+      "kills_this_month": 3953681,
+      "kills_this_month_str": "4.0M",
+      "met_quota": true
+    },
+    {
+      "name": "Duc Pham",
+      "power": 1700254940,
+      "power_str": "1.70B",
+      "kills_this_month": 3923895,
+      "kills_this_month_str": "3.9M",
+      "met_quota": true
+    },
+    {
+      "name": "TR11A03",
+      "power": 1534572744,
+      "power_str": "1.53B",
+      "kills_this_month": 3694241,
+      "kills_this_month_str": "3.7M",
+      "met_quota": true
+    },
+    {
+      "name": "Frank143",
+      "power": 1865233127,
+      "power_str": "1.87B",
+      "kills_this_month": 3654899,
+      "kills_this_month_str": "3.7M",
+      "met_quota": true
+    },
+    {
+      "name": "MorcyJhon",
+      "power": 997982400,
+      "power_str": "998.0M",
+      "kills_this_month": 3297160,
+      "kills_this_month_str": "3.3M",
+      "met_quota": true
+    },
+    {
+      "name": "Sugoroku7",
+      "power": 2303863379,
+      "power_str": "2.30B",
+      "kills_this_month": 3293889,
+      "kills_this_month_str": "3.3M",
+      "met_quota": true
+    },
+    {
+      "name": "RAJNEEL SEN1",
+      "power": 2237777777,
+      "power_str": "2.24B",
+      "kills_this_month": 3118509,
+      "kills_this_month_str": "3.1M",
+      "met_quota": true
+    },
+    {
+      "name": "Ben2301",
+      "power": 1403646677,
+      "power_str": "1.40B",
+      "kills_this_month": 3015231,
+      "kills_this_month_str": "3.0M",
+      "met_quota": true
+    },
+    {
+      "name": "Binzzz215",
+      "power": 1262688590,
+      "power_str": "1.26B",
+      "kills_this_month": 2980552,
+      "kills_this_month_str": "3.0M",
+      "met_quota": true
+    },
+    {
+      "name": "ZENIIX",
+      "power": 1861205326,
+      "power_str": "1.86B",
+      "kills_this_month": 2948839,
+      "kills_this_month_str": "2.9M",
+      "met_quota": true
+    },
+    {
+      "name": "German Areta",
+      "power": 1409483591,
+      "power_str": "1.41B",
+      "kills_this_month": 2944580,
+      "kills_this_month_str": "2.9M",
+      "met_quota": true
+    },
+    {
+      "name": "HuuHanh",
+      "power": 1362681870,
+      "power_str": "1.36B",
+      "kills_this_month": 2780056,
+      "kills_this_month_str": "2.8M",
+      "met_quota": true
+    },
+    {
+      "name": "HOLALORD88",
+      "power": 1650510238,
+      "power_str": "1.65B",
+      "kills_this_month": 2721650,
+      "kills_this_month_str": "2.7M",
+      "met_quota": true
+    },
+    {
+      "name": "CHiLL2NiGHT",
+      "power": 1723894975,
+      "power_str": "1.72B",
+      "kills_this_month": 2708232,
+      "kills_this_month_str": "2.7M",
+      "met_quota": true
+    },
+    {
+      "name": "gdooo",
+      "power": 2797225877,
+      "power_str": "2.80B",
+      "kills_this_month": 2589996,
+      "kills_this_month_str": "2.6M",
+      "met_quota": true
+    },
+    {
+      "name": "453798",
+      "power": 4404294811,
+      "power_str": "4.40B",
+      "kills_this_month": 2504256,
+      "kills_this_month_str": "2.5M",
+      "met_quota": true
+    },
+    {
+      "name": "Arjan Don",
+      "power": 488613876,
+      "power_str": "488.6M",
+      "kills_this_month": 2494965,
+      "kills_this_month_str": "2.5M",
+      "met_quota": true
+    },
+    {
+      "name": "Arow63",
+      "power": 1423334694,
+      "power_str": "1.42B",
+      "kills_this_month": 2219724,
+      "kills_this_month_str": "2.2M",
+      "met_quota": true
+    },
+    {
+      "name": "Ninhbinh",
+      "power": 1085338668,
+      "power_str": "1.09B",
+      "kills_this_month": 2151257,
+      "kills_this_month_str": "2.2M",
+      "met_quota": true
+    },
+    {
+      "name": "katsu  katsu",
+      "power": 2386246501,
+      "power_str": "2.39B",
+      "kills_this_month": 2089590,
+      "kills_this_month_str": "2.1M",
+      "met_quota": true
+    },
+    {
+      "name": "Jjoyboyy",
+      "power": 1217699210,
+      "power_str": "1.22B",
+      "kills_this_month": 2023168,
+      "kills_this_month_str": "2.0M",
+      "met_quota": true
+    },
+    {
+      "name": "CatFishx",
+      "power": 1101770833,
+      "power_str": "1.10B",
+      "kills_this_month": 1980760,
+      "kills_this_month_str": "2.0M",
+      "met_quota": true
+    },
+    {
+      "name": "IIEMPERYALII",
+      "power": 912472349,
+      "power_str": "912.5M",
+      "kills_this_month": 1915743,
+      "kills_this_month_str": "1.9M",
+      "met_quota": true
+    },
+    {
+      "name": "SICILYMAN",
+      "power": 1062713691,
+      "power_str": "1.06B",
+      "kills_this_month": 1834191,
+      "kills_this_month_str": "1.8M",
+      "met_quota": true
+    },
+    {
+      "name": "Armannd0",
+      "power": 1335439263,
+      "power_str": "1.34B",
+      "kills_this_month": 1782593,
+      "kills_this_month_str": "1.8M",
+      "met_quota": true
+    },
+    {
+      "name": "oTheViking",
+      "power": 1946626634,
+      "power_str": "1.95B",
+      "kills_this_month": 1584689,
+      "kills_this_month_str": "1.6M",
+      "met_quota": true
+    },
+    {
+      "name": "Nekoarerugi",
+      "power": 1046275362,
+      "power_str": "1.05B",
+      "kills_this_month": 1534882,
+      "kills_this_month_str": "1.5M",
+      "met_quota": true
+    },
+    {
+      "name": "venom 005",
+      "power": 866559741,
+      "power_str": "866.6M",
+      "kills_this_month": 1501046,
+      "kills_this_month_str": "1.5M",
+      "met_quota": true
+    },
+    {
+      "name": "Sieu348",
+      "power": 1437607114,
+      "power_str": "1.44B",
+      "kills_this_month": 1459370,
+      "kills_this_month_str": "1.5M",
+      "met_quota": true
+    },
+    {
+      "name": "Itachi285",
+      "power": 1163961989,
+      "power_str": "1.16B",
+      "kills_this_month": 1052478,
+      "kills_this_month_str": "1.1M",
+      "met_quota": true
+    },
+    {
+      "name": "Cappyman",
+      "power": 1577063627,
+      "power_str": "1.58B",
+      "kills_this_month": 1040007,
+      "kills_this_month_str": "1.0M",
+      "met_quota": true
+    },
+    {
+      "name": "Tio Vegeta",
+      "power": 1077290865,
+      "power_str": "1.08B",
+      "kills_this_month": 1017328,
+      "kills_this_month_str": "1.0M",
+      "met_quota": true
+    },
+    {
+      "name": "Kim Tan",
+      "power": 1028818145,
+      "power_str": "1.03B",
+      "kills_this_month": 930226,
+      "kills_this_month_str": "930.2K",
+      "met_quota": false
+    },
+    {
+      "name": "kiiiiiiton",
+      "power": 2672793253,
+      "power_str": "2.67B",
+      "kills_this_month": 919137,
+      "kills_this_month_str": "919.1K",
+      "met_quota": false
+    },
+    {
+      "name": "Eltarii",
+      "power": 1731010933,
+      "power_str": "1.73B",
+      "kills_this_month": 808520,
+      "kills_this_month_str": "808.5K",
+      "met_quota": false
+    },
+    {
+      "name": "Bi9 99",
+      "power": 1514001692,
+      "power_str": "1.51B",
+      "kills_this_month": 807934,
+      "kills_this_month_str": "807.9K",
+      "met_quota": false
+    },
+    {
+      "name": "Rallito 01",
+      "power": 2085149630,
+      "power_str": "2.09B",
+      "kills_this_month": 737056,
+      "kills_this_month_str": "737.1K",
+      "met_quota": false
+    },
+    {
+      "name": "AHMETCY",
+      "power": 921427255,
+      "power_str": "921.4M",
+      "kills_this_month": 732375,
+      "kills_this_month_str": "732.4K",
+      "met_quota": false
+    },
+    {
+      "name": "AMAN 1986",
+      "power": 1507876495,
+      "power_str": "1.51B",
+      "kills_this_month": 685398,
+      "kills_this_month_str": "685.4K",
+      "met_quota": false
+    },
+    {
+      "name": "pr0fessor1",
+      "power": 643720718,
+      "power_str": "643.7M",
+      "kills_this_month": 668759,
+      "kills_this_month_str": "668.8K",
+      "met_quota": false
+    },
+    {
+      "name": "OMeRo77",
+      "power": 1272756363,
+      "power_str": "1.27B",
+      "kills_this_month": 531727,
+      "kills_this_month_str": "531.7K",
+      "met_quota": false
+    },
+    {
+      "name": "milaros",
+      "power": 2012425742,
+      "power_str": "2.01B",
+      "kills_this_month": 498245,
+      "kills_this_month_str": "498.2K",
+      "met_quota": false
+    },
+    {
+      "name": "Rashford29",
+      "power": 876098626,
+      "power_str": "876.1M",
+      "kills_this_month": 364893,
+      "kills_this_month_str": "364.9K",
+      "met_quota": false
+    },
+    {
+      "name": "Luscop",
+      "power": 859520319,
+      "power_str": "859.5M",
+      "kills_this_month": 285211,
+      "kills_this_month_str": "285.2K",
+      "met_quota": false
+    },
+    {
+      "name": "OliveVN",
+      "power": 1915812428,
+      "power_str": "1.92B",
+      "kills_this_month": 283753,
+      "kills_this_month_str": "283.8K",
+      "met_quota": false
+    },
+    {
+      "name": "Valentex",
+      "power": 1817455325,
+      "power_str": "1.82B",
+      "kills_this_month": 279200,
+      "kills_this_month_str": "279.2K",
+      "met_quota": false
+    },
+    {
+      "name": "kathLeen07",
+      "power": 1672645068,
+      "power_str": "1.67B",
+      "kills_this_month": 243133,
+      "kills_this_month_str": "243.1K",
+      "met_quota": false
+    },
+    {
+      "name": "Naive ovo",
+      "power": 1922580806,
+      "power_str": "1.92B",
+      "kills_this_month": 210920,
+      "kills_this_month_str": "210.9K",
+      "met_quota": false
+    },
+    {
+      "name": "xCrazy Busy",
+      "power": 1888261954,
+      "power_str": "1.89B",
+      "kills_this_month": 175986,
+      "kills_this_month_str": "176.0K",
+      "met_quota": false
+    },
+    {
+      "name": "ELYSINA",
+      "power": 1166778697,
+      "power_str": "1.17B",
+      "kills_this_month": 159836,
+      "kills_this_month_str": "159.8K",
+      "met_quota": false
+    },
+    {
+      "name": "KingAtli",
+      "power": 1135523559,
+      "power_str": "1.14B",
+      "kills_this_month": 153040,
+      "kills_this_month_str": "153.0K",
+      "met_quota": false
+    },
+    {
+      "name": "Gato Plus",
+      "power": 1189820806,
+      "power_str": "1.19B",
+      "kills_this_month": 125976,
+      "kills_this_month_str": "126.0K",
+      "met_quota": false
+    },
+    {
+      "name": "II Yumeko",
+      "power": 1447961847,
+      "power_str": "1.45B",
+      "kills_this_month": 124507,
+      "kills_this_month_str": "124.5K",
+      "met_quota": false
+    },
+    {
+      "name": "Xo M oX",
+      "power": 1653277284,
+      "power_str": "1.65B",
+      "kills_this_month": 57506,
+      "kills_this_month_str": "57.5K",
+      "met_quota": false
+    },
+    {
+      "name": "Devmani Sing",
+      "power": 1094395024,
+      "power_str": "1.09B",
+      "kills_this_month": 52786,
+      "kills_this_month_str": "52.8K",
+      "met_quota": false
+    },
+    {
+      "name": "Prischilla",
+      "power": 1671439537,
+      "power_str": "1.67B",
+      "kills_this_month": 32176,
+      "kills_this_month_str": "32.2K",
+      "met_quota": false
+    },
+    {
+      "name": "Taurus8",
+      "power": 1055664111,
+      "power_str": "1.06B",
+      "kills_this_month": 31438,
+      "kills_this_month_str": "31.4K",
+      "met_quota": false
+    },
+    {
+      "name": "vgk one",
+      "power": 1185892589,
+      "power_str": "1.19B",
+      "kills_this_month": 26097,
+      "kills_this_month_str": "26.1K",
+      "met_quota": false
+    },
+    {
+      "name": "Darren69",
+      "power": 1607863390,
+      "power_str": "1.61B",
+      "kills_this_month": 7676,
+      "kills_this_month_str": "7.7K",
+      "met_quota": false
+    },
+    {
+      "name": "A u ro ra",
+      "power": 1034793297,
+      "power_str": "1.03B",
+      "kills_this_month": 11,
+      "kills_this_month_str": "11",
+      "met_quota": false
+    },
+    {
+      "name": "Chocoflan1",
+      "power": 1340930899,
+      "power_str": "1.34B",
+      "kills_this_month": 10,
+      "kills_this_month_str": "10",
+      "met_quota": false
+    },
+    {
+      "name": "Sanko925",
+      "power": 882168469,
+      "power_str": "882.2M",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "abankbro",
+      "power": 359020182,
+      "power_str": "359.0M",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Ry0hei",
+      "power": 964748566,
+      "power_str": "964.7M",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Clayton V",
+      "power": 1503745891,
+      "power_str": "1.50B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "1Shiz",
+      "power": 1880107894,
+      "power_str": "1.88B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Mahesh 1433",
+      "power": 1497715998,
+      "power_str": "1.50B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "KollerGK",
+      "power": 1452322992,
+      "power_str": "1.45B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Darren69 Bnk",
+      "power": 403588472,
+      "power_str": "403.6M",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "MoonOrchid",
+      "power": 843255069,
+      "power_str": "843.3M",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Nohave a gun",
+      "power": 947253227,
+      "power_str": "947.3M",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Golden Boy19",
+      "power": 987907352,
+      "power_str": "987.9M",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Chen Pei Xin",
+      "power": 2013909177,
+      "power_str": "2.01B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "iOoNe",
+      "power": 1346335653,
+      "power_str": "1.35B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Eagle10",
+      "power": 1012538545,
+      "power_str": "1.01B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "I  Nagato II",
+      "power": 1189371307,
+      "power_str": "1.19B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "ROSEWALL X",
+      "power": 1322632736,
+      "power_str": "1.32B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Tha Wences",
+      "power": 1386306051,
+      "power_str": "1.39B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "TheKing 6789",
+      "power": 1104176951,
+      "power_str": "1.10B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "killers 20",
+      "power": 1074076148,
+      "power_str": "1.07B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "AxelMax1",
+      "power": 639104730,
+      "power_str": "639.1M",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Black Ichigo",
+      "power": 1554385028,
+      "power_str": "1.55B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Charlyx1x",
+      "power": 1203058728,
+      "power_str": "1.20B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Misaaa4",
+      "power": 977053202,
+      "power_str": "977.1M",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "wimpyy",
+      "power": 1290053199,
+      "power_str": "1.29B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "JJZeusJJ",
+      "power": 1150843041,
+      "power_str": "1.15B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "FLORECITA06",
+      "power": 1297785149,
+      "power_str": "1.30B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "160599",
+      "power": 1411842711,
+      "power_str": "1.41B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "NEWBIE two",
+      "power": 1131141672,
+      "power_str": "1.13B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Le Clebard",
+      "power": 1704970905,
+      "power_str": "1.70B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "MASTER 1993",
+      "power": 1050059057,
+      "power_str": "1.05B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "Vladimir G",
+      "power": 1324436118,
+      "power_str": "1.32B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    },
+    {
+      "name": "CaveBat",
+      "power": 1455309618,
+      "power_str": "1.46B",
+      "kills_this_month": 0,
+      "kills_this_month_str": "0",
+      "met_quota": false
+    }
+  ],
+  "stats": {
+    "total_power_str": "152.13B",
+    "member_count": 117,
+    "met_quota_count": 56,
+    "last_snapshot_date": "2026-03-26"
+  }
+}
