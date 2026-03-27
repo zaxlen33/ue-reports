@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player Dashboard · UE Guild</title>
+  <link rel="stylesheet" href="./css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .chart-container { position: relative; height: 300px; width: 100%; }
+    .profile-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; background: var(--bg-card); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; color: #fff; text-transform: uppercase; }
+    .profile-info h1 { margin: 0 0 5px 0; font-size: 2rem; color: var(--text-primary); }
+    .profile-info p { margin: 0; color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.95rem; }
+    .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 1.5rem; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <span class="logo">🏰</span>
+        <span>UE Guild <span>Dashboard</span></span>
+      </div>
+      <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      <ul class="navbar-nav">
+        <li><a href="./index.html">🏠 Home</a></li>
+        <li><a href="./war.html">🏰 War</a></li>
+        <li><a href="./hunt.html">🦅 Hunt</a></li>
+        <li><a href="./tasks.html">🎯 Tasks</a></li>
+        <li><a href="./rankings.html">🏆 Rankings</a></li>
+        <li><a href="./history.html">📈 All History</a></li>
+        <li><a href="./members.html">👥 Check Member</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Page Content ── -->
+  <main class="container">
+    <div id="player-container">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading player data…</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      UE Guild Dashboard · Data updated via Telegram Bot
+    </div>
+  </footer>
+
+  <script src="./js/app.js"></script>
+  <script src="./js/player.js"></script>
+</body>
+</html>
