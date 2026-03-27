@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="dark">
+<html lang="en" data-bs-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,6 +22,7 @@
     --gold:   #e3a336;
     --purple: #a371f7;
     --cyan:   #39c5cf;
+    --sb-w:   260px;
   }
   * { box-sizing: border-box; }
   body {
@@ -62,7 +63,6 @@
     color: var(--muted);
     font-size: .78rem;
     transition: all .18s;
-    white-space: nowrap;
   }
   .nav-pill:hover { border-color:var(--blue); color:var(--blue); background:rgba(79,156,249,.07); }
   .nav-pill.active { background:var(--blue); color:#fff; border-color:var(--blue); }
@@ -95,495 +95,174 @@
 <body>
 <nav class="nav-bar">
   <span class="nav-logo">⚔️ UE Guild</span>
-  <a href="index.html" class="nav-pill">🏠 Inicio</a>
-    <a href="hunt_general.html" class="nav-pill">🎯 Hunt General</a>
-    <a href="hunt_individual.html" class="nav-pill  active">👤 Hunt Individual</a>
-    <a href="war_general.html" class="nav-pill">🏰 War General</a>
-    <a href="war_months.html" class="nav-pill">📅 War Mensual</a>
-    <a href="war_individual.html" class="nav-pill">📈 War Individual</a>
-  <span class="ts">🕒 2026-03-26 20:27</span>
+  <a href="index.html" class="nav-pill">🏠 Home</a>
+  <a href="hunt_general.html" class="nav-pill">🎯 Hunt General</a>
+  <a href="hunt_individual.html" class="nav-pill active">👤 Hunt Individual</a>
+  <a href="war_general.html" class="nav-pill">🏰 War General</a>
+  <a href="war_months.html" class="nav-pill">📅 War Monthly</a>
+  <a href="war_individual.html" class="nav-pill">📈 War Individual</a>
+  <span class="ts" id="ts-top">🕒 Loading...</span>
 </nav>
-<div class="container-fluid px-3 px-md-4 py-4 pb-5">
 
-<div class="d-flex align-items-end gap-3 mb-4 flex-wrap">
-  <div><h1 style="font-size:2rem;margin-bottom:0;">👤 Hunt — Individual</h1>
-  <p style="color:var(--muted);margin:0;">Historial de hasta 8 semanas por miembro</p></div>
-</div>
-<div class="row g-3">
-  <div class="col-md-3">
-    <div class="card p-3" style="position:sticky;top:66px;max-height:calc(100vh - 80px);overflow-y:auto;">
-      <h5 class="sec-hdr" style="font-size:1rem;">Seleccionar Miembro</h5>
-      <input class="search-input mb-3" type="text" placeholder="Filtrar por nombre..." oninput="filterM(this.value)">
-      <div id="member-list"><div class="member-row" onclick="selectMember('1906115241')" id="mr-1906115241" data-name="tieneko">
-          <span style="font-size:.85rem;font-weight:600;">Tieneko</span>
-          <span class="badge-ok">✅ 322pts</span>
-        </div><div class="member-row" onclick="selectMember('1852555496')" id="mr-1852555496" data-name="bi9 99">
-          <span style="font-size:.85rem;font-weight:600;">Bi9 99</span>
-          <span class="badge-ok">✅ 192pts</span>
-        </div><div class="member-row" onclick="selectMember('1701326641')" id="mr-1701326641" data-name="tio vegeta">
-          <span style="font-size:.85rem;font-weight:600;">Tio Vegeta</span>
-          <span class="badge-ok">✅ 154pts</span>
-        </div><div class="member-row" onclick="selectMember('1972720259')" id="mr-1972720259" data-name="wibrahim">
-          <span style="font-size:.85rem;font-weight:600;">Wibrahim</span>
-          <span class="badge-ok">✅ 152pts</span>
-        </div><div class="member-row" onclick="selectMember('1846815022')" id="mr-1846815022" data-name="sugoroku7">
-          <span style="font-size:.85rem;font-weight:600;">Sugoroku7</span>
-          <span class="badge-ok">✅ 132pts</span>
-        </div><div class="member-row" onclick="selectMember('1874463206')" id="mr-1874463206" data-name="beeeast">
-          <span style="font-size:.85rem;font-weight:600;">Beeeast</span>
-          <span class="badge-ok">✅ 132pts</span>
-        </div><div class="member-row" onclick="selectMember('1788036988')" id="mr-1788036988" data-name="xcrazy busy">
-          <span style="font-size:.85rem;font-weight:600;">xCrazy Busy</span>
-          <span class="badge-ok">✅ 130pts</span>
-        </div><div class="member-row" onclick="selectMember('1899040803')" id="mr-1899040803" data-name="1shiz">
-          <span style="font-size:.85rem;font-weight:600;">1Shiz</span>
-          <span class="badge-ok">✅ 124pts</span>
-        </div><div class="member-row" onclick="selectMember('1902334592')" id="mr-1902334592" data-name="453798">
-          <span style="font-size:.85rem;font-weight:600;">453798</span>
-          <span class="badge-ok">✅ 116pts</span>
-        </div><div class="member-row" onclick="selectMember('1654393040')" id="mr-1654393040" data-name="a u ro ra">
-          <span style="font-size:.85rem;font-weight:600;">A u ro ra</span>
-          <span class="badge-ok">✅ 108pts</span>
-        </div><div class="member-row" onclick="selectMember('1859513688')" id="mr-1859513688" data-name="roman3265438">
-          <span style="font-size:.85rem;font-weight:600;">roman3265438</span>
-          <span class="badge-ok">✅ 102pts</span>
-        </div><div class="member-row" onclick="selectMember('1807804398')" id="mr-1807804398" data-name="palmeiras87">
-          <span style="font-size:.85rem;font-weight:600;">palmeiras87</span>
-          <span class="badge-ok">✅ 100pts</span>
-        </div><div class="member-row" onclick="selectMember('1893809715')" id="mr-1893809715" data-name="luckycoin4">
-          <span style="font-size:.85rem;font-weight:600;">luckycoin4</span>
-          <span class="badge-ok">✅ 96pts</span>
-        </div><div class="member-row" onclick="selectMember('1896492060')" id="mr-1896492060" data-name="xgalax">
-          <span style="font-size:.85rem;font-weight:600;">xgalax</span>
-          <span class="badge-ok">✅ 96pts</span>
-        </div><div class="member-row" onclick="selectMember('1816079360')" id="mr-1816079360" data-name="catfishx">
-          <span style="font-size:.85rem;font-weight:600;">CatFishx</span>
-          <span class="badge-ok">✅ 94pts</span>
-        </div><div class="member-row" onclick="selectMember('1801440935')" id="mr-1801440935" data-name="sk genderuwo">
-          <span style="font-size:.85rem;font-weight:600;">SK Genderuwo</span>
-          <span class="badge-ok">✅ 74pts</span>
-        </div><div class="member-row" onclick="selectMember('1810909983')" id="mr-1810909983" data-name="valentex">
-          <span style="font-size:.85rem;font-weight:600;">Valentex</span>
-          <span class="badge-ok">✅ 74pts</span>
-        </div><div class="member-row" onclick="selectMember('1853511558')" id="mr-1853511558" data-name="black ichigo">
-          <span style="font-size:.85rem;font-weight:600;">Black Ichigo</span>
-          <span class="badge-ok">✅ 74pts</span>
-        </div><div class="member-row" onclick="selectMember('1815382145')" id="mr-1815382145" data-name="d a h l i a">
-          <span style="font-size:.85rem;font-weight:600;">D A H L I A</span>
-          <span class="badge-ok">✅ 72pts</span>
-        </div><div class="member-row" onclick="selectMember('1814600495')" id="mr-1814600495" data-name="arow63">
-          <span style="font-size:.85rem;font-weight:600;">Arow63</span>
-          <span class="badge-ok">✅ 72pts</span>
-        </div><div class="member-row" onclick="selectMember('1768310146')" id="mr-1768310146" data-name="rallito 01">
-          <span style="font-size:.85rem;font-weight:600;">Rallito 01</span>
-          <span class="badge-ok">✅ 72pts</span>
-        </div><div class="member-row" onclick="selectMember('571089074')" id="mr-571089074" data-name="arjan don">
-          <span style="font-size:.85rem;font-weight:600;">Arjan Don</span>
-          <span class="badge-ok">✅ 70pts</span>
-        </div><div class="member-row" onclick="selectMember('1808527905')" id="mr-1808527905" data-name="itachi285">
-          <span style="font-size:.85rem;font-weight:600;">Itachi285</span>
-          <span class="badge-ok">✅ 70pts</span>
-        </div><div class="member-row" onclick="selectMember('1828249413')" id="mr-1828249413" data-name="frank14">
-          <span style="font-size:.85rem;font-weight:600;">Frank14</span>
-          <span class="badge-ok">✅ 70pts</span>
-        </div><div class="member-row" onclick="selectMember('1862714372')" id="mr-1862714372" data-name="ordogfioka">
-          <span style="font-size:.85rem;font-weight:600;">ordogfioka</span>
-          <span class="badge-ok">✅ 68pts</span>
-        </div><div class="member-row" onclick="selectMember('1868733598')" id="mr-1868733598" data-name="ahmetcy">
-          <span style="font-size:.85rem;font-weight:600;">AHMETCY</span>
-          <span class="badge-ok">✅ 68pts</span>
-        </div><div class="member-row" onclick="selectMember('980169908')" id="mr-980169908" data-name="ninhbinh">
-          <span style="font-size:.85rem;font-weight:600;">Ninhbinh</span>
-          <span class="badge-ok">✅ 66pts</span>
-        </div><div class="member-row" onclick="selectMember('1816941638')" id="mr-1816941638" data-name="dsgutrdghg">
-          <span style="font-size:.85rem;font-weight:600;">dsgutrdghg</span>
-          <span class="badge-ok">✅ 64pts</span>
-        </div><div class="member-row" onclick="selectMember('1881058812')" id="mr-1881058812" data-name="sieu348">
-          <span style="font-size:.85rem;font-weight:600;">Sieu348</span>
-          <span class="badge-ok">✅ 64pts</span>
-        </div><div class="member-row" onclick="selectMember('1734078080')" id="mr-1734078080" data-name="vgk one">
-          <span style="font-size:.85rem;font-weight:600;">vgk one</span>
-          <span class="badge-ok">✅ 62pts</span>
-        </div><div class="member-row" onclick="selectMember('1863339572')" id="mr-1863339572" data-name="gdooo">
-          <span style="font-size:.85rem;font-weight:600;">Gdooo</span>
-          <span class="badge-ok">✅ 60pts</span>
-        </div><div class="member-row" onclick="selectMember('1802495838')" id="mr-1802495838" data-name="othepanda">
-          <span style="font-size:.85rem;font-weight:600;">oThePanda</span>
-          <span class="badge-ok">✅ 60pts</span>
-        </div><div class="member-row" onclick="selectMember('1803992555')" id="mr-1803992555" data-name="pr0fessor1">
-          <span style="font-size:.85rem;font-weight:600;">pr0fessor1</span>
-          <span class="badge-ok">✅ 60pts</span>
-        </div><div class="member-row" onclick="selectMember('1901311064')" id="mr-1901311064" data-name="katsu  katsu">
-          <span style="font-size:.85rem;font-weight:600;">katsu  katsu</span>
-          <span class="badge-ok">✅ 58pts</span>
-        </div><div class="member-row" onclick="selectMember('1849194303')" id="mr-1849194303" data-name="izares">
-          <span style="font-size:.85rem;font-weight:600;">Izares</span>
-          <span class="badge-ok">✅ 58pts</span>
-        </div><div class="member-row" onclick="selectMember('1855793389')" id="mr-1855793389" data-name="darren69">
-          <span style="font-size:.85rem;font-weight:600;">Darren69</span>
-          <span class="badge-ok">✅ 56pts</span>
-        </div><div class="member-row" onclick="selectMember('1791568320')" id="mr-1791568320" data-name="pedaskali">
-          <span style="font-size:.85rem;font-weight:600;">PEDASKALI</span>
-          <span class="badge-no">❌ 54pts</span>
-        </div><div class="member-row" onclick="selectMember('1943912317')" id="mr-1943912317" data-name="al tetra">
-          <span style="font-size:.85rem;font-weight:600;">al tetra</span>
-          <span class="badge-no">❌ 52pts</span>
-        </div><div class="member-row" onclick="selectMember('1097851755')" id="mr-1097851755" data-name="tha wences">
-          <span style="font-size:.85rem;font-weight:600;">Tha Wences</span>
-          <span class="badge-no">❌ 52pts</span>
-        </div><div class="member-row" onclick="selectMember('1698372491')" id="mr-1698372491" data-name="mr yichen">
-          <span style="font-size:.85rem;font-weight:600;">Mr Yichen</span>
-          <span class="badge-no">❌ 52pts</span>
-        </div><div class="member-row" onclick="selectMember('1325812001')" id="mr-1325812001" data-name="olivevn">
-          <span style="font-size:.85rem;font-weight:600;">OliveVN</span>
-          <span class="badge-no">❌ 52pts</span>
-        </div><div class="member-row" onclick="selectMember('1826727460')" id="mr-1826727460" data-name="i yumeko">
-          <span style="font-size:.85rem;font-weight:600;">I Yumeko</span>
-          <span class="badge-no">❌ 48pts</span>
-        </div><div class="member-row" onclick="selectMember('1811371554')" id="mr-1811371554" data-name="morcyjhon">
-          <span style="font-size:.85rem;font-weight:600;">MorcyJhon</span>
-          <span class="badge-no">❌ 48pts</span>
-        </div><div class="member-row" onclick="selectMember('1806553240')" id="mr-1806553240" data-name="venom 005">
-          <span style="font-size:.85rem;font-weight:600;">venom 005</span>
-          <span class="badge-no">❌ 48pts</span>
-        </div><div class="member-row" onclick="selectMember('1790139550')" id="mr-1790139550" data-name="zeniix">
-          <span style="font-size:.85rem;font-weight:600;">ZENIIX</span>
-          <span class="badge-no">❌ 48pts</span>
-        </div><div class="member-row" onclick="selectMember('1788543887')" id="mr-1788543887" data-name="wimpyy">
-          <span style="font-size:.85rem;font-weight:600;">wimpyy</span>
-          <span class="badge-no">❌ 48pts</span>
-        </div><div class="member-row" onclick="selectMember('1833692845')" id="mr-1833692845" data-name="armannd0">
-          <span style="font-size:.85rem;font-weight:600;">Armannd0</span>
-          <span class="badge-no">❌ 46pts</span>
-        </div><div class="member-row" onclick="selectMember('1612220801')" id="mr-1612220801" data-name="rashford29">
-          <span style="font-size:.85rem;font-weight:600;">Rashford29</span>
-          <span class="badge-no">❌ 46pts</span>
-        </div><div class="member-row" onclick="selectMember('1866936967')" id="mr-1866936967" data-name="jjoyboyy">
-          <span style="font-size:.85rem;font-weight:600;">Jjoyboyy</span>
-          <span class="badge-no">❌ 46pts</span>
-        </div><div class="member-row" onclick="selectMember('1903674552')" id="mr-1903674552" data-name="axelmax1">
-          <span style="font-size:.85rem;font-weight:600;">AxelMax1</span>
-          <span class="badge-no">❌ 46pts</span>
-        </div><div class="member-row" onclick="selectMember('1767163792')" id="mr-1767163792" data-name="el diabl0 85">
-          <span style="font-size:.85rem;font-weight:600;">EL DIABL0 85</span>
-          <span class="badge-no">❌ 46pts</span>
-        </div><div class="member-row" onclick="selectMember('1891986941')" id="mr-1891986941" data-name="mahesh 1433">
-          <span style="font-size:.85rem;font-weight:600;">Mahesh 1433</span>
-          <span class="badge-no">❌ 44pts</span>
-        </div><div class="member-row" onclick="selectMember('1774011202')" id="mr-1774011202" data-name="cr shelby">
-          <span style="font-size:.85rem;font-weight:600;">CR Shelby</span>
-          <span class="badge-no">❌ 44pts</span>
-        </div><div class="member-row" onclick="selectMember('1815529383')" id="mr-1815529383" data-name="german areta">
-          <span style="font-size:.85rem;font-weight:600;">German Areta</span>
-          <span class="badge-no">❌ 42pts</span>
-        </div><div class="member-row" onclick="selectMember('1691304761')" id="mr-1691304761" data-name="binzzz215">
-          <span style="font-size:.85rem;font-weight:600;">Binzzz215</span>
-          <span class="badge-no">❌ 42pts</span>
-        </div><div class="member-row" onclick="selectMember('1855451121')" id="mr-1855451121" data-name="enchanterttt">
-          <span style="font-size:.85rem;font-weight:600;">EnchanterTTT</span>
-          <span class="badge-no">❌ 42pts</span>
-        </div><div class="member-row" onclick="selectMember('1787772735')" id="mr-1787772735" data-name="xo m ox">
-          <span style="font-size:.85rem;font-weight:600;">Xo M oX</span>
-          <span class="badge-no">❌ 42pts</span>
-        </div><div class="member-row" onclick="selectMember('1797798170')" id="mr-1797798170" data-name="dragon lh">
-          <span style="font-size:.85rem;font-weight:600;">DRAGON LH</span>
-          <span class="badge-no">❌ 42pts</span>
-        </div><div class="member-row" onclick="selectMember('1854111759')" id="mr-1854111759" data-name="duc pham">
-          <span style="font-size:.85rem;font-weight:600;">Duc Pham</span>
-          <span class="badge-no">❌ 42pts</span>
-        </div><div class="member-row" onclick="selectMember('1805108021')" id="mr-1805108021" data-name="misaaa4">
-          <span style="font-size:.85rem;font-weight:600;">Misaaa4</span>
-          <span class="badge-no">❌ 42pts</span>
-        </div><div class="member-row" onclick="selectMember('1806526774')" id="mr-1806526774" data-name="cappyman">
-          <span style="font-size:.85rem;font-weight:600;">Cappyman</span>
-          <span class="badge-no">❌ 40pts</span>
-        </div><div class="member-row" onclick="selectMember('1807971393')" id="mr-1807971393" data-name="omero77">
-          <span style="font-size:.85rem;font-weight:600;">OMeRo77</span>
-          <span class="badge-no">❌ 40pts</span>
-        </div><div class="member-row" onclick="selectMember('1900692958')" id="mr-1900692958" data-name="ry0hei">
-          <span style="font-size:.85rem;font-weight:600;">Ry0hei</span>
-          <span class="badge-no">❌ 38pts</span>
-        </div><div class="member-row" onclick="selectMember('1831180008')" id="mr-1831180008" data-name="prischilla">
-          <span style="font-size:.85rem;font-weight:600;">Prischilla</span>
-          <span class="badge-no">❌ 36pts</span>
-        </div><div class="member-row" onclick="selectMember('1893794042')" id="mr-1893794042" data-name="ben2301">
-          <span style="font-size:.85rem;font-weight:600;">Ben2301</span>
-          <span class="badge-no">❌ 34pts</span>
-        </div><div class="member-row" onclick="selectMember('1819577439')" id="mr-1819577439" data-name="milaros">
-          <span style="font-size:.85rem;font-weight:600;">milaros</span>
-          <span class="badge-no">❌ 34pts</span>
-        </div><div class="member-row" onclick="selectMember('1843213227')" id="mr-1843213227" data-name="chill2night">
-          <span style="font-size:.85rem;font-weight:600;">CHiLL2NiGHT</span>
-          <span class="badge-no">❌ 32pts</span>
-        </div><div class="member-row" onclick="selectMember('1724951581')" id="mr-1724951581" data-name="tr11a03">
-          <span style="font-size:.85rem;font-weight:600;">TR11A03</span>
-          <span class="badge-no">❌ 32pts</span>
-        </div><div class="member-row" onclick="selectMember('1924268117')" id="mr-1924268117" data-name="abankbro">
-          <span style="font-size:.85rem;font-weight:600;">abankbro</span>
-          <span class="badge-no">❌ 30pts</span>
-        </div><div class="member-row" onclick="selectMember('1928262500')" id="mr-1928262500" data-name="egao">
-          <span style="font-size:.85rem;font-weight:600;">egao</span>
-          <span class="badge-no">❌ 30pts</span>
-        </div><div class="member-row" onclick="selectMember('1897884037')" id="mr-1897884037" data-name="kiiiiiiton">
-          <span style="font-size:.85rem;font-weight:600;">kiiiiiiton</span>
-          <span class="badge-no">❌ 30pts</span>
-        </div><div class="member-row" onclick="selectMember('1834768797')" id="mr-1834768797" data-name="moonorchid">
-          <span style="font-size:.85rem;font-weight:600;">MoonOrchid</span>
-          <span class="badge-no">❌ 30pts</span>
-        </div><div class="member-row" onclick="selectMember('1833784577')" id="mr-1833784577" data-name="nohave a gun">
-          <span style="font-size:.85rem;font-weight:600;">Nohave a gun</span>
-          <span class="badge-no">❌ 28pts</span>
-        </div><div class="member-row" onclick="selectMember('1375100080')" id="mr-1375100080" data-name="160599">
-          <span style="font-size:.85rem;font-weight:600;">160599</span>
-          <span class="badge-no">❌ 28pts</span>
-        </div><div class="member-row" onclick="selectMember('1715596425')" id="mr-1715596425" data-name="florecita06">
-          <span style="font-size:.85rem;font-weight:600;">FLORECITA06</span>
-          <span class="badge-no">❌ 26pts</span>
-        </div><div class="member-row" onclick="selectMember('1822385859')" id="mr-1822385859" data-name="holalord88">
-          <span style="font-size:.85rem;font-weight:600;">HOLALORD88</span>
-          <span class="badge-no">❌ 24pts</span>
-        </div><div class="member-row" onclick="selectMember('1804733399')" id="mr-1804733399" data-name="sicilyman">
-          <span style="font-size:.85rem;font-weight:600;">SICILYMAN</span>
-          <span class="badge-no">❌ 24pts</span>
-        </div><div class="member-row" onclick="selectMember('1949567372')" id="mr-1949567372" data-name="nekoarerugi">
-          <span style="font-size:.85rem;font-weight:600;">Nekoarerugi</span>
-          <span class="badge-no">❌ 24pts</span>
-        </div><div class="member-row" onclick="selectMember('1875294370')" id="mr-1875294370" data-name="darren69 bnk">
-          <span style="font-size:.85rem;font-weight:600;">Darren69 Bnk</span>
-          <span class="badge-no">❌ 24pts</span>
-        </div><div class="member-row" onclick="selectMember('1288813475')" id="mr-1288813475" data-name="luscop">
-          <span style="font-size:.85rem;font-weight:600;">Luscop</span>
-          <span class="badge-no">❌ 24pts</span>
-        </div><div class="member-row" onclick="selectMember('1795283643')" id="mr-1795283643" data-name="naive ovo">
-          <span style="font-size:.85rem;font-weight:600;">Naive ovo</span>
-          <span class="badge-no">❌ 22pts</span>
-        </div><div class="member-row" onclick="selectMember('1839011930')" id="mr-1839011930" data-name="kingatli">
-          <span style="font-size:.85rem;font-weight:600;">KingAtli</span>
-          <span class="badge-no">❌ 22pts</span>
-        </div><div class="member-row" onclick="selectMember('1707783496')" id="mr-1707783496" data-name="otheviking">
-          <span style="font-size:.85rem;font-weight:600;">oTheViking</span>
-          <span class="badge-no">❌ 20pts</span>
-        </div><div class="member-row" onclick="selectMember('1835358372')" id="mr-1835358372" data-name="noodle 06">
-          <span style="font-size:.85rem;font-weight:600;">NOODLE 06</span>
-          <span class="badge-no">❌ 20pts</span>
-        </div><div class="member-row" onclick="selectMember('1811413483')" id="mr-1811413483" data-name="charlyx1x">
-          <span style="font-size:.85rem;font-weight:600;">Charlyx1x</span>
-          <span class="badge-no">❌ 20pts</span>
-        </div><div class="member-row" onclick="selectMember('1845807187')" id="mr-1845807187" data-name="king ozaru">
-          <span style="font-size:.85rem;font-weight:600;">King ozaru</span>
-          <span class="badge-no">❌ 18pts</span>
-        </div><div class="member-row" onclick="selectMember('1597909042')" id="mr-1597909042" data-name="vladimir g">
-          <span style="font-size:.85rem;font-weight:600;">Vladimir G</span>
-          <span class="badge-no">❌ 16pts</span>
-        </div><div class="member-row" onclick="selectMember('1833510438')" id="mr-1833510438" data-name="golden boy19">
-          <span style="font-size:.85rem;font-weight:600;">Golden Boy19</span>
-          <span class="badge-no">❌ 14pts</span>
-        </div><div class="member-row" onclick="selectMember('1810443603')" id="mr-1810443603" data-name="milk1104">
-          <span style="font-size:.85rem;font-weight:600;">Milk1104</span>
-          <span class="badge-no">❌ 12pts</span>
-        </div><div class="member-row" onclick="selectMember('1807356725')" id="mr-1807356725" data-name="ioone">
-          <span style="font-size:.85rem;font-weight:600;">iOoNe</span>
-          <span class="badge-no">❌ 12pts</span>
-        </div><div class="member-row" onclick="selectMember('1793027681')" id="mr-1793027681" data-name="kim tan">
-          <span style="font-size:.85rem;font-weight:600;">Kim Tan</span>
-          <span class="badge-no">❌ 12pts</span>
-        </div><div class="member-row" onclick="selectMember('1848545727')" id="mr-1848545727" data-name="rajneel sen1">
-          <span style="font-size:.85rem;font-weight:600;">RAJNEEL SEN1</span>
-          <span class="badge-no">❌ 12pts</span>
-        </div><div class="member-row" onclick="selectMember('1843636984')" id="mr-1843636984" data-name="iiemperyalii">
-          <span style="font-size:.85rem;font-weight:600;">IIEMPERYALII</span>
-          <span class="badge-no">❌ 10pts</span>
-        </div><div class="member-row" onclick="selectMember('1802546717')" id="mr-1802546717" data-name="master 1993">
-          <span style="font-size:.85rem;font-weight:600;">MASTER 1993</span>
-          <span class="badge-no">❌ 10pts</span>
-        </div><div class="member-row" onclick="selectMember('1882289151')" id="mr-1882289151" data-name="kollergk">
-          <span style="font-size:.85rem;font-weight:600;">KollerGK</span>
-          <span class="badge-no">❌ 8pts</span>
-        </div><div class="member-row" onclick="selectMember('1808511873')" id="mr-1808511873" data-name="kathleen07">
-          <span style="font-size:.85rem;font-weight:600;">kathLeen07</span>
-          <span class="badge-no">❌ 8pts</span>
-        </div><div class="member-row" onclick="selectMember('1737451614')" id="mr-1737451614" data-name="devmani sing">
-          <span style="font-size:.85rem;font-weight:600;">Devmani Sing</span>
-          <span class="badge-no">❌ 8pts</span>
-        </div><div class="member-row" onclick="selectMember('1786827571')" id="mr-1786827571" data-name="jjzeusjj">
-          <span style="font-size:.85rem;font-weight:600;">JJZeusJJ</span>
-          <span class="badge-no">❌ 8pts</span>
-        </div><div class="member-row" onclick="selectMember('272876100')" id="mr-272876100" data-name="gato plus">
-          <span style="font-size:.85rem;font-weight:600;">Gato Plus</span>
-          <span class="badge-no">❌ 8pts</span>
-        </div><div class="member-row" onclick="selectMember('1893498133')" id="mr-1893498133" data-name="ii yumeko">
-          <span style="font-size:.85rem;font-weight:600;">II Yumeko</span>
-          <span class="badge-no">❌ 6pts</span>
-        </div><div class="member-row" onclick="selectMember('1746648751')" id="mr-1746648751" data-name="looking 4 me">
-          <span style="font-size:.85rem;font-weight:600;">Looking 4 me</span>
-          <span class="badge-no">❌ 4pts</span>
-        </div><div class="member-row" onclick="selectMember('1902106809')" id="mr-1902106809" data-name="elysina">
-          <span style="font-size:.85rem;font-weight:600;">ELYSINA</span>
-          <span class="badge-no">❌ 4pts</span>
-        </div><div class="member-row" onclick="selectMember('1835901676')" id="mr-1835901676" data-name="huuhanh">
-          <span style="font-size:.85rem;font-weight:600;">HuuHanh</span>
-          <span class="badge-no">❌ 4pts</span>
-        </div><div class="member-row" onclick="selectMember('1920907780')" id="mr-1920907780" data-name="rajneel3">
-          <span style="font-size:.85rem;font-weight:600;">RAJNEEL3</span>
-          <span class="badge-no">❌ 4pts</span>
-        </div><div class="member-row" onclick="selectMember('1751738365')" id="mr-1751738365" data-name="nishantk029">
-          <span style="font-size:.85rem;font-weight:600;">NISHANTK029</span>
-          <span class="badge-no">❌ 2pts</span>
-        </div><div class="member-row" onclick="selectMember('1820536786')" id="mr-1820536786" data-name="5p1n">
-          <span style="font-size:.85rem;font-weight:600;">5P1N</span>
-          <span class="badge-no">❌ 2pts</span>
-        </div><div class="member-row" onclick="selectMember('1863348955')" id="mr-1863348955" data-name="rigsss">
-          <span style="font-size:.85rem;font-weight:600;">RIGSSS</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('1810019838')" id="mr-1810019838" data-name="chen pei xin">
-          <span style="font-size:.85rem;font-weight:600;">Chen Pei Xin</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('1497956064')" id="mr-1497956064" data-name="chocoflan1">
-          <span style="font-size:.85rem;font-weight:600;">Chocoflan1</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('1796412185')" id="mr-1796412185" data-name="eagle10">
-          <span style="font-size:.85rem;font-weight:600;">Eagle10</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('1933732389')" id="mr-1933732389" data-name="sanko925">
-          <span style="font-size:.85rem;font-weight:600;">Sanko925</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('735251249')" id="mr-735251249" data-name="theking 6789">
-          <span style="font-size:.85rem;font-weight:600;">TheKing 6789</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('1899680350')" id="mr-1899680350" data-name="clayton v">
-          <span style="font-size:.85rem;font-weight:600;">Clayton V</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('1777217605')" id="mr-1777217605" data-name="i  nagato ii">
-          <span style="font-size:.85rem;font-weight:600;">I  Nagato II</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('1765376047')" id="mr-1765376047" data-name="taurus8">
-          <span style="font-size:.85rem;font-weight:600;">Taurus8</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('2028605961')" id="mr-2028605961" data-name="killers 20">
-          <span style="font-size:.85rem;font-weight:600;">killers 20</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('1344219062')" id="mr-1344219062" data-name="newbie two">
-          <span style="font-size:.85rem;font-weight:600;">NEWBIE two</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('1870904264')" id="mr-1870904264" data-name="eltarii">
-          <span style="font-size:.85rem;font-weight:600;">Eltarii</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('2096915477')" id="mr-2096915477" data-name="le clebard">
-          <span style="font-size:.85rem;font-weight:600;">Le Clebard</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div><div class="member-row" onclick="selectMember('1836549011')" id="mr-1836549011" data-name="cavebat">
-          <span style="font-size:.85rem;font-weight:600;">CaveBat</span>
-          <span class="badge-no">❌ 0pts</span>
-        </div></div>
+<div class="container-fluid px-3 px-md-4 py-4 pb-5" id="main-container" style="display:none;">
+<div class="row g-4">
+  <div class="col-md-4 col-xl-3" style="max-width:320px;">
+    <div class="card p-3 h-100" style="max-height:85vh;overflow-y:auto;">
+      <h3 class="sec-hdr" style="font-size:1.1rem;margin-bottom:.8rem;">🔍 Members (<span id="m-count">0</span>)</h3>
+      <input type="text" id="srch" class="search-input mb-3" placeholder="Search member...">
+      <div id="m-list"></div>
     </div>
   </div>
-  <div class="col-md-9">
-    <div id="welcome" class="card"><div class="empty-state"><div class="icon">👈</div><h4 style="color:var(--muted)">Selecciona un miembro</h4><p style="color:var(--muted)">Haz clic en la lista de la izquierda</p></div></div>
-    <div id="detail" style="display:none;">
-      <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
-        <h2 id="d-name" style="margin:0;"></h2><span id="d-badge"></span>
+
+  <div class="col-md-8 col-xl-9">
+    <div id="content-pane" style="display:none;">
+      <div class="d-flex align-items-center gap-3 mb-4 flex-wrap">
+        <h1 style="font-size:2.2rem;margin-bottom:0;" id="m-title">Member</h1>
+        <div id="m-status"></div>
       </div>
-      <div class="row g-3 mb-3">
-        <div class="col-4"><div class="card stat-card"><div class="stat-num" id="d-total" style="color:var(--blue)"></div><div class="stat-lbl">Pts Esta Semana</div></div></div>
-        <div class="col-4"><div class="card stat-card"><div class="stat-num" id="d-hunt" style="color:var(--green)"></div><div class="stat-lbl">Hunt Pts</div></div></div>
-        <div class="col-4"><div class="card stat-card"><div class="stat-num" id="d-purch" style="color:var(--purple)"></div><div class="stat-lbl">Compra Pts</div></div></div>
-      </div>
-      <div class="row g-3 mb-3">
-        <div class="col-md-6"><div class="card p-3"><div id="c-hlvl" style="height:270px;"></div></div></div>
-        <div class="col-md-6"><div class="card p-3"><div id="c-plvl" style="height:270px;"></div></div></div>
-      </div>
-      <div class="row g-3 mb-3">
-        <div class="col-12"><div class="card p-3"><div id="c-wpts" style="height:270px;"></div></div></div>
-      </div>
-      <div class="card p-3">
-        <h5 class="sec-hdr">📅 Historial Semanal (8 semanas)</h5>
-        <div class="table-responsive">
-          <table class="table table-sm">
-            <thead><tr><th>Semana</th><th>H-L1</th><th>H-L2</th><th>H-L3</th><th>H-L4</th><th>H-L5</th><th>P-L1</th><th>P-L2</th><th>P-L3</th><th>P-L4</th><th>P-L5</th><th>Hunt Pts</th><th>Compra Pts</th><th>Total</th><th>% Meta</th></tr></thead>
-            <tbody id="d-table"></tbody>
-          </table>
+      
+      <div class="row g-3">
+        <div class="col-xl-7">
+          <div class="card p-3 mb-3"><div id="c-hist" style="height:320px;"></div></div>
+          <div class="card p-3"><div id="c-day" style="height:320px;"></div></div>
+        </div>
+        <div class="col-xl-5">
+          <div class="card p-3 mb-3"><div id="c-lvl" style="height:300px;"></div></div>
+          
+          <div class="card p-3">
+            <h4 style="font-size:1.1rem;margin-bottom:1rem;color:var(--text);">📅 Recorded Weeks</h4>
+            <div style="max-height:280px;overflow-y:auto;padding-right:8px;">
+              <table class="table table-sm" id="t-wks">
+                <thead><tr><th>Week</th><th>Hunt</th><th>Purch</th><th>Total</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    
+    <div id="empty-pane" class="card mt-2">
+      <div class="empty-state">
+        <div class="icon">🔍</div>
+        <h4 style="color:var(--text)">Select a member</h4>
+        <p style="margin-bottom:0;">Choose a member from the sidebar to view their history.</p>
+      </div>
+    </div>
   </div>
 </div>
-<script>
+</div>
 
+<script>
 const THEME = {
-  paper_bgcolor: 'rgba(0,0,0,0)',
-  plot_bgcolor:  'rgba(0,0,0,0)',
-  font:   { color: '#dce4f0', family: 'Inter, sans-serif', size: 11 },
-  xaxis:  { gridcolor: '#1e2533', color: '#5a6a82', linecolor: '#1e2533', zerolinecolor: '#1e2533' },
-  yaxis:  { gridcolor: '#1e2533', color: '#5a6a82', linecolor: '#1e2533', zerolinecolor: '#1e2533' },
-  margin: { t: 42, l: 55, r: 18, b: 65 },
+  paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+  font: { color: '#dce4f0', family: 'Inter, sans-serif', size: 11 },
+  xaxis: { gridcolor: '#1e2533', color: '#5a6a82', linecolor: '#1e2533', zerolinecolor: '#1e2533' },
+  yaxis: { gridcolor: '#1e2533', color: '#5a6a82', linecolor: '#1e2533', zerolinecolor: '#1e2533' },
+  margin: { t: 42, l: 45, r: 18, b: 65 }
 };
 const cfg = { responsive: true, displayModeBar: false };
 function lay(title, xl='', yl='', extra={}) {
   return { ...THEME, title: { text: title, font: { color: '#dce4f0', size: 14, family: 'Rajdhani, sans-serif' } },
-           xaxis: { ...THEME.xaxis, title: xl },
+           xaxis: { ...THEME.xaxis, title: xl, tickformat: '' },
            yaxis: { ...THEME.yaxis, title: yl }, ...extra };
 }
-const fmtBig = v => {
-  const a = Math.abs(v);
-  let s = a >= 1e9 ? (a/1e9).toFixed(2)+'B' : a >= 1e6 ? (a/1e6).toFixed(1)+'M' : a >= 1e3 ? (a/1e3).toFixed(1)+'K' : String(a);
-  return v < 0 ? '-'+s : s;
-};
 
-const MEMBERS = {"1924268117": {"name": "abankbro", "cur_total": 30, "cur_hunt": 30, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 15, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 15, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 30, "pts_purchase": 0, "pts_total": 30, "goal_pct": 53.6}]}, "1893794042": {"name": "Ben2301", "cur_total": 34, "cur_hunt": 34, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 17, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 17, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 34, "pts_purchase": 0, "pts_total": 34, "goal_pct": 60.7}]}, "1843213227": {"name": "CHiLL2NiGHT", "cur_total": 32, "cur_hunt": 32, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 2, 1, 3, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 2, "hunt_l3": 1, "hunt_l4": 3, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 32, "pts_purchase": 0, "pts_total": 32, "goal_pct": 57.1}]}, "1815382145": {"name": "D A H L I A", "cur_total": 72, "cur_hunt": 72, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 26, 3, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 26, "hunt_l3": 3, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 72, "pts_purchase": 0, "pts_total": 72, "goal_pct": 128.6}]}, "1855793389": {"name": "Darren69", "cur_total": 56, "cur_hunt": 56, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 0, 14, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 14, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 56, "pts_purchase": 0, "pts_total": 56, "goal_pct": 100.0}]}, "1816941638": {"name": "dsgutrdghg", "cur_total": 64, "cur_hunt": 64, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 0, 0, 8, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 8, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 64, "pts_purchase": 0, "pts_total": 64, "goal_pct": 114.3}]}, "1815529383": {"name": "German Areta", "cur_total": 42, "cur_hunt": 42, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 1, 10, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 1, "hunt_l3": 10, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 42, "pts_purchase": 0, "pts_total": 42, "goal_pct": 75.0}]}, "1826727460": {"name": "I Yumeko", "cur_total": 48, "cur_hunt": 48, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 10, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 10, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 48, "pts_purchase": 0, "pts_total": 48, "goal_pct": 85.7}]}, "1901311064": {"name": "katsu  katsu", "cur_total": 58, "cur_hunt": 44, "cur_purch": 14, "met": true, "cur_hunt_lvl": [0, 0, 3, 4, 0], "cur_purch_lvl": [9, 3, 2, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 3, "hunt_l4": 4, "hunt_l5": 0, "purch_l1": 9, "purch_l2": 3, "purch_l3": 2, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 44, "pts_purchase": 14, "pts_total": 58, "goal_pct": 103.6}]}, "1795283643": {"name": "Naive ovo", "cur_total": 22, "cur_hunt": 22, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 11, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 11, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 22, "pts_purchase": 0, "pts_total": 22, "goal_pct": 39.3}]}, "1707783496": {"name": "oTheViking", "cur_total": 20, "cur_hunt": 20, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 8, 1, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 8, "hunt_l3": 1, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 20, "pts_purchase": 0, "pts_total": 20, "goal_pct": 35.7}]}, "1863348955": {"name": "RIGSSS", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1846815022": {"name": "Sugoroku7", "cur_total": 132, "cur_hunt": 132, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 0, 3, 13, 1], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 3, "hunt_l4": 13, "hunt_l5": 1, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 132, "pts_purchase": 0, "pts_total": 132, "goal_pct": 235.7}]}, "1906115241": {"name": "Tieneko", "cur_total": 322, "cur_hunt": 322, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 9, 0, 2, 18], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 9, "hunt_l3": 0, "hunt_l4": 2, "hunt_l5": 18, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 322, "pts_purchase": 0, "pts_total": 322, "goal_pct": 575.0}]}, "1943912317": {"name": "al tetra", "cur_total": 52, "cur_hunt": 52, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 4, 9, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 4, "hunt_l3": 9, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 52, "pts_purchase": 0, "pts_total": 52, "goal_pct": 92.9}]}, "571089074": {"name": "Arjan Don", "cur_total": 70, "cur_hunt": 70, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 21, 5, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 21, "hunt_l3": 5, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 70, "pts_purchase": 0, "pts_total": 70, "goal_pct": 125.0}]}, "1833692845": {"name": "Armannd0", "cur_total": 46, "cur_hunt": 46, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 23, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 23, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 46, "pts_purchase": 0, "pts_total": 46, "goal_pct": 82.1}]}, "1814600495": {"name": "Arow63", "cur_total": 72, "cur_hunt": 72, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 30, 3, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 30, "hunt_l3": 3, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 72, "pts_purchase": 0, "pts_total": 72, "goal_pct": 128.6}]}, "1874463206": {"name": "Beeeast", "cur_total": 132, "cur_hunt": 132, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 4, 27, 2, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 4, "hunt_l3": 27, "hunt_l4": 2, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 132, "pts_purchase": 0, "pts_total": 132, "goal_pct": 235.7}]}, "1852555496": {"name": "Bi9 99", "cur_total": 192, "cur_hunt": 188, "cur_purch": 4, "met": true, "cur_hunt_lvl": [0, 42, 12, 5, 1], "cur_purch_lvl": [1, 0, 1, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 42, "hunt_l3": 12, "hunt_l4": 5, "hunt_l5": 1, "purch_l1": 1, "purch_l2": 0, "purch_l3": 1, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 188, "pts_purchase": 4, "pts_total": 192, "goal_pct": 342.9}]}, "1691304761": {"name": "Binzzz215", "cur_total": 42, "cur_hunt": 42, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 17, 2, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 17, "hunt_l3": 2, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 42, "pts_purchase": 0, "pts_total": 42, "goal_pct": 75.0}]}, "1806526774": {"name": "Cappyman", "cur_total": 40, "cur_hunt": 38, "cur_purch": 2, "met": false, "cur_hunt_lvl": [0, 11, 4, 0, 0], "cur_purch_lvl": [2, 1, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 11, "hunt_l3": 4, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 2, "purch_l2": 1, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 38, "pts_purchase": 2, "pts_total": 40, "goal_pct": 71.4}]}, "1816079360": {"name": "CatFishx", "cur_total": 94, "cur_hunt": 94, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 47, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 47, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 94, "pts_purchase": 0, "pts_total": 94, "goal_pct": 167.9}]}, "1810019838": {"name": "Chen Pei Xin", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1497956064": {"name": "Chocoflan1", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1796412185": {"name": "Eagle10", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1928262500": {"name": "egao", "cur_total": 30, "cur_hunt": 30, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 9, 3, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 9, "hunt_l3": 3, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 30, "pts_purchase": 0, "pts_total": 30, "goal_pct": 53.6}]}, "1855451121": {"name": "EnchanterTTT", "cur_total": 42, "cur_hunt": 42, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 11, 1, 2, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 11, "hunt_l3": 1, "hunt_l4": 2, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 42, "pts_purchase": 0, "pts_total": 42, "goal_pct": 75.0}]}, "1863339572": {"name": "Gdooo", "cur_total": 60, "cur_hunt": 58, "cur_purch": 2, "met": true, "cur_hunt_lvl": [0, 1, 12, 1, 0], "cur_purch_lvl": [27, 1, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 1, "hunt_l3": 12, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 27, "purch_l2": 1, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 58, "pts_purchase": 2, "pts_total": 60, "goal_pct": 107.1}]}, "1833510438": {"name": "Golden Boy19", "cur_total": 14, "cur_hunt": 14, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 5, 1, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 5, "hunt_l3": 1, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 14, "pts_purchase": 0, "pts_total": 14, "goal_pct": 25.0}]}, "1822385859": {"name": "HOLALORD88", "cur_total": 24, "cur_hunt": 24, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 2, 1, 2, 0], "cur_purch_lvl": [1, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 2, "hunt_l3": 1, "hunt_l4": 2, "hunt_l5": 0, "purch_l1": 1, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 24, "pts_purchase": 0, "pts_total": 24, "goal_pct": 42.9}]}, "1893498133": {"name": "II Yumeko", "cur_total": 6, "cur_hunt": 6, "cur_purch": 0, "met": false, "cur_hunt_lvl": [6, 3, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 6, "hunt_l2": 3, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 6, "pts_purchase": 0, "pts_total": 6, "goal_pct": 10.7}]}, "1808527905": {"name": "Itachi285", "cur_total": 70, "cur_hunt": 70, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 25, 3, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 25, "hunt_l3": 3, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 70, "pts_purchase": 0, "pts_total": 70, "goal_pct": 125.0}]}, "1849194303": {"name": "Izares", "cur_total": 58, "cur_hunt": 58, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 25, 0, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 25, "hunt_l3": 0, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 58, "pts_purchase": 0, "pts_total": 58, "goal_pct": 103.6}]}, "1897884037": {"name": "kiiiiiiton", "cur_total": 30, "cur_hunt": 30, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 3, 2, 2, 0], "cur_purch_lvl": [11, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 3, "hunt_l3": 2, "hunt_l4": 2, "hunt_l5": 0, "purch_l1": 11, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 30, "pts_purchase": 0, "pts_total": 30, "goal_pct": 53.6}]}, "1882289151": {"name": "KollerGK", "cur_total": 8, "cur_hunt": 8, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 2, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 2, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 8, "pts_purchase": 0, "pts_total": 8, "goal_pct": 14.3}]}, "1746648751": {"name": "Looking 4 me", "cur_total": 4, "cur_hunt": 4, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 2, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 2, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 4, "pts_purchase": 0, "pts_total": 4, "goal_pct": 7.1}]}, "1893809715": {"name": "luckycoin4", "cur_total": 96, "cur_hunt": 96, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 0, 0, 12, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 12, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 96, "pts_purchase": 0, "pts_total": 96, "goal_pct": 171.4}]}, "1891986941": {"name": "Mahesh 1433", "cur_total": 44, "cur_hunt": 42, "cur_purch": 2, "met": false, "cur_hunt_lvl": [0, 9, 6, 0, 0], "cur_purch_lvl": [3, 1, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 9, "hunt_l3": 6, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 3, "purch_l2": 1, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 42, "pts_purchase": 2, "pts_total": 44, "goal_pct": 78.6}]}, "1819577439": {"name": "milaros", "cur_total": 34, "cur_hunt": 34, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 1, 8, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 1, "hunt_l3": 8, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 34, "pts_purchase": 0, "pts_total": 34, "goal_pct": 60.7}]}, "1810443603": {"name": "Milk1104", "cur_total": 12, "cur_hunt": 12, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 2, 2, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 2, "hunt_l3": 2, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 12, "pts_purchase": 0, "pts_total": 12, "goal_pct": 21.4}]}, "1834768797": {"name": "MoonOrchid", "cur_total": 30, "cur_hunt": 30, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 15, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 15, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 30, "pts_purchase": 0, "pts_total": 30, "goal_pct": 53.6}]}, "1811371554": {"name": "MorcyJhon", "cur_total": 48, "cur_hunt": 48, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 24, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 24, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 48, "pts_purchase": 0, "pts_total": 48, "goal_pct": 85.7}]}, "980169908": {"name": "Ninhbinh", "cur_total": 66, "cur_hunt": 66, "cur_purch": 0, "met": true, "cur_hunt_lvl": [28, 27, 3, 0, 0], "cur_purch_lvl": [2, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 28, "hunt_l2": 27, "hunt_l3": 3, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 2, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 66, "pts_purchase": 0, "pts_total": 66, "goal_pct": 117.9}]}, "1751738365": {"name": "NISHANTK029", "cur_total": 2, "cur_hunt": 2, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 1, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 1, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 2, "pts_purchase": 0, "pts_total": 2, "goal_pct": 3.6}]}, "1833784577": {"name": "Nohave a gun", "cur_total": 28, "cur_hunt": 28, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 4, 5, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 4, "hunt_l3": 5, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 28, "pts_purchase": 0, "pts_total": 28, "goal_pct": 50.0}]}, "1835358372": {"name": "NOODLE 06", "cur_total": 20, "cur_hunt": 20, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 4, 3, 0, 0], "cur_purch_lvl": [4, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 4, "hunt_l3": 3, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 4, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 20, "pts_purchase": 0, "pts_total": 20, "goal_pct": 35.7}]}, "1862714372": {"name": "ordogfioka", "cur_total": 68, "cur_hunt": 68, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 26, 4, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 26, "hunt_l3": 4, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 68, "pts_purchase": 0, "pts_total": 68, "goal_pct": 121.4}]}, "1802495838": {"name": "oThePanda", "cur_total": 60, "cur_hunt": 60, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 30, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 30, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 60, "pts_purchase": 0, "pts_total": 60, "goal_pct": 107.1}]}, "1807804398": {"name": "palmeiras87", "cur_total": 100, "cur_hunt": 100, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 20, 3, 6, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 20, "hunt_l3": 3, "hunt_l4": 6, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 100, "pts_purchase": 0, "pts_total": 100, "goal_pct": 178.6}]}, "1791568320": {"name": "PEDASKALI", "cur_total": 54, "cur_hunt": 54, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 21, 3, 0, 0], "cur_purch_lvl": [2, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 21, "hunt_l3": 3, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 2, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 54, "pts_purchase": 0, "pts_total": 54, "goal_pct": 96.4}]}, "1831180008": {"name": "Prischilla", "cur_total": 36, "cur_hunt": 36, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 14, 2, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 14, "hunt_l3": 2, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 36, "pts_purchase": 0, "pts_total": 36, "goal_pct": 64.3}]}, "1768310146": {"name": "Rallito 01", "cur_total": 72, "cur_hunt": 72, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 12, 6, 3, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 12, "hunt_l3": 6, "hunt_l4": 3, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 72, "pts_purchase": 0, "pts_total": 72, "goal_pct": 128.6}]}, "1612220801": {"name": "Rashford29", "cur_total": 46, "cur_hunt": 46, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 11, 0, 1, 1], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 11, "hunt_l3": 0, "hunt_l4": 1, "hunt_l5": 1, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 46, "pts_purchase": 0, "pts_total": 46, "goal_pct": 82.1}]}, "1859513688": {"name": "roman3265438", "cur_total": 102, "cur_hunt": 84, "cur_purch": 18, "met": true, "cur_hunt_lvl": [0, 2, 20, 0, 0], "cur_purch_lvl": [28, 9, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 2, "hunt_l3": 20, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 28, "purch_l2": 9, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 84, "pts_purchase": 18, "pts_total": 102, "goal_pct": 182.1}]}, "1933732389": {"name": "Sanko925", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1804733399": {"name": "SICILYMAN", "cur_total": 24, "cur_hunt": 24, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 1, 1], "cur_purch_lvl": [2, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 1, "hunt_l5": 1, "purch_l1": 2, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 24, "pts_purchase": 0, "pts_total": 24, "goal_pct": 42.9}]}, "1881058812": {"name": "Sieu348", "cur_total": 64, "cur_hunt": 64, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 14, 9, 0, 0], "cur_purch_lvl": [1, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 14, "hunt_l3": 9, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 1, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 64, "pts_purchase": 0, "pts_total": 64, "goal_pct": 114.3}]}, "1097851755": {"name": "Tha Wences", "cur_total": 52, "cur_hunt": 52, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 20, 3, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 20, "hunt_l3": 3, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 52, "pts_purchase": 0, "pts_total": 52, "goal_pct": 92.9}]}, "735251249": {"name": "TheKing 6789", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1806553240": {"name": "venom 005", "cur_total": 48, "cur_hunt": 48, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 18, 1, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 18, "hunt_l3": 1, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 48, "pts_purchase": 0, "pts_total": 48, "goal_pct": 85.7}]}, "1788036988": {"name": "xCrazy Busy", "cur_total": 130, "cur_hunt": 130, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 21, 18, 2, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 21, "hunt_l3": 18, "hunt_l4": 2, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 130, "pts_purchase": 0, "pts_total": 130, "goal_pct": 232.1}]}, "1787772735": {"name": "Xo M oX", "cur_total": 42, "cur_hunt": 42, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 7, 5, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 7, "hunt_l3": 5, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 42, "pts_purchase": 0, "pts_total": 42, "goal_pct": 75.0}]}, "1790139550": {"name": "ZENIIX", "cur_total": 48, "cur_hunt": 48, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 12, 4, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 12, "hunt_l3": 4, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 48, "pts_purchase": 0, "pts_total": 48, "goal_pct": 85.7}]}, "1899040803": {"name": "1Shiz", "cur_total": 124, "cur_hunt": 124, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 46, 0, 0, 2], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 46, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 2, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 124, "pts_purchase": 0, "pts_total": 124, "goal_pct": 221.4}]}, "1902334592": {"name": "453798", "cur_total": 116, "cur_hunt": 116, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 0, 1, 8, 3], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 1, "hunt_l4": 8, "hunt_l5": 3, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 116, "pts_purchase": 0, "pts_total": 116, "goal_pct": 207.1}]}, "1868733598": {"name": "AHMETCY", "cur_total": 68, "cur_hunt": 64, "cur_purch": 4, "met": true, "cur_hunt_lvl": [0, 32, 0, 0, 0], "cur_purch_lvl": [0, 0, 1, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 32, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 1, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 64, "pts_purchase": 4, "pts_total": 68, "goal_pct": 121.4}]}, "1899680350": {"name": "Clayton V", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1774011202": {"name": "CR Shelby", "cur_total": 44, "cur_hunt": 44, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 6, 8, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 6, "hunt_l3": 8, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 44, "pts_purchase": 0, "pts_total": 44, "goal_pct": 78.6}]}, "1797798170": {"name": "DRAGON LH", "cur_total": 42, "cur_hunt": 40, "cur_purch": 2, "met": false, "cur_hunt_lvl": [2, 12, 2, 1, 0], "cur_purch_lvl": [0, 1, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 2, "hunt_l2": 12, "hunt_l3": 2, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 1, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 40, "pts_purchase": 2, "pts_total": 42, "goal_pct": 75.0}]}, "1854111759": {"name": "Duc Pham", "cur_total": 42, "cur_hunt": 42, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 11, 5, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 11, "hunt_l3": 5, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 42, "pts_purchase": 0, "pts_total": 42, "goal_pct": 75.0}]}, "1902106809": {"name": "ELYSINA", "cur_total": 4, "cur_hunt": 4, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 1, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 1, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 4, "pts_purchase": 0, "pts_total": 4, "goal_pct": 7.1}]}, "1828249413": {"name": "Frank14", "cur_total": 70, "cur_hunt": 70, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 25, 3, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 25, "hunt_l3": 3, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 70, "pts_purchase": 0, "pts_total": 70, "goal_pct": 125.0}]}, "1835901676": {"name": "HuuHanh", "cur_total": 4, "cur_hunt": 4, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 1, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 1, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 4, "pts_purchase": 0, "pts_total": 4, "goal_pct": 7.1}]}, "1777217605": {"name": "I  Nagato II", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1843636984": {"name": "IIEMPERYALII", "cur_total": 10, "cur_hunt": 10, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 5, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 5, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 10, "pts_purchase": 0, "pts_total": 10, "goal_pct": 17.9}]}, "1807356725": {"name": "iOoNe", "cur_total": 12, "cur_hunt": 12, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 3, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 3, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 12, "pts_purchase": 0, "pts_total": 12, "goal_pct": 21.4}]}, "1866936967": {"name": "Jjoyboyy", "cur_total": 46, "cur_hunt": 46, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 13, 5, 0, 0], "cur_purch_lvl": [4, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 13, "hunt_l3": 5, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 4, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 46, "pts_purchase": 0, "pts_total": 46, "goal_pct": 82.1}]}, "1808511873": {"name": "kathLeen07", "cur_total": 8, "cur_hunt": 8, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 2, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 2, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 8, "pts_purchase": 0, "pts_total": 8, "goal_pct": 14.3}]}, "1793027681": {"name": "Kim Tan", "cur_total": 12, "cur_hunt": 12, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 4, 1, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 4, "hunt_l3": 1, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 12, "pts_purchase": 0, "pts_total": 12, "goal_pct": 21.4}]}, "1698372491": {"name": "Mr Yichen", "cur_total": 52, "cur_hunt": 52, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 2, 4, 2, 1], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 2, "hunt_l3": 4, "hunt_l4": 2, "hunt_l5": 1, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 52, "pts_purchase": 0, "pts_total": 52, "goal_pct": 92.9}]}, "1949567372": {"name": "Nekoarerugi", "cur_total": 24, "cur_hunt": 24, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 2, 1, 2, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 2, "hunt_l3": 1, "hunt_l4": 2, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 24, "pts_purchase": 0, "pts_total": 24, "goal_pct": 42.9}]}, "1803992555": {"name": "pr0fessor1", "cur_total": 60, "cur_hunt": 60, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 22, 0, 0, 1], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 22, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 1, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 60, "pts_purchase": 0, "pts_total": 60, "goal_pct": 107.1}]}, "1900692958": {"name": "Ry0hei", "cur_total": 38, "cur_hunt": 38, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 13, 3, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 13, "hunt_l3": 3, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 38, "pts_purchase": 0, "pts_total": 38, "goal_pct": 67.9}]}, "1801440935": {"name": "SK Genderuwo", "cur_total": 74, "cur_hunt": 74, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 33, 2, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 33, "hunt_l3": 2, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 74, "pts_purchase": 0, "pts_total": 74, "goal_pct": 132.1}]}, "1765376047": {"name": "Taurus8", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1724951581": {"name": "TR11A03", "cur_total": 32, "cur_hunt": 32, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 14, 1, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 14, "hunt_l3": 1, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 32, "pts_purchase": 0, "pts_total": 32, "goal_pct": 57.1}]}, "1810909983": {"name": "Valentex", "cur_total": 74, "cur_hunt": 74, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 27, 5, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 27, "hunt_l3": 5, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 74, "pts_purchase": 0, "pts_total": 74, "goal_pct": 132.1}]}, "1734078080": {"name": "vgk one", "cur_total": 62, "cur_hunt": 62, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 11, 2, 0, 2], "cur_purch_lvl": [2, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 11, "hunt_l3": 2, "hunt_l4": 0, "hunt_l5": 2, "purch_l1": 2, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 62, "pts_purchase": 0, "pts_total": 62, "goal_pct": 110.7}]}, "1972720259": {"name": "Wibrahim", "cur_total": 152, "cur_hunt": 152, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 8, 8, 13, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 8, "hunt_l3": 8, "hunt_l4": 13, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 152, "pts_purchase": 0, "pts_total": 152, "goal_pct": 271.4}]}, "1896492060": {"name": "xgalax", "cur_total": 96, "cur_hunt": 96, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 16, 0, 8, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 16, "hunt_l3": 0, "hunt_l4": 8, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 96, "pts_purchase": 0, "pts_total": 96, "goal_pct": 171.4}]}, "1875294370": {"name": "Darren69 Bnk", "cur_total": 24, "cur_hunt": 24, "cur_purch": 0, "met": false, "cur_hunt_lvl": [19, 6, 3, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-16 → 2026-03-22", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}, {"week": "2026-03-23 → 2026-03-29", "hunt_l1": 19, "hunt_l2": 6, "hunt_l3": 3, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 24, "pts_purchase": 0, "pts_total": 24, "goal_pct": 42.9}]}, "1903674552": {"name": "AxelMax1", "cur_total": 46, "cur_hunt": 46, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 23, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 23, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 46, "pts_purchase": 0, "pts_total": 46, "goal_pct": 82.1}]}, "1654393040": {"name": "A u ro ra", "cur_total": 108, "cur_hunt": 108, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 42, 6, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 42, "hunt_l3": 6, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 108, "pts_purchase": 0, "pts_total": 108, "goal_pct": 192.9}]}, "1853511558": {"name": "Black Ichigo", "cur_total": 74, "cur_hunt": 74, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 15, 11, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 15, "hunt_l3": 11, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 74, "pts_purchase": 0, "pts_total": 74, "goal_pct": 132.1}]}, "1811413483": {"name": "Charlyx1x", "cur_total": 20, "cur_hunt": 20, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 6, 2, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 6, "hunt_l3": 2, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 20, "pts_purchase": 0, "pts_total": 20, "goal_pct": 35.7}]}, "1737451614": {"name": "Devmani Sing", "cur_total": 8, "cur_hunt": 8, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 2, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 2, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 8, "pts_purchase": 0, "pts_total": 8, "goal_pct": 14.3}]}, "1767163792": {"name": "EL DIABL0 85", "cur_total": 46, "cur_hunt": 46, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 7, 4, 0, 1], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 7, "hunt_l3": 4, "hunt_l4": 0, "hunt_l5": 1, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 46, "pts_purchase": 0, "pts_total": 46, "goal_pct": 82.1}]}, "1715596425": {"name": "FLORECITA06", "cur_total": 26, "cur_hunt": 26, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 11, 1, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 11, "hunt_l3": 1, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 26, "pts_purchase": 0, "pts_total": 26, "goal_pct": 46.4}]}, "1786827571": {"name": "JJZeusJJ", "cur_total": 8, "cur_hunt": 8, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 2, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 2, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 8, "pts_purchase": 0, "pts_total": 8, "goal_pct": 14.3}]}, "2028605961": {"name": "killers 20", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1839011930": {"name": "KingAtli", "cur_total": 22, "cur_hunt": 22, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 3, 0, 2, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 3, "hunt_l3": 0, "hunt_l4": 2, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 22, "pts_purchase": 0, "pts_total": 22, "goal_pct": 39.3}]}, "1288813475": {"name": "Luscop", "cur_total": 24, "cur_hunt": 24, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 4, 4, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 4, "hunt_l3": 4, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 24, "pts_purchase": 0, "pts_total": 24, "goal_pct": 42.9}]}, "1805108021": {"name": "Misaaa4", "cur_total": 42, "cur_hunt": 42, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 19, 1, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 19, "hunt_l3": 1, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 42, "pts_purchase": 0, "pts_total": 42, "goal_pct": 75.0}]}, "1325812001": {"name": "OliveVN", "cur_total": 52, "cur_hunt": 52, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 22, 2, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 22, "hunt_l3": 2, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 52, "pts_purchase": 0, "pts_total": 52, "goal_pct": 92.9}]}, "1807971393": {"name": "OMeRo77", "cur_total": 40, "cur_hunt": 40, "cur_purch": 0, "met": false, "cur_hunt_lvl": [4, 12, 2, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 4, "hunt_l2": 12, "hunt_l3": 2, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 40, "pts_purchase": 0, "pts_total": 40, "goal_pct": 71.4}]}, "1701326641": {"name": "Tio Vegeta", "cur_total": 154, "cur_hunt": 154, "cur_purch": 0, "met": true, "cur_hunt_lvl": [0, 75, 1, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 75, "hunt_l3": 1, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 154, "pts_purchase": 0, "pts_total": 154, "goal_pct": 275.0}]}, "1788543887": {"name": "wimpyy", "cur_total": 48, "cur_hunt": 48, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 20, 2, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 20, "hunt_l3": 2, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 48, "pts_purchase": 0, "pts_total": 48, "goal_pct": 85.7}]}, "1375100080": {"name": "160599", "cur_total": 28, "cur_hunt": 28, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 8, 3, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 8, "hunt_l3": 3, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 28, "pts_purchase": 0, "pts_total": 28, "goal_pct": 50.0}]}, "1344219062": {"name": "NEWBIE two", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1845807187": {"name": "King ozaru", "cur_total": 18, "cur_hunt": 18, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 9, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 9, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 18, "pts_purchase": 0, "pts_total": 18, "goal_pct": 32.1}]}, "1820536786": {"name": "5P1N", "cur_total": 2, "cur_hunt": 2, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 1, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 1, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 2, "pts_purchase": 0, "pts_total": 2, "goal_pct": 3.6}]}, "1870904264": {"name": "Eltarii", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1802546717": {"name": "MASTER 1993", "cur_total": 10, "cur_hunt": 10, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 5, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 5, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 10, "pts_purchase": 0, "pts_total": 10, "goal_pct": 17.9}]}, "1597909042": {"name": "Vladimir G", "cur_total": 16, "cur_hunt": 16, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 2, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 2, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 16, "pts_purchase": 0, "pts_total": 16, "goal_pct": 28.6}]}, "272876100": {"name": "Gato Plus", "cur_total": 8, "cur_hunt": 8, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 2, 1, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 2, "hunt_l3": 1, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 8, "pts_purchase": 0, "pts_total": 8, "goal_pct": 14.3}]}, "2096915477": {"name": "Le Clebard", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1848545727": {"name": "RAJNEEL SEN1", "cur_total": 12, "cur_hunt": 12, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 1, 1, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 1, "hunt_l4": 1, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 12, "pts_purchase": 0, "pts_total": 12, "goal_pct": 21.4}]}, "1836549011": {"name": "CaveBat", "cur_total": 0, "cur_hunt": 0, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 0, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 0, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 0, "pts_purchase": 0, "pts_total": 0, "goal_pct": 0.0}]}, "1920907780": {"name": "RAJNEEL3", "cur_total": 4, "cur_hunt": 4, "cur_purch": 0, "met": false, "cur_hunt_lvl": [0, 2, 0, 0, 0], "cur_purch_lvl": [0, 0, 0, 0, 0], "weeks": [{"week": "2026-03-23 → 2026-03-29", "hunt_l1": 0, "hunt_l2": 2, "hunt_l3": 0, "hunt_l4": 0, "hunt_l5": 0, "purch_l1": 0, "purch_l2": 0, "purch_l3": 0, "purch_l4": 0, "purch_l5": 0, "pts_hunt": 4, "pts_purchase": 0, "pts_total": 4, "goal_pct": 7.1}]}};
-const MIN=56, GOAL=56;
-let selectedUid = null;
-function filterM(v){
-  v=v.toLowerCase();
-  document.querySelectorAll('#member-list .member-row').forEach(el=>{
-    el.style.display=el.dataset.name.includes(v)?'':'none';
+let DATA = null;
+
+fetch('data/hunt_individual_data.json')
+  .then(r => r.json())
+  .then(d => {
+    DATA = d;
+    document.getElementById('main-container').style.display = 'block';
+    document.getElementById('ts-top').textContent = '🕒 ' + d.generated_at;
+    document.getElementById('m-count').textContent = d.members.length;
+    renderSidebar();
+    
+    document.getElementById('srch').addEventListener('input', renderSidebar);
+    
+    if(d.members.length > 0) show(0);
+  })
+  .catch(e => {
+    console.error(e);
+    document.getElementById('ts-top').textContent = '⚠️ Error loading data';
   });
+
+function renderSidebar() {
+  const q = document.getElementById('srch').value.toLowerCase();
+  let html = '';
+  DATA.members.forEach((m, ix) => {
+    if(m.name.toLowerCase().includes(q)) {
+      html += `<div class="member-row" id="row-${ix}" onclick="show(${ix})">
+        <span style="font-weight:600;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${m.name}">${m.name}</span>
+        <span style="font-size:1.2rem;">${m.weeks.length > 0 && m.weeks[m.weeks.length-1].met ? '✅' : '❌'}</span>
+      </div>`;
+    }
+  });
+  document.getElementById('m-list').innerHTML = html;
 }
-function selectMember(uid){
-  if(selectedUid) document.getElementById('mr-'+selectedUid)?.classList.remove('selected');
-  selectedUid=uid;
-  document.getElementById('mr-'+uid)?.classList.add('selected');
-  const m=MEMBERS[uid]; if(!m)return;
-  document.getElementById('welcome').style.display='none';
-  document.getElementById('detail').style.display='';
-  document.getElementById('d-name').textContent=m.name;
-  document.getElementById('d-badge').innerHTML=m.met?'<span class="badge-ok">✅ Cumplió</span>':'<span class="badge-no">❌ No cumplió</span>';
-  document.getElementById('d-total').textContent=m.cur_total;
-  document.getElementById('d-hunt').textContent=m.cur_hunt;
-  document.getElementById('d-purch').textContent=m.cur_purch;
-  const lvl=['L1','L2','L3','L4','L5'];
-  Plotly.newPlot('c-hlvl',[{type:'bar',x:lvl,y:m.cur_hunt_lvl,
-    marker:{color:['#4f9cf9','#34d058','#e3a336','#f55555','#a371f7']},
-    text:m.cur_hunt_lvl,textposition:'outside'}],
-    {...lay(m.name+' — Monstruos por Nivel','Nivel',''),showlegend:false},cfg);
-  if(m.cur_purch_lvl.some(v=>v>0)){
-    Plotly.newPlot('c-plvl',[{type:'bar',x:lvl,y:m.cur_purch_lvl,marker:{color:'#a371f7'},
-      text:m.cur_purch_lvl,textposition:'outside'}],
-      {...lay(m.name+' — Cofres Comprados','Nivel',''),showlegend:false},cfg);
+
+function show(idx) {
+  document.querySelectorAll('.member-row').forEach(n => n.classList.remove('selected'));
+  const row = document.getElementById(`row-${idx}`);
+  if(row) row.classList.add('selected');
+  
+  document.getElementById('empty-pane').style.display = 'none';
+  document.getElementById('content-pane').style.display = 'block';
+  
+  const m = DATA.members[idx];
+  document.getElementById('m-title').textContent = m.name;
+  
+  const cur = m.weeks.length > 0 ? m.weeks[m.weeks.length-1] : null;
+  if(cur) {
+    const cls = cur.met ? 'badge-ok' : 'badge-no';
+    const icn = cur.met ? '✅ Met Quota' : '❌ Not Met';
+    document.getElementById('m-status').innerHTML = `<span class="${cls}" style="font-size:.85rem;padding:3px 10px;">${icn} — ${cur.pct}% (${cur.total_pts}/${DATA.hunt_goal})</span>`;
   } else {
-    document.getElementById('c-plvl').innerHTML='<div class="empty-state" style="padding:1.5rem"><div class="icon" style="font-size:1.8rem">🏪</div>Sin compras esta semana</div>';
+    document.getElementById('m-status').innerHTML = `<span class="badge-no" style="font-size:.85rem;padding:3px 10px;">No Data</span>`;
   }
-  const wLabels=m.weeks.map(w=>w.week); const wPts=m.weeks.map(w=>w.pts_total);
-  Plotly.newPlot('c-wpts',[
-    {type:'scatter',mode:'lines+markers',x:wLabels,y:wPts,name:'Pts/Semana',
-      line:{color:'#4f9cf9',width:2.5},fill:'tozeroy',fillcolor:'rgba(79,156,249,.1)',
-      text:wPts,textposition:'top center'},
-    {type:'scatter',mode:'lines',x:wLabels,y:Array(wLabels.length).fill(GOAL),
-      name:`Meta (${GOAL}pts)`,line:{color:'#e3a336',dash:'dash',width:1.5}},
-  ],lay(m.name+' — Puntos por Semana','','Pts'),cfg);
-  const tb=document.getElementById('d-table'); tb.innerHTML='';
-  [...m.weeks].reverse().forEach(r=>{
-    const ok=r.pts_total>=MIN;
-    tb.innerHTML+=`<tr style="background:${ok?'rgba(52,208,88,.07)':'rgba(245,85,85,.07)'}">
-      <td style="font-size:.73rem;white-space:nowrap">${r.week}</td>
-      <td>${r.hunt_l1}</td><td>${r.hunt_l2}</td><td>${r.hunt_l3}</td><td>${r.hunt_l4}</td><td>${r.hunt_l5}</td>
-      <td>${r.purch_l1}</td><td>${r.purch_l2}</td><td>${r.purch_l3}</td><td>${r.purch_l4}</td><td>${r.purch_l5}</td>
-      <td>${r.pts_hunt}</td><td>${r.pts_purchase}</td>
-      <td><strong>${r.pts_total}</strong></td><td>${r.goal_pct}%</td>
+  
+  const wks = m.weeks.map(w => w.week);
+  const hts = m.weeks.map(w => w.hunt_pts);
+  const pts = m.weeks.map(w => w.purch_pts);
+  const tts = m.weeks.map(w => w.total_pts);
+  
+  Plotly.newPlot('c-hist',[
+    {type:'bar',name:'Hunt Pts',x:wks,y:hts,marker:{color:'#4f9cf9'}},
+    {type:'bar',name:'Purch Pts',x:wks,y:pts,marker:{color:'#a371f7'}}
+  ],{...lay('Weekly Progression','Week','Points'),barmode:'stack',
+     shapes:[{type:'line',x0:-0.5,x1:wks.length-0.5,y0:DATA.hunt_goal,y1:DATA.hunt_goal,line:{color:'#34d058',width:2,dash:'dash'}}],
+     annotations:[{x:wks.length>0?wks[0]:0,y:DATA.hunt_goal,text:'QUOTA',showarrow:false,yshift:10,font:{color:'#34d058',size:10,family:'Rajdhani'}}]
+  },cfg);
+  
+  if(cur) {
+    Plotly.newPlot('c-lvl',[
+      {type:'bar',x:['L1','L2','L3','L4','L5'],y:[cur.l1, cur.l2, cur.l3, cur.l4, cur.l5],marker:{color:'#34d058'},text:[cur.l1, cur.l2, cur.l3, cur.l4, cur.l5],textposition:'outside'}
+    ],lay('Current Week Monsters by Level','Level','Quantity'),cfg);
+  } else {
+    document.getElementById('c-lvl').innerHTML = '<div class="empty-state" style="padding:4rem 1rem;"><div class="icon">📭</div>No level data</div>';
+  }
+  
+  if(cur && cur.daily && cur.daily.dates && cur.daily.dates.length > 0) {
+    Plotly.newPlot('c-day',[
+      {type:'scatter',mode:'lines+markers',x:cur.daily.dates,y:cur.daily.cum,line:{color:'#4f9cf9',width:2.5},fill:'tozeroy',fillcolor:'rgba(79,156,249,.1)',text:cur.daily.cum,textposition:'top center'}
+    ],lay('Current Week Daily Points','Date','Points'),cfg);
+  } else {
+    document.getElementById('c-day').innerHTML = '<div class="empty-state" style="padding:4rem 1rem;"><div class="icon">📭</div>No daily progression data</div>';
+  }
+  
+  let html = '';
+  [...m.weeks].reverse().forEach(w => {
+    const cls = w.met ? 'color:var(--green)' : 'color:var(--red)';
+    html += `<tr>
+      <td style="font-size:.75rem;color:var(--muted);white-space:nowrap">${w.week}</td>
+      <td class="text-center">${w.hunt_pts}</td>
+      <td class="text-center">${w.purch_pts}</td>
+      <td class="text-center"><strong style="${cls}">${w.total_pts}</strong></td>
     </tr>`;
   });
+  document.querySelector('#t-wks tbody').innerHTML = html;
 }
 </script>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
