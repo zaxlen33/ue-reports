@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hunt Reports · UE Guild Dashboard</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <span class="logo">🏰</span>
+        <span>UE Guild <span>Dashboard</span></span>
+      </div>
+      <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      <ul class="navbar-nav">
+        <li><a href="./index.html">🏠 Home</a></li>
+        <li><a href="./war.html">🏰 War</a></li>
+        <li><a href="./hunt.html">🦅 Hunt</a></li>
+        <li><a href="./growth.html">📈 Growth</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Page Content ── -->
+  <main class="container">
+    <div class="page-header">
+      <h1>🦅 Hunt Reports</h1>
+      <p>Weekly hunt performance — player kills, points, and goal completion rates.</p>
+    </div>
+
+    <!-- List view (no hash) -->
+    <div id="hunt-list-view">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading hunt reports…</p>
+      </div>
+    </div>
+
+    <!-- Detail view (hash = hunt id) -->
+    <div id="hunt-detail-view" style="display:none;">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading hunt data…</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      UE Guild Dashboard · Data updated via Telegram Bot
+    </div>
+  </footer>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>
