@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="dark">
+<html lang="en" data-bs-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Inicio — UE Guild</title>
+<title>Home — UE Guild</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.32.0/plotly.min.js"></script>
 <style>
   :root {
     --bg:     #080c10;
@@ -62,74 +61,54 @@
     color: var(--muted);
     font-size: .78rem;
     transition: all .18s;
-    white-space: nowrap;
   }
   .nav-pill:hover { border-color:var(--blue); color:var(--blue); background:rgba(79,156,249,.07); }
   .nav-pill.active { background:var(--blue); color:#fff; border-color:var(--blue); }
   .ts { font-size:.7rem; color:var(--muted); margin-left:auto; white-space:nowrap; }
-  .sec-hdr { border-bottom:1px solid var(--border); padding-bottom:.5rem; margin-bottom:1.2rem; }
   .badge-ok  { background:rgba(52,208,88,.15);  color:var(--green);  border:1px solid rgba(52,208,88,.4);  border-radius:4px; padding:1px 8px; font-size:.72rem; }
   .badge-no  { background:rgba(245,85,85,.15);  color:var(--red);    border:1px solid rgba(245,85,85,.4);  border-radius:4px; padding:1px 8px; font-size:.72rem; }
-  .table { color:var(--text); margin-bottom:0; }
-  .table th  { color:var(--muted); font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; border-color:var(--border); font-weight:500; }
-  .table td  { border-color:var(--border); font-size:.83rem; vertical-align:middle; }
-  .table tbody tr:hover { background:rgba(79,156,249,.05); }
-  .search-input {
-    background:var(--card2); border:1px solid var(--border); border-radius:7px;
-    padding:.45rem .9rem; color:var(--text); width:100%; font-size:.85rem;
-  }
-  .search-input:focus { outline:none; border-color:var(--blue); }
-  .member-row {
-    border:1px solid var(--border); border-radius:8px; padding:.5rem .8rem;
-    cursor:pointer; transition:border-color .15s; margin-bottom:.4rem;
-    display:flex; align-items:center; justify-content:space-between; gap:.5rem;
-    background:var(--card);
-  }
-  .member-row:hover { border-color:var(--blue); background:rgba(79,156,249,.05); }
-  .member-row.selected { border-color:var(--blue); background:rgba(79,156,249,.1); }
-  .progress-bar-outer { background:#1a2233; border-radius:4px; height:7px; flex:1; overflow:hidden; }
-  .empty-state { text-align:center; padding:3rem 1rem; color:var(--muted); }
-  .empty-state .icon { font-size:3rem; margin-bottom:.8rem; }
 </style>
 </head>
 <body>
 <nav class="nav-bar">
   <span class="nav-logo">⚔️ UE Guild</span>
-  <a href="index.html" class="nav-pill  active">🏠 Inicio</a>
-    <a href="hunt_general.html" class="nav-pill">🎯 Hunt General</a>
-    <a href="hunt_individual.html" class="nav-pill">👤 Hunt Individual</a>
-    <a href="war_general.html" class="nav-pill">🏰 War General</a>
-    <a href="war_months.html" class="nav-pill">📅 War Mensual</a>
-    <a href="war_individual.html" class="nav-pill">📈 War Individual</a>
-  <span class="ts">🕒 2026-03-26 20:27</span>
+  <a href="index.html" class="nav-pill active">🏠 Home</a>
+  <a href="hunt_general.html" class="nav-pill">🎯 Hunt General</a>
+  <a href="hunt_individual.html" class="nav-pill">👤 Hunt Individual</a>
+  <a href="war_general.html" class="nav-pill">🏰 War General</a>
+  <a href="war_months.html" class="nav-pill">📅 War Monthly</a>
+  <a href="war_individual.html" class="nav-pill">📈 War Individual</a>
+  <span class="ts" id="ts-top">🕒 Loading...</span>
 </nav>
-<div class="container-fluid px-3 px-md-4 py-4 pb-5">
 
+<div class="container-fluid px-3 px-md-4 py-4 pb-5" id="main-container" style="display:none;">
 <div class="row g-0 mb-4 align-items-end">
   <div class="col">
     <h1 style="font-size:2.4rem;">⚔️ UE Guild Reports</h1>
-    <p style="color:var(--muted);">Panel central · Semana actual: <strong>2026-03-23 → 2026-03-29</strong></p>
+    <p style="color:var(--muted);">Central Dashboard &middot; Current week: <strong id="lbl-week">...</strong></p>
   </div>
 </div>
+
 <div class="row g-3 mb-4">
   <div class="col-4"><div class="card stat-card">
-    <div class="stat-num" style="color:var(--blue)">116</div><div class="stat-lbl">Miembros Hunt</div>
+    <div class="stat-num" style="color:var(--blue)" id="h-total">0</div><div class="stat-lbl">Hunt Members</div>
   </div></div>
   <div class="col-4"><div class="card stat-card">
-    <div class="stat-num" style="color:var(--green)">36</div><div class="stat-lbl">Cumplieron Cuota</div>
+    <div class="stat-num" style="color:var(--green)" id="h-met">0</div><div class="stat-lbl">Met Quota</div>
   </div></div>
   <div class="col-4"><div class="card stat-card">
-    <div class="stat-num" style="color:var(--gold)">31%</div><div class="stat-lbl">% Participación</div>
+    <div class="stat-num" style="color:var(--gold)" id="h-pct">0%</div><div class="stat-lbl">Participation</div>
   </div></div>
 </div>
+
 <div class="row g-3">
     <div class="col-sm-6 col-lg-4">
       <a href="hunt_general.html" style="text-decoration:none;">
         <div class="card p-4 h-100" style="border-color:#4f9cf922;transition:all .2s;">
           <div style="font-size:2.2rem;line-height:1;">🎯</div>
           <h3 class="mt-2 mb-1">Hunt General</h3>
-          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Reporte semanal del gremio — participación, puntos por nivel, progresión diaria.</p>
-          <div style="font-size:.75rem;color:var(--muted);"><span class='badge-ok'>36 cumplieron</span> &nbsp;<span class='badge-no'>80 pendientes</span></div>
+          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Guild weekly report &mdash; participation, points per level, daily progression.</p>
+          <div style="font-size:.75rem;color:var(--muted);"><span class='badge-ok' id="h-ok">... met</span> &nbsp;<span class='badge-no' id="h-no">... pending</span></div>
         </div>
       </a>
     </div>
@@ -138,8 +117,8 @@
         <div class="card p-4 h-100" style="border-color:#34d05822;transition:all .2s;">
           <div style="font-size:2.2rem;line-height:1;">👤</div>
           <h3 class="mt-2 mb-1">Hunt Individual</h3>
-          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Historial de 8 semanas por miembro — gráficas de niveles y evolución semanal.</p>
-          <div style="font-size:.75rem;color:var(--muted);">116 miembros activos</div>
+          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Up to 8 weeks of history per member &mdash; level graphs and tracking.</p>
+          <div style="font-size:.75rem;color:var(--muted);" id="h-active">... active members</div>
         </div>
       </a>
     </div>
@@ -148,8 +127,8 @@
         <div class="card p-4 h-100" style="border-color:#f5555522;transition:all .2s;">
           <div style="font-size:2.2rem;line-height:1;">🏰</div>
           <h3 class="mt-2 mb-1">War General</h3>
-          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Poder y kills del gremio a lo largo del tiempo + cuota mensual de kills.</p>
-          <div style="font-size:.75rem;color:var(--muted);">Último snapshot: 2026-03-26 · 152.13B poder</div>
+          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Guild power and kills over time + monthly kill quota tracking.</p>
+          <div style="font-size:.75rem;color:var(--muted);" id="w-snap">...</div>
         </div>
       </a>
     </div>
@@ -157,9 +136,9 @@
       <a href="war_months.html" style="text-decoration:none;">
         <div class="card p-4 h-100" style="border-color:#e3a33622;transition:all .2s;">
           <div style="font-size:2.2rem;line-height:1;">📅</div>
-          <h3 class="mt-2 mb-1">War Mensual</h3>
-          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Tendencia histórica de hasta 36 meses — poder total y kills ganados por mes.</p>
-          <div style="font-size:.75rem;color:var(--muted);">0 meses registrados</div>
+          <h3 class="mt-2 mb-1">War Monthly</h3>
+          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Historical multi-month trend &mdash; total power and kills gained per month.</p>
+          <div style="font-size:.75rem;color:var(--muted);" id="w-mos">...</div>
         </div>
       </a>
     </div>
@@ -168,13 +147,37 @@
         <div class="card p-4 h-100" style="border-color:#a371f722;transition:all .2s;">
           <div style="font-size:2.2rem;line-height:1;">📈</div>
           <h3 class="mt-2 mb-1">War Individual</h3>
-          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Historial mensual de kills y poder por miembro — hasta 36 meses de historial.</p>
-          <div style="font-size:.75rem;color:var(--muted);">Busca cualquier miembro por nombre</div>
+          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Monthly kills and power history per member &mdash; up to 36 months.</p>
+          <div style="font-size:.75rem;color:var(--muted);">Search for any member by name</div>
         </div>
       </a>
-    </div></div>
-
+    </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</div>
+
+<script>
+fetch('data/index_data.json')
+  .then(r => r.json())
+  .then(d => {
+    document.getElementById('main-container').style.display = 'block';
+    document.getElementById('ts-top').textContent = '🕒 ' + d.generated_at;
+    
+    document.getElementById('lbl-week').textContent = d.week_start + ' → ' + d.week_end;
+    document.getElementById('h-total').textContent = d.hunt.total_members;
+    document.getElementById('h-met').textContent = d.hunt.met_quota;
+    document.getElementById('h-pct').textContent = d.hunt.pct + '%';
+    
+    document.getElementById('h-ok').textContent = d.hunt.met_quota + ' met';
+    document.getElementById('h-no').textContent = d.hunt.pending + ' pending';
+    document.getElementById('h-active').textContent = d.hunt.total_members + ' active members';
+    
+    document.getElementById('w-snap').textContent = 'Last snapshot: ' + d.war.last_snapshot + ' · ' + d.war.total_power_str + ' power';
+    document.getElementById('w-mos').textContent = d.war.months_recorded + ' months recorded';
+  })
+  .catch(e => {
+    console.error(e);
+    document.getElementById('ts-top').textContent = '⚠️ Error loading data';
+  });
+</script>
 </body>
 </html>
