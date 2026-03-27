@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>War General — UE Guild</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.32.0/plotly.min.js"></script>
+<style>
+  :root {
+    --bg:     #080c10;
+    --card:   #0e1117;
+    --card2:  #141920;
+    --border: #1e2533;
+    --text:   #dce4f0;
+    --muted:  #5a6a82;
+    --blue:   #4f9cf9;
+    --green:  #34d058;
+    --red:    #f55555;
+    --gold:   #e3a336;
+    --purple: #a371f7;
+    --cyan:   #39c5cf;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+  }
+  h1,h2,h3,h4,h5 { font-family: 'Rajdhani', sans-serif; font-weight: 700; letter-spacing: .02em; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .stat-card { text-align:center; padding:1.1rem .8rem; }
+  .stat-num  { font-family:'Rajdhani',sans-serif; font-size:2rem; font-weight:700; line-height:1; }
+  .stat-lbl  { font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-top:.3rem; }
+  .nav-bar {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  .nav-logo { font-family:'Rajdhani',sans-serif; font-size:1.2rem; font-weight:700; color:var(--gold); white-space:nowrap; }
+  .nav-pill {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .3rem .75rem;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: .78rem;
+    transition: all .18s;
+    white-space: nowrap;
+  }
+  .nav-pill:hover { border-color:var(--blue); color:var(--blue); background:rgba(79,156,249,.07); }
+  .nav-pill.active { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .ts { font-size:.7rem; color:var(--muted); margin-left:auto; white-space:nowrap; }
+  .sec-hdr { border-bottom:1px solid var(--border); padding-bottom:.5rem; margin-bottom:1.2rem; }
+  .badge-ok  { background:rgba(52,208,88,.15);  color:var(--green);  border:1px solid rgba(52,208,88,.4);  border-radius:4px; padding:1px 8px; font-size:.72rem; }
+  .badge-no  { background:rgba(245,85,85,.15);  color:var(--red);    border:1px solid rgba(245,85,85,.4);  border-radius:4px; padding:1px 8px; font-size:.72rem; }
+  .table { color:var(--text); margin-bottom:0; }
+  .table th  { color:var(--muted); font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; border-color:var(--border); font-weight:500; }
+  .table td  { border-color:var(--border); font-size:.83rem; vertical-align:middle; }
+  .table tbody tr:hover { background:rgba(79,156,249,.05); }
+  .search-input {
+    background:var(--card2); border:1px solid var(--border); border-radius:7px;
+    padding:.45rem .9rem; color:var(--text); width:100%; font-size:.85rem;
+  }
+  .search-input:focus { outline:none; border-color:var(--blue); }
+  .member-row {
+    border:1px solid var(--border); border-radius:8px; padding:.5rem .8rem;
+    cursor:pointer; transition:border-color .15s; margin-bottom:.4rem;
+    display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+    background:var(--card);
+  }
+  .member-row:hover { border-color:var(--blue); background:rgba(79,156,249,.05); }
+  .member-row.selected { border-color:var(--blue); background:rgba(79,156,249,.1); }
+  .progress-bar-outer { background:#1a2233; border-radius:4px; height:7px; flex:1; overflow:hidden; }
+  .empty-state { text-align:center; padding:3rem 1rem; color:var(--muted); }
+  .empty-state .icon { font-size:3rem; margin-bottom:.8rem; }
+</style>
+</head>
+<body>
+<nav class="nav-bar">
+  <span class="nav-logo">⚔️ UE Guild</span>
+  <a href="index.html" class="nav-pill">🏠 Inicio</a>
+    <a href="hunt_general.html" class="nav-pill">🎯 Hunt General</a>
+    <a href="hunt_individual.html" class="nav-pill">👤 Hunt Individual</a>
+    <a href="war_general.html" class="nav-pill  active">🏰 War General</a>
+    <a href="war_months.html" class="nav-pill">📅 War Mensual</a>
+    <a href="war_individual.html" class="nav-pill">📈 War Individual</a>
+  <span class="ts">🕒 2026-03-26 20:27</span>
+</nav>
+<div class="container-fluid px-3 px-md-4 py-4 pb-5">
+
+<div class="d-flex align-items-end gap-3 mb-4 flex-wrap">
+  <div><h1 style="font-size:2rem;margin-bottom:0;">🏰 War — General</h1>
+  <p style="color:var(--muted);margin:0;">Poder y kills del gremio a lo largo del tiempo</p></div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3"><div class="card stat-card"><div class="stat-num" style="color:var(--blue)">152.13B</div><div class="stat-lbl">Poder Total (Último)</div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat-card"><div class="stat-num" style="color:var(--red)">34.29B</div><div class="stat-lbl">Kills Totales (Último)</div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat-card"><div class="stat-num" style="color:var(--green)">40</div><div class="stat-lbl">Cuota 2026-03 Cumplida</div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat-card"><div class="stat-num" style="color:var(--red)">77</div><div class="stat-lbl">Cuota 2026-03 Pendiente</div></div></div>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-md-6"><div class="card p-3"><div id="c-pwr" style="height:300px;"></div></div></div>
+  <div class="col-md-6"><div class="card p-3"><div id="c-kls" style="height:300px;"></div></div></div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-12"><div class="card p-3"><div id="c-qbar" style="height:310px;"></div></div></div>
+</div>
+<div class="card p-3">
+  <h3 class="sec-hdr">⚔️ Cuota de Kills — Mes 2026-03 <small style="color:var(--muted);font-size:.8rem">(meta: 1.0M/mes)</small></h3>
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead><tr><th>#</th><th>Nombre</th><th>Kills Ganados</th><th>Estado</th></tr></thead>
+      <tbody><tr>
+          <td class="text-center" style="color:var(--muted)">1</td>
+          <td><strong>Izares</strong></td>
+          <td class="text-center">357.7M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">2</td>
+          <td><strong>Tieneko</strong></td>
+          <td class="text-center">262.0M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">3</td>
+          <td><strong>Mr Yichen</strong></td>
+          <td class="text-center">101.8M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">4</td>
+          <td><strong>dsgutrdghg</strong></td>
+          <td class="text-center">16.2M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">5</td>
+          <td><strong>luckycoin4</strong></td>
+          <td class="text-center">12.1M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">6</td>
+          <td><strong>EL DIABL0 85</strong></td>
+          <td class="text-center">9.6M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">7</td>
+          <td><strong>al tetra</strong></td>
+          <td class="text-center">8.9M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">8</td>
+          <td><strong>DRAGON LH</strong></td>
+          <td class="text-center">5.6M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">9</td>
+          <td><strong>Looking 4 me</strong></td>
+          <td class="text-center">5.1M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">10</td>
+          <td><strong>SK Genderuwo</strong></td>
+          <td class="text-center">4.7M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">11</td>
+          <td><strong>Wibrahim</strong></td>
+          <td class="text-center">4.6M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">12</td>
+          <td><strong>Beeeast</strong></td>
+          <td class="text-center">4.5M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">13</td>
+          <td><strong>OliveiraPY</strong></td>
+          <td class="text-center">4.4M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">14</td>
+          <td><strong>roman3265438</strong></td>
+          <td class="text-center">3.9M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">15</td>
+          <td><strong>Duc Pham</strong></td>
+          <td class="text-center">3.9M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">16</td>
+          <td><strong>egao</strong></td>
+          <td class="text-center">3.7M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">17</td>
+          <td><strong>Frank143</strong></td>
+          <td class="text-center">3.7M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">18</td>
+          <td><strong>I Yumeko</strong></td>
+          <td class="text-center">3.5M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">19</td>
+          <td><strong>MorcyJhon</strong></td>
+          <td class="text-center">3.3M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">20</td>
+          <td><strong>ordogfioka</strong></td>
+          <td class="text-center">3.1M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">21</td>
+          <td><strong>RAJNEEL SEN1</strong></td>
+          <td class="text-center">3.1M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">22</td>
+          <td><strong>D A H L I A</strong></td>
+          <td class="text-center">2.8M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">23</td>
+          <td><strong>Binzzz215</strong></td>
+          <td class="text-center">2.8M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">24</td>
+          <td><strong>PEDASKALI</strong></td>
+          <td class="text-center">2.6M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">25</td>
+          <td><strong>TR11A03</strong></td>
+          <td class="text-center">2.4M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">26</td>
+          <td><strong>Milk1104</strong></td>
+          <td class="text-center">2.2M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">27</td>
+          <td><strong>German Areta</strong></td>
+          <td class="text-center">2.1M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">28</td>
+          <td><strong>Sugoroku7</strong></td>
+          <td class="text-center">2.1M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">29</td>
+          <td><strong>CatFishx</strong></td>
+          <td class="text-center">2.0M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">30</td>
+          <td><strong>xgalax</strong></td>
+          <td class="text-center">1.8M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">31</td>
+          <td><strong>RIGSSS</strong></td>
+          <td class="text-center">1.7M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">32</td>
+          <td><strong>katsu  katsu</strong></td>
+          <td class="text-center">1.6M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">33</td>
+          <td><strong>Sieu348</strong></td>
+          <td class="text-center">1.5M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">34</td>
+          <td><strong>Jjoyboyy</strong></td>
+          <td class="text-center">1.2M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">35</td>
+          <td><strong>EnchanterTTT</strong></td>
+          <td class="text-center">1.1M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">36</td>
+          <td><strong>Ninhbinh</strong></td>
+          <td class="text-center">1.1M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">37</td>
+          <td><strong>Itachi285</strong></td>
+          <td class="text-center">1.1M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">38</td>
+          <td><strong>oThePanda</strong></td>
+          <td class="text-center">1.0M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">39</td>
+          <td><strong>Tio Vegeta</strong></td>
+          <td class="text-center">1.0M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">40</td>
+          <td><strong>453798</strong></td>
+          <td class="text-center">1.0M</td>
+          <td class="text-center"><span class="badge-ok">✅</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">41</td>
+          <td><strong>kiiiiiiton</strong></td>
+          <td class="text-center">919.1K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">42</td>
+          <td><strong>CHiLL2NiGHT</strong></td>
+          <td class="text-center">828.1K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">43</td>
+          <td><strong>Nekoarerugi</strong></td>
+          <td class="text-center">818.4K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">44</td>
+          <td><strong>Eltarii</strong></td>
+          <td class="text-center">808.5K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">45</td>
+          <td><strong>venom 005</strong></td>
+          <td class="text-center">782.6K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">46</td>
+          <td><strong>AHMETCY</strong></td>
+          <td class="text-center">732.4K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">47</td>
+          <td><strong>AMAN 1986</strong></td>
+          <td class="text-center">685.4K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">48</td>
+          <td><strong>gdooo</strong></td>
+          <td class="text-center">681.9K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">49</td>
+          <td><strong>pr0fessor1</strong></td>
+          <td class="text-center">668.8K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">50</td>
+          <td><strong>Cappyman</strong></td>
+          <td class="text-center">633.6K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">51</td>
+          <td><strong>OMeRo77</strong></td>
+          <td class="text-center">531.7K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">52</td>
+          <td><strong>Arow63</strong></td>
+          <td class="text-center">529.9K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">53</td>
+          <td><strong>Armannd0</strong></td>
+          <td class="text-center">398.7K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">54</td>
+          <td><strong>Luscop</strong></td>
+          <td class="text-center">285.2K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">55</td>
+          <td><strong>OliveVN</strong></td>
+          <td class="text-center">283.8K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">56</td>
+          <td><strong>Kim Tan</strong></td>
+          <td class="text-center">204.6K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">57</td>
+          <td><strong>KingAtli</strong></td>
+          <td class="text-center">153.0K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">58</td>
+          <td><strong>milaros</strong></td>
+          <td class="text-center">146.1K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">59</td>
+          <td><strong>Gato Plus</strong></td>
+          <td class="text-center">126.0K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">60</td>
+          <td><strong>II Yumeko</strong></td>
+          <td class="text-center">124.5K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">61</td>
+          <td><strong>Bi9 99</strong></td>
+          <td class="text-center">91.5K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">62</td>
+          <td><strong>SICILYMAN</strong></td>
+          <td class="text-center">81.6K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">63</td>
+          <td><strong>kathLeen07</strong></td>
+          <td class="text-center">80.6K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">64</td>
+          <td><strong>palmeiras87</strong></td>
+          <td class="text-center">65.0K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">65</td>
+          <td><strong>Xo M oX</strong></td>
+          <td class="text-center">57.5K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">66</td>
+          <td><strong>Valentex</strong></td>
+          <td class="text-center">54.2K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">67</td>
+          <td><strong>Devmani Sing</strong></td>
+          <td class="text-center">52.8K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">68</td>
+          <td><strong>Prischilla</strong></td>
+          <td class="text-center">32.2K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">69</td>
+          <td><strong>Taurus8</strong></td>
+          <td class="text-center">31.4K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">70</td>
+          <td><strong>Naive ovo</strong></td>
+          <td class="text-center">30.0K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">71</td>
+          <td><strong>xCrazy Busy</strong></td>
+          <td class="text-center">24.4K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">72</td>
+          <td><strong>ZENIIX</strong></td>
+          <td class="text-center">22.2K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">73</td>
+          <td><strong>Darren69</strong></td>
+          <td class="text-center">7.7K</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">74</td>
+          <td><strong>A u ro ra</strong></td>
+          <td class="text-center">11</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">75</td>
+          <td><strong>Sanko925</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">76</td>
+          <td><strong>abankbro</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">77</td>
+          <td><strong>ELYSINA</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">78</td>
+          <td><strong>Ry0hei</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">79</td>
+          <td><strong>Clayton V</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">80</td>
+          <td><strong>1Shiz</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">81</td>
+          <td><strong>Ben2301</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">82</td>
+          <td><strong>Mahesh 1433</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">83</td>
+          <td><strong>KollerGK</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">84</td>
+          <td><strong>Darren69 Bnk</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">85</td>
+          <td><strong>IIEMPERYALII</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">86</td>
+          <td><strong>HuuHanh</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">87</td>
+          <td><strong>MoonOrchid</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">88</td>
+          <td><strong>Nohave a gun</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">89</td>
+          <td><strong>Golden Boy19</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">90</td>
+          <td><strong>HOLALORD88</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">91</td>
+          <td><strong>Chen Pei Xin</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">92</td>
+          <td><strong>iOoNe</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">93</td>
+          <td><strong>Eagle10</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">94</td>
+          <td><strong>I  Nagato II</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">95</td>
+          <td><strong>Rallito 01</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">96</td>
+          <td><strong>ROSEWALL X</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">97</td>
+          <td><strong>vgk one</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">98</td>
+          <td><strong>oTheViking</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">99</td>
+          <td><strong>Rashford29</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">100</td>
+          <td><strong>Chocoflan1</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">101</td>
+          <td><strong>Tha Wences</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">102</td>
+          <td><strong>TheKing 6789</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">103</td>
+          <td><strong>Arjan Don</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">104</td>
+          <td><strong>killers 20</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">105</td>
+          <td><strong>AxelMax1</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">106</td>
+          <td><strong>Black Ichigo</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">107</td>
+          <td><strong>Charlyx1x</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">108</td>
+          <td><strong>Misaaa4</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">109</td>
+          <td><strong>wimpyy</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">110</td>
+          <td><strong>JJZeusJJ</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">111</td>
+          <td><strong>FLORECITA06</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">112</td>
+          <td><strong>160599</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">113</td>
+          <td><strong>NEWBIE two</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">114</td>
+          <td><strong>Le Clebard</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">115</td>
+          <td><strong>MASTER 1993</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">116</td>
+          <td><strong>Vladimir G</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr><tr>
+          <td class="text-center" style="color:var(--muted)">117</td>
+          <td><strong>CaveBat</strong></td>
+          <td class="text-center">0</td>
+          <td class="text-center"><span class="badge-no">❌</span></td>
+        </tr></tbody>
+    </table>
+  </div>
+</div>
+<script>
+
+const THEME = {
+  paper_bgcolor: 'rgba(0,0,0,0)',
+  plot_bgcolor:  'rgba(0,0,0,0)',
+  font:   { color: '#dce4f0', family: 'Inter, sans-serif', size: 11 },
+  xaxis:  { gridcolor: '#1e2533', color: '#5a6a82', linecolor: '#1e2533', zerolinecolor: '#1e2533' },
+  yaxis:  { gridcolor: '#1e2533', color: '#5a6a82', linecolor: '#1e2533', zerolinecolor: '#1e2533' },
+  margin: { t: 42, l: 55, r: 18, b: 65 },
+};
+const cfg = { responsive: true, displayModeBar: false };
+function lay(title, xl='', yl='', extra={}) {
+  return { ...THEME, title: { text: title, font: { color: '#dce4f0', size: 14, family: 'Rajdhani, sans-serif' } },
+           xaxis: { ...THEME.xaxis, title: xl },
+           yaxis: { ...THEME.yaxis, title: yl }, ...extra };
+}
+const fmtBig = v => {
+  const a = Math.abs(v);
+  let s = a >= 1e9 ? (a/1e9).toFixed(2)+'B' : a >= 1e6 ? (a/1e6).toFixed(1)+'M' : a >= 1e3 ? (a/1e3).toFixed(1)+'K' : String(a);
+  return v < 0 ? '-'+s : s;
+};
+
+const D={"dates": ["2026-03-20", "2026-03-23", "2026-03-25", "2026-03-26"], "powers": [142983524282, 154274903099, 156466465684, 152134294360], "kills": [32393135049, 32373625503, 34302036667, 34288432390], "qNames": ["Izares", "Tieneko", "Mr Yichen", "dsgutrdghg", "luckycoin4", "EL DIABL0 85", "al tetra", "DRAGON LH", "Looking 4 me", "SK Genderuwo", "Wibrahim", "Beeeast", "OliveiraPY", "roman3265438", "Duc Pham", "egao", "Frank143", "I Yumeko", "MorcyJhon", "ordogfioka"], "qKills": [357670952, 261991205, 101799844, 16218930, 12104184, 9587815, 8900540, 5584134, 5129096, 4690743, 4646954, 4540171, 4421533, 3939594, 3923895, 3713168, 3654899, 3511768, 3285594, 3140251], "qColors": ["#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058", "#34d058"]};
+Plotly.newPlot('c-pwr',[{type:'scatter',mode:'lines+markers',x:D.dates,y:D.powers,
+  line:{color:'#4f9cf9',width:2.5},fill:'tozeroy',fillcolor:'rgba(79,156,249,.1)',
+  text:D.powers.map(fmtBig),textposition:'top center',name:'Poder'}],
+  lay('Poder Total del Gremio','Fecha','Poder'),cfg);
+Plotly.newPlot('c-kls',[{type:'scatter',mode:'lines+markers',x:D.dates,y:D.kills,
+  line:{color:'#f55555',width:2.5},fill:'tozeroy',fillcolor:'rgba(245,85,85,.1)',
+  text:D.kills.map(fmtBig),textposition:'top center',name:'Kills'}],
+  lay('Kills Totales del Gremio','Fecha','Kills'),cfg);
+Plotly.newPlot('c-qbar',[{type:'bar',x:D.qNames,y:D.qKills,
+  marker:{color:D.qColors},
+  text:D.qKills.map(fmtBig),textposition:'outside'}],
+  {...lay('Kills Ganados este Mes — Top 20','','Kills'),showlegend:false},cfg);
+</script>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
