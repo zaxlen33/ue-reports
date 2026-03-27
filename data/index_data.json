@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-03-26 21:07",
+  "week_start": "2026-03-23",
+  "week_end": "2026-03-29",
+  "hunt": {
+    "total_members": 117,
+    "met_quota": 37,
+    "pending": 80,
+    "pct": 31.6
+  },
+  "war": {
+    "last_snapshot": "2026-03-26",
+    "total_power_str": "152.13B",
+    "member_count": 117,
+    "months_recorded": 0
+  }
+}
