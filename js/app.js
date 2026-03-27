@@ -599,6 +599,9 @@ function renderHuntList(container, hunts) {
         <h2>📋 All Hunt Reports</h2>
         <span class="badge-count">${hunts.length} report${hunts.length !== 1 ? 's' : ''}</span>
       </div>
+      <div style="padding: 10px 15px; background: rgba(88,166,255,0.05); border-bottom: 1px solid var(--border); font-size: 0.85rem; color: var(--text-secondary); display:flex; gap:8px; align-items:center;">
+        <span>ℹ️</span> <span><strong>Note:</strong> The most recent report may represent an ongoing week and could be incomplete.</span>
+      </div>
       <div class="table-wrapper">
         <table>
           <thead>
