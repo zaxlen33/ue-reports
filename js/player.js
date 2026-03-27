@@ -133,7 +133,7 @@ function _profileHeader(name, growth, view) {
       <div class="profile-avatar">${initial}</div>
       <div class="profile-info">
         <h1>${name}</h1>
-        <p>IGG ID: ${growth?growth.igg_id:'—'} &nbsp;|&nbsp; Rank: ${last?last.rank:'—'} &nbsp;|&nbsp; First seen: ${growth?growth.first_seen||'—':'—'}</p>
+        <p>Rank: ${last?last.rank:'—'} &nbsp;|&nbsp; First seen: ${growth?growth.first_seen||'—':'—'}</p>
       </div>
     </div>`;
 }
