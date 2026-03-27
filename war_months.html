@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es" data-bs-theme="dark">
+<html lang="en" data-bs-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>War Mensual — UE Guild</title>
+<title>War Monthly — UE Guild</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
@@ -62,7 +62,6 @@
     color: var(--muted);
     font-size: .78rem;
     transition: all .18s;
-    white-space: nowrap;
   }
   .nav-pill:hover { border-color:var(--blue); color:var(--blue); background:rgba(79,156,249,.07); }
   .nav-pill.active { background:var(--blue); color:#fff; border-color:var(--blue); }
@@ -74,19 +73,6 @@
   .table th  { color:var(--muted); font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; border-color:var(--border); font-weight:500; }
   .table td  { border-color:var(--border); font-size:.83rem; vertical-align:middle; }
   .table tbody tr:hover { background:rgba(79,156,249,.05); }
-  .search-input {
-    background:var(--card2); border:1px solid var(--border); border-radius:7px;
-    padding:.45rem .9rem; color:var(--text); width:100%; font-size:.85rem;
-  }
-  .search-input:focus { outline:none; border-color:var(--blue); }
-  .member-row {
-    border:1px solid var(--border); border-radius:8px; padding:.5rem .8rem;
-    cursor:pointer; transition:border-color .15s; margin-bottom:.4rem;
-    display:flex; align-items:center; justify-content:space-between; gap:.5rem;
-    background:var(--card);
-  }
-  .member-row:hover { border-color:var(--blue); background:rgba(79,156,249,.05); }
-  .member-row.selected { border-color:var(--blue); background:rgba(79,156,249,.1); }
   .progress-bar-outer { background:#1a2233; border-radius:4px; height:7px; flex:1; overflow:hidden; }
   .empty-state { text-align:center; padding:3rem 1rem; color:var(--muted); }
   .empty-state .icon { font-size:3rem; margin-bottom:.8rem; }
@@ -95,17 +81,101 @@
 <body>
 <nav class="nav-bar">
   <span class="nav-logo">⚔️ UE Guild</span>
-  <a href="index.html" class="nav-pill">🏠 Inicio</a>
-    <a href="hunt_general.html" class="nav-pill">🎯 Hunt General</a>
-    <a href="hunt_individual.html" class="nav-pill">👤 Hunt Individual</a>
-    <a href="war_general.html" class="nav-pill">🏰 War General</a>
-    <a href="war_months.html" class="nav-pill  active">📅 War Mensual</a>
-    <a href="war_individual.html" class="nav-pill">📈 War Individual</a>
-  <span class="ts">🕒 2026-03-26 20:27</span>
+  <a href="index.html" class="nav-pill">🏠 Home</a>
+  <a href="hunt_general.html" class="nav-pill">🎯 Hunt General</a>
+  <a href="hunt_individual.html" class="nav-pill">👤 Hunt Individual</a>
+  <a href="war_general.html" class="nav-pill">🏰 War General</a>
+  <a href="war_months.html" class="nav-pill active">📅 War Monthly</a>
+  <a href="war_individual.html" class="nav-pill">📈 War Individual</a>
+  <span class="ts" id="ts-top">🕒 Loading...</span>
 </nav>
-<div class="container-fluid px-3 px-md-4 py-4 pb-5">
-<div class="card"><div class="empty-state"><div class="icon">📭</div><h4 style="color:var(--muted)">Sin datos mensuales aún</h4><p style="color:var(--muted)">Los datos se generan automáticamente al finalizar cada mes.</p></div></div>
+
+<div class="container-fluid px-3 px-md-4 py-4 pb-5" id="main-container" style="display:none;">
+<div class="d-flex align-items-end gap-3 mb-4 flex-wrap">
+  <div><h1 style="font-size:2rem;margin-bottom:0;">📅 War Report — Monthly History</h1>
+  <p style="color:var(--muted);margin:0;">Guild historical progression (up to 36 months)</p></div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6"><div class="card p-3"><div id="c-pow" style="height:340px;"></div></div></div>
+  <div class="col-md-6"><div class="card p-3"><div id="c-kil" style="height:340px;"></div></div></div>
+</div>
+
+<div class="card p-3">
+  <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2" style="border-color:var(--border)!important;">
+    <h3 class="sec-hdr mb-0" style="border:none;padding:0;">📋 Monthly Historical Table</h3>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover" id="tbl-months">
+      <thead><tr><th>Month</th><th>Total Power</th><th>Kills Gained</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<script>
+const THEME = {
+  paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+  font: { color: '#dce4f0', family: 'Inter, sans-serif', size: 11 },
+  xaxis: { gridcolor: '#1e2533', color: '#5a6a82', linecolor: '#1e2533', zerolinecolor: '#1e2533' },
+  yaxis: { gridcolor: '#1e2533', color: '#5a6a82', linecolor: '#1e2533', zerolinecolor: '#1e2533' },
+  margin: { t: 42, l: 55, r: 18, b: 50 },
+};
+const cfg = { responsive: true, displayModeBar: false };
+function lay(title, xl='', yl='', extra={}) {
+  return { ...THEME, title: { text: title, font: { color: '#dce4f0', size: 14, family: 'Rajdhani, sans-serif' } },
+           xaxis: { ...THEME.xaxis, title: xl, type: 'category' },
+           yaxis: { ...THEME.yaxis, title: yl }, ...extra };
+}
+
+fetch('data/war_months_data.json')
+  .then(r => r.json())
+  .then(d => {
+    if (d.empty) {
+      document.body.innerHTML = '<div class="empty-state"><div class="icon">📭</div><h4 style="color:var(--muted)">No monthly data found</h4></div>';
+      return;
+    }
+    
+    document.getElementById('main-container').style.display = 'block';
+    document.getElementById('ts-top').textContent = '🕒 ' + d.generated_at;
+    
+    // Plots
+    if(d.months && d.months.length > 0) {
+      const dates = d.months.map(x => x.month);
+      const pow = d.months.map(x => x.total_power);
+      const kil = d.months.map(x => x.kills_gained);
+      
+      Plotly.newPlot('c-pow',[{
+        type:'bar', x:dates, y:pow, marker:{color:'#e3a336'}, text:d.months.map(x=>x.total_power_str), textposition:'outside'
+      }], lay('Historical Total Power','Month','Power'), cfg);
+      
+      Plotly.newPlot('c-kil',[{
+        type:'bar', x:dates, y:kil, marker:{color:'#f55555'}, text:d.months.map(x=>x.kills_gained_str), textposition:'outside'
+      }], lay('Kills Gained Per Month','Month','Kills'), cfg);
+    } else {
+       document.getElementById('c-pow').innerHTML='<div class="empty-state">No historical data</div>';
+       document.getElementById('c-kil').innerHTML='<div class="empty-state">No historical data</div>';
+    }
+    
+    // Table
+    const tbody = document.querySelector('#tbl-months tbody');
+    let html = '';
+    // Reverse to show newest first
+    const revMonths = [...d.months].reverse();
+    revMonths.forEach(m => {
+      html += `<tr>
+        <td style="color:var(--muted)">${m.month}</td>
+        <td><strong>${m.total_power_str}</strong></td>
+        <td><strong style="color:var(--red)">+${m.kills_gained_str}</strong></td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+  })
+  .catch(e => {
+    console.error(e);
+    document.getElementById('ts-top').textContent = '⚠️ Error loading data';
+  });
+</script>
 </body>
 </html>
