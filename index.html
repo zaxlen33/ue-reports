@@ -1,183 +1,47 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Home — UE Guild</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
-<style>
-  :root {
-    --bg:     #080c10;
-    --card:   #0e1117;
-    --card2:  #141920;
-    --border: #1e2533;
-    --text:   #dce4f0;
-    --muted:  #5a6a82;
-    --blue:   #4f9cf9;
-    --green:  #34d058;
-    --red:    #f55555;
-    --gold:   #e3a336;
-    --purple: #a371f7;
-    --cyan:   #39c5cf;
-  }
-  * { box-sizing: border-box; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-  }
-  h1,h2,h3,h4,h5 { font-family: 'Rajdhani', sans-serif; font-weight: 700; letter-spacing: .02em; }
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-  }
-  .stat-card { text-align:center; padding:1.1rem .8rem; }
-  .stat-num  { font-family:'Rajdhani',sans-serif; font-size:2rem; font-weight:700; line-height:1; }
-  .stat-lbl  { font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-top:.3rem; }
-  .nav-bar {
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    padding: .6rem 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    flex-wrap: wrap;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: blur(10px);
-  }
-  .nav-logo { font-family:'Rajdhani',sans-serif; font-size:1.2rem; font-weight:700; color:var(--gold); white-space:nowrap; }
-  .nav-pill {
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: .3rem .75rem;
-    text-decoration: none;
-    color: var(--muted);
-    font-size: .78rem;
-    transition: all .18s;
-  }
-  .nav-pill:hover { border-color:var(--blue); color:var(--blue); background:rgba(79,156,249,.07); }
-  .nav-pill.active { background:var(--blue); color:#fff; border-color:var(--blue); }
-  .ts { font-size:.7rem; color:var(--muted); margin-left:auto; white-space:nowrap; }
-  .badge-ok  { background:rgba(52,208,88,.15);  color:var(--green);  border:1px solid rgba(52,208,88,.4);  border-radius:4px; padding:1px 8px; font-size:.72rem; }
-  .badge-no  { background:rgba(245,85,85,.15);  color:var(--red);    border:1px solid rgba(245,85,85,.4);  border-radius:4px; padding:1px 8px; font-size:.72rem; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UE Guild Dashboard</title>
+  <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
-<nav class="nav-bar">
-  <span class="nav-logo">⚔️ UE Guild</span>
-  <a href="index.html" class="nav-pill active">🏠 Home</a>
-  <a href="hunt_general.html" class="nav-pill">🎯 Hunt General</a>
-  <a href="hunt_individual.html" class="nav-pill">👤 Hunt Individual</a>
-  <a href="war_general.html" class="nav-pill">🏰 War General</a>
-  <a href="war_months.html" class="nav-pill">📅 War Monthly</a>
-  <a href="war_individual.html" class="nav-pill">📈 War Individual</a>
-  <span class="ts" id="ts-top">🕒 Loading...</span>
-</nav>
 
-<div class="container-fluid px-3 px-md-4 py-4 pb-5" id="main-container" style="display:none;">
-<div class="row g-0 mb-4 align-items-end">
-  <div class="col">
-    <h1 style="font-size:2.4rem;">⚔️ UE Guild Reports</h1>
-    <p style="color:var(--muted);">Central Dashboard &middot; Current week: <strong id="lbl-week">...</strong></p>
-  </div>
-</div>
+  <!-- ── Navigation ── -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <span class="logo">🏰</span>
+        <span>UE Guild <span>Dashboard</span></span>
+      </div>
+      <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      <ul class="navbar-nav">
+        <li><a href="./index.html">🏠 Home</a></li>
+        <li><a href="./war.html">🏰 War</a></li>
+        <li><a href="./hunt.html">🦅 Hunt</a></li>
+        <li><a href="./growth.html">📈 Growth</a></li>
+      </ul>
+    </div>
+  </nav>
 
-<div class="row g-3 mb-4">
-  <div class="col-4"><div class="card stat-card">
-    <div class="stat-num" style="color:var(--blue)" id="h-total">0</div><div class="stat-lbl">Hunt Members</div>
-  </div></div>
-  <div class="col-4"><div class="card stat-card">
-    <div class="stat-num" style="color:var(--green)" id="h-met">0</div><div class="stat-lbl">Met Quota</div>
-  </div></div>
-  <div class="col-4"><div class="card stat-card">
-    <div class="stat-num" style="color:var(--gold)" id="h-pct">0%</div><div class="stat-lbl">Participation</div>
-  </div></div>
-</div>
+  <!-- ── Page Content ── -->
+  <main class="container">
+    <div class="page-header">
+      <h1>🏠 Guild Dashboard</h1>
+      <p>Overview of war reports, hunt performance, and member growth.</p>
+    </div>
 
-<div class="row g-3">
-    <div class="col-sm-6 col-lg-4">
-      <a href="hunt_general.html" style="text-decoration:none;">
-        <div class="card p-4 h-100" style="border-color:#4f9cf922;transition:all .2s;">
-          <div style="font-size:2.2rem;line-height:1;">🎯</div>
-          <h3 class="mt-2 mb-1">Hunt General</h3>
-          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Guild weekly report &mdash; participation, points per level, daily progression.</p>
-          <div style="font-size:.75rem;color:var(--muted);"><span class='badge-ok' id="h-ok">... met</span> &nbsp;<span class='badge-no' id="h-no">... pending</span></div>
-        </div>
-      </a>
-    </div>
-    <div class="col-sm-6 col-lg-4">
-      <a href="hunt_individual.html" style="text-decoration:none;">
-        <div class="card p-4 h-100" style="border-color:#34d05822;transition:all .2s;">
-          <div style="font-size:2.2rem;line-height:1;">👤</div>
-          <h3 class="mt-2 mb-1">Hunt Individual</h3>
-          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Up to 8 weeks of history per member &mdash; level graphs and tracking.</p>
-          <div style="font-size:.75rem;color:var(--muted);" id="h-active">... active members</div>
-        </div>
-      </a>
-    </div>
-    <div class="col-sm-6 col-lg-4">
-      <a href="war_general.html" style="text-decoration:none;">
-        <div class="card p-4 h-100" style="border-color:#f5555522;transition:all .2s;">
-          <div style="font-size:2.2rem;line-height:1;">🏰</div>
-          <h3 class="mt-2 mb-1">War General</h3>
-          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Guild power and kills over time + monthly kill quota tracking.</p>
-          <div style="font-size:.75rem;color:var(--muted);" id="w-snap">...</div>
-        </div>
-      </a>
-    </div>
-    <div class="col-sm-6 col-lg-4">
-      <a href="war_months.html" style="text-decoration:none;">
-        <div class="card p-4 h-100" style="border-color:#e3a33622;transition:all .2s;">
-          <div style="font-size:2.2rem;line-height:1;">📅</div>
-          <h3 class="mt-2 mb-1">War Monthly</h3>
-          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Historical multi-month trend &mdash; total power and kills gained per month.</p>
-          <div style="font-size:.75rem;color:var(--muted);" id="w-mos">...</div>
-        </div>
-      </a>
-    </div>
-    <div class="col-sm-6 col-lg-4">
-      <a href="war_individual.html" style="text-decoration:none;">
-        <div class="card p-4 h-100" style="border-color:#a371f722;transition:all .2s;">
-          <div style="font-size:2.2rem;line-height:1;">📈</div>
-          <h3 class="mt-2 mb-1">War Individual</h3>
-          <p style="color:var(--muted);font-size:.83rem;margin-bottom:.8rem;">Monthly kills and power history per member &mdash; up to 36 months.</p>
-          <div style="font-size:.75rem;color:var(--muted);">Search for any member by name</div>
-        </div>
-      </a>
-    </div>
-</div>
-</div>
+    <!-- Dynamic content injected by app.js -->
+    <div id="dashboard"></div>
+  </main>
 
-<script>
-fetch('data/index_data.json')
-  .then(r => r.json())
-  .then(d => {
-    document.getElementById('main-container').style.display = 'block';
-    document.getElementById('ts-top').textContent = '🕒 ' + d.generated_at;
-    
-    document.getElementById('lbl-week').textContent = d.week_start + ' → ' + d.week_end;
-    document.getElementById('h-total').textContent = d.hunt.total_members;
-    document.getElementById('h-met').textContent = d.hunt.met_quota;
-    document.getElementById('h-pct').textContent = d.hunt.pct + '%';
-    
-    document.getElementById('h-ok').textContent = d.hunt.met_quota + ' met';
-    document.getElementById('h-no').textContent = d.hunt.pending + ' pending';
-    document.getElementById('h-active').textContent = d.hunt.total_members + ' active members';
-    
-    document.getElementById('w-snap').textContent = 'Last snapshot: ' + d.war.last_snapshot + ' · ' + d.war.total_power_str + ' power';
-    document.getElementById('w-mos').textContent = d.war.months_recorded + ' months recorded';
-  })
-  .catch(e => {
-    console.error(e);
-    document.getElementById('ts-top').textContent = '⚠️ Error loading data';
-  });
-</script>
+  <footer class="footer">
+    <div class="container">
+      UE Guild Dashboard · Data updated via Telegram Bot · All rights reserved
+    </div>
+  </footer>
+
+  <script src="./js/app.js"></script>
 </body>
 </html>
