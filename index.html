@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lords Mobile Bot Dashboard</title>
+    <!-- Use a modern Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a; /* Slate 900 */
+            --glass-bg: rgba(30, 41, 59, 0.7); /* Slate 800 with opacity */
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc; /* Slate 50 */
+            --text-muted: #94a3b8; /* Slate 400 */
+            --accent: #3b82f6; /* Blue 500 */
+            --accent-hover: #60a5fa; /* Blue 400 */
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            background-image: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 40%),
+                              radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.1), transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            padding: 2rem 0;
+            text-align: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            margin-top: 0.5rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 2rem auto;
+            flex: 1;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: default;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 0;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0.5rem 0;
+        }
+
+        /* Loading Spinner */
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+            display: flex;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+        
+        .tables-container {
+            margin-top: 2rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--glass-bg);
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--glass-border);
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        th {
+            background-color: rgba(0,0,0,0.2);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge.green { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .badge.blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Lords Mobile Hub</h1>
+        <div class="subtitle" id="last-updated">Cargando datos...</div>
+    </header>
+
+    <div class="container">
+        <div id="loading" class="loader"></div>
+        
+        <div id="dashboard" style="display: none;">
+            <!-- Start Top Metrics Grid -->
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">👥 Guild Members</h2>
+                    </div>
+                    <div class="stat-value" id="member-count">0</div>
+                    <div class="subtitle">Scraped vs Local list</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🎯 Tasks 200%</h2>
+                    </div>
+                    <div class="stat-value" id="tasks-200">0</div>
+                    <div class="subtitle">Missions found in JSON</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🦅 Hunt Participation</h2>
+                    </div>
+                    <div class="stat-value" id="hunt-stats">0</div>
+                    <div class="subtitle">Entries in Hunt Stats</div>
+                </div>
+            </div>
+            
+            <div class="tables-container">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🏆 Top Tracking (Preview)</h2>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table id="preview-table">
+                            <thead>
+                                <tr>
+                                    <th>Player Name</th>
+                                    <th>Status / Info</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- JS will populate -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch the dynamically generated JSON file
+        fetch('data.json')
+            .then(response => {
+                if (!response.ok) throw new Error("Network response was not ok");
+                return response.json();
+            })
+            .then(data => {
+                // Hide loader, show dashboard
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+
+                // Set last updated
+                document.getElementById('last-updated').textContent = `Last synchronized: ${data.last_updated || 'Unknown'}`;
+
+                // Populate Members Stat
+                const membersCount = data.members ? Object.keys(data.members).length : 0;
+                document.getElementById('member-count').textContent = membersCount;
+
+                // Populate Tasks 200% count
+                const tasks200 = (data.tasks && data.tasks['200_percent_bonus_missions']) 
+                    ? data.tasks['200_percent_bonus_missions'].length 
+                    : 0;
+                document.getElementById('tasks-200').textContent = tasks200;
+
+                // Populate Hunt Stats count
+                const huntCount = (data.hunt && data.hunt.current_week)
+                    ? Object.keys(data.hunt.current_week).length
+                    : 0;
+                document.getElementById('hunt-stats').textContent = huntCount;
+
+                // Populate arbitrary table with some members as a preview
+                const tbody = document.querySelector('#preview-table tbody');
+                if (membersCount > 0) {
+                    let count = 0;
+                    for (const [name, info] of Object.entries(data.members)) {
+                        if (count >= 10) break; // limit to 10 for preview
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><strong>${name}</strong></td>
+                            <td>${info.rank || 'N/A'}</td>
+                            <td><span class="badge blue">Member</span></td>
+                        `;
+                        tbody.appendChild(tr);
+                        count++;
+                    }
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center">No member data available</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error("Error loading data:", error);
+                document.getElementById('last-updated').textContent = "Error Loading Data JSON";
+                document.getElementById('loading').style.display = 'none';
+            });
+    </script>
+</body>
+</html>
