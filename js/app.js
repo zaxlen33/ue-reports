@@ -306,7 +306,7 @@ function renderWarList(container, wars) {
       </div>
     </a>`).join('');
 
-  if (chartWars.length >= 2 && window.Chart) {
+  if (chartWars.length >= 1 && window.Chart) {
     Chart.defaults.color = '#8b949e';
     Chart.defaults.borderColor = '#30363d';
     const baseOpt = {
@@ -318,13 +318,13 @@ function renderWarList(container, wars) {
       }
     };
     new Chart(document.getElementById('chart-war-might-guild'), {
-      type: 'line',
-      data: { labels: chartLabels, datasets: [{ label: 'Guild Might', data: chartMight, borderColor: '#58a6ff', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#0d1117' }] },
+      type: 'bar',
+      data: { labels: chartLabels, datasets: [{ label: 'Guild Might', data: chartMight, backgroundColor: 'rgba(88,166,255,0.7)', borderColor: '#58a6ff', borderWidth: 1, borderRadius: 4 }] },
       options: baseOpt
     });
     new Chart(document.getElementById('chart-war-kills-guild'), {
-      type: 'line',
-      data: { labels: chartLabels, datasets: [{ label: 'Guild Kills', data: chartKills, borderColor: '#f85149', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#0d1117' }] },
+      type: 'bar',
+      data: { labels: chartLabels, datasets: [{ label: 'Guild Kills', data: chartKills, backgroundColor: 'rgba(248,81,73,0.7)', borderColor: '#f85149', borderWidth: 1, borderRadius: 4 }] },
       options: baseOpt
     });
   }
@@ -671,13 +671,13 @@ function renderHuntList(container, hunts) {
       </div>
     </div>`;
 
-  if (chartHunts.length >= 2 && window.Chart) {
+  if (chartHunts.length >= 1 && window.Chart) {
     Chart.defaults.color = '#8b949e';
     Chart.defaults.borderColor = '#30363d';
     
     new Chart(document.getElementById('chart-hunt-pts-guild'), {
-      type: 'line',
-      data: { labels: chartLabels, datasets: [{ label: 'Guild Hunt Points', data: chartTotalPts, borderColor: '#3fb950', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#0d1117' }] },
+      type: 'bar',
+      data: { labels: chartLabels, datasets: [{ label: 'Guild Hunt Points', data: chartTotalPts, backgroundColor: 'rgba(63,185,80,0.7)', borderColor: '#3fb950', borderWidth: 1, borderRadius: 4 }] },
       options: {
         responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
