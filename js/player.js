@@ -15,7 +15,7 @@ _style.textContent = `
   .chart-box{position:relative;height:270px;}
   .profile-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;background:var(--bg-card);padding:1.4rem;border-radius:12px;border:1px solid var(--border);}
   .profile-avatar{width:68px;height:68px;border-radius:50%;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;font-size:1.9rem;font-weight:700;color:#fff;flex-shrink:0;}
-  .profile-info h1{margin:0 0 4px;font-size:1.7rem;color:var(--text-primary);}
+  .profile-info h1{margin:0 0 4px;font-size:1.7rem;color:var(--text-primary); display:flex; align-items:center;}
   .profile-info p{margin:0;color:var(--text-secondary);font-family:var(--font-mono);font-size:.88rem;}
   .section-label{color:var(--text-secondary);margin:1.5rem 0 .6rem;font-size:.8rem;text-transform:uppercase;letter-spacing:1px;font-weight:600;}
   @media(max-width:520px){.chart-grid{grid-template-columns:1fr;}}
@@ -120,6 +120,8 @@ function _profileHeader(name, growth, view) {
   const snaps   = growth ? (growth.snapshots||[]) : [];
   const last    = snaps.length ? snaps[snaps.length-1] : null;
   const initial = name.charAt(0).toUpperCase();
+  const uid     = growth && growth.uid ? growth.uid : 'N/A';
+
   let backLink, backText;
   if      (view==='war')    { backLink='./war.html';     backText='🏰 War Reports'; }
   else if (view==='hunt')   { backLink='./hunt.html';    backText='🦅 Hunt Reports'; }
@@ -132,7 +134,7 @@ function _profileHeader(name, growth, view) {
     <div class="profile-header">
       <div class="profile-avatar">${initial}</div>
       <div class="profile-info">
-        <h1>${name}</h1>
+        <h1>${name} <span style="font-size:0.8rem;color:var(--accent-orange);border:1px solid var(--accent-orange);border-radius:4px;padding:2px 6px;margin-left:8px;vertical-align:middle;font-family:var(--font-mono);">${uid}</span></h1>
         <p>Rank: ${last?last.rank:'—'} &nbsp;|&nbsp; First seen: ${growth?growth.first_seen||'—':'—'}</p>
       </div>
     </div>`;
@@ -141,15 +143,13 @@ function _profileHeader(name, growth, view) {
 // ─── Build war section HTML + mount charts ───────────────────────────────────
 
 function buildWarSection(name, month, warDailyData, growth) {
-  // Filter daily snapshots to the selected month
   const allDays  = (warDailyData[name] || []);
   const monthDays = month
     ? allDays.filter(s => s.date.startsWith(month))
-    : allDays.slice(-31); // fallback: last 31 days
+    : allDays.slice(-31);
 
   const snaps52  = growth ? (growth.snapshots || []) : [];
 
-  // Latest values from daily data for stat cards
   const last30   = monthDays.length ? monthDays[monthDays.length - 1] : null;
   const first30  = monthDays.length ? monthDays[0] : null;
   const mightDiff = (last30 && first30) ? last30.might - first30.might : 0;
@@ -163,7 +163,6 @@ function buildWarSection(name, month, warDailyData, growth) {
 
   html += _quotaBadge(killsDiff);
 
-  // 30-day per-day charts
   const monthLabel = month ? (() => { try { return new Date(month+'-02').toLocaleDateString('en',{month:'long',year:'numeric'}); } catch{ return month; } })() : 'Last 30 days';
   html += `<div class="section-label">📅 ${monthLabel} — Daily snapshots</div>`;
   html += `<div class="chart-grid">`;
@@ -171,7 +170,6 @@ function buildWarSection(name, month, warDailyData, growth) {
   html += monthDays.length >= 2 ? _card('⚔️ Kills — Each Day of the Month', 'chart-war-kills-30d') : _noData('⚔️ Kills (30 days)', 'At least 2 snapshots needed.');
   html += `</div>`;
 
-  // 52-week charts
   html += `<div class="section-label">📊 All History — 52 Weeks</div>`;
   html += `<div class="chart-grid">`;
   html += snaps52.length >= 2 ? _card('🏰 Power — 52 Weeks', 'chart-war-might-52w') : _noData('🏰 Power — 52 Weeks');
@@ -180,7 +178,7 @@ function buildWarSection(name, month, warDailyData, growth) {
 
   return { html, mount() {
     if (monthDays.length >= 2) {
-      const dates  = monthDays.map(s => s.date.slice(5)); // MM-DD
+      const dates  = monthDays.map(s => s.date.slice(5));
       _lineChart('chart-war-might-30d', 'Might', dates, monthDays.map(s=>s.might), '#58a6ff');
       _lineChart('chart-war-kills-30d', 'Kills', dates, monthDays.map(s=>s.kills), '#f85149');
     }
@@ -195,12 +193,10 @@ function buildWarSection(name, month, warDailyData, growth) {
 // ─── Build hunt section HTML + mount charts ──────────────────────────────────
 
 function buildHuntSection(name, weekId, huntDailyData, playerHunts52) {
-  // Get this player's data for the selected week (or latest week if none)
   const playerWeeks = huntDailyData[name] || {};
   let targetWeekId  = weekId;
 
   if (!targetWeekId || !playerWeeks[targetWeekId]) {
-    // Fall back to the latest available week for this player
     const available = Object.keys(playerWeeks).sort();
     targetWeekId = available.length ? available[available.length - 1] : null;
   }
@@ -208,12 +204,11 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52) {
   const weekDays   = targetWeekId ? (playerWeeks[targetWeekId] || []) : [];
   const sortedDays = [...weekDays].sort((a, b) => a.date.localeCompare(b.date));
 
-  // Build cumulative daily pts array
   let cumPts = 0;
   const cumDates = [], cumVals = [], cumMon = {}, cumPurch = {};
   for (const d of sortedDays) {
     cumPts += d.pts_total;
-    cumDates.push(d.date.slice(5)); // MM-DD
+    cumDates.push(d.date.slice(5));
     cumVals.push(cumPts);
     for (let i = 1; i <= 5; i++) {
       cumMon[`lvl${i}`]   = (cumMon[`lvl${i}`]   || 0) + (d.monsters?.[`lvl${i}`]   || 0);
@@ -227,7 +222,6 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52) {
   const pct        = Math.min(100, Math.round((weekTotal / 56) * 100));
   const pctColor   = met ? 'var(--accent-green)' : pct >= 75 ? 'var(--accent-yellow)' : 'var(--accent-red)';
 
-  // Week date label
   let weekLabel = '';
   if (targetWeekId) {
     try {
@@ -239,7 +233,6 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52) {
 
   let html = '';
 
-  // Goal badge
   html += `<div class="card" style="border-top:3px solid ${pctColor};margin-bottom:1.5rem;">
     <div class="card-header"><h2>🎯 Weekly Hunt Goal — ${weekLabel}</h2></div>
     <div class="card-body" style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;">
@@ -255,14 +248,12 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52) {
     </div>
   </div>`;
 
-  // 7-day charts
   html += `<div class="section-label">🗓️ This Week — Cumulative daily progress</div>`;
   html += `<div class="chart-grid">`;
   html += sortedDays.length >= 1 ? _card('📈 Hunt Points — Cumulative by Day', 'chart-hunt-pts-7d') : _noData('📈 Hunt Points (7 days)', 'No daily hunt data for this week.');
   html += sortedDays.length >= 1 ? _card('📦 Monsters & Chests — Week Total (Accumulated)', 'chart-hunt-bar-7d') : _noData('📦 Monsters & Chests (week)');
   html += `</div>`;
 
-  // 52-week history
   html += `<div class="section-label">📊 All History — 52 Weeks</div>`;
   html += `<div class="chart-grid">`;
   html += playerHunts52.length >= 2 ? _card('🦅 Hunt Points — 52 Weeks', 'chart-hunt-pts-52w') : _noData('🦅 Hunt Points — 52 Weeks', 'At least 2 weeks of data needed.');
@@ -297,6 +288,53 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52) {
       ]);
     }
   }};
+}
+
+// ─── Build festival section HTML + mount charts ──────────────────────────────
+
+function buildFestivalSection(name, growth, rawFestivalData) {
+  let html = '';
+  if (!rawFestivalData || !rawFestivalData.length) return { html: _noData('🎪 Festival History'), mount(){} };
+
+  const uid = growth ? (growth.uid || 'N/A') : 'N/A';
+  const festHist = [];
+  rawFestivalData.forEach(fest => {
+    // Find player by UID or current Name
+    const p = fest.players.find(x => x.uid === uid || x.name === name);
+    if (p || fest.players.length > 0) {
+      festHist.push({
+        date: fest.date,
+        score: p ? p.score : 0,
+        participated: !!p,
+        min: fest.summary.festival_min_score || 3100
+      });
+    }
+  });
+  
+  html += `<div class="section-label">📊 Festival Performance — Last 12 Events</div>`;
+  html += `<div class="chart-grid" style="grid-template-columns:1fr;">`;
+  html += festHist.length > 0 ? _card('🎪 Festival Scores', 'chart-player-fest') : _noData('🎪 Festival');
+  html += `</div>`;
+  
+  html += `<div class="card table-wrapper" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>Festival Date</th><th class="right">Score</th></tr></thead>
+      <tbody>
+        ${festHist.slice().reverse().map(f => `<tr><td>${f.date}</td><td class="right mono ${f.score >= f.min ? 'text-green' : 'text-red'}">${f.participated ? Number(f.score).toLocaleString() : '—'}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  return {
+    html,
+    mount() {
+      if (festHist.length > 0) {
+        _barChart('chart-player-fest', festHist.map(f => f.date), [
+          { label: 'Festival Score', data: festHist.map(f => f.score), backgroundColor: '#a371f7' }
+        ]);
+      }
+    }
+  };
 }
 
 // ─── Build "All History" section (52w only) ──────────────────────────────────
@@ -349,15 +387,13 @@ function buildAllHistorySection(name, growth, playerHunts52) {
   }};
 }
 
-// ─── VIEW: WAR ───────────────────────────────────────────────────────────────
+// ─── VIEWS ───────────────────────────────────────────────────────────────────
 
 async function renderWarView(container, name, month, growth, warDailyData) {
   const sec = buildWarSection(name, month, warDailyData, growth);
   container.innerHTML = _profileHeader(name, growth, 'war') + sec.html;
   sec.mount();
 }
-
-// ─── VIEW: HUNT ──────────────────────────────────────────────────────────────
 
 async function renderHuntView(container, name, week, huntDailyData, playerHunts52) {
   const breadcrumb = `<div class="breadcrumb" style="margin-bottom:1.5rem;">
@@ -372,29 +408,45 @@ async function renderHuntView(container, name, week, huntDailyData, playerHunts5
   sec.mount();
 }
 
-// ─── VIEW: ALL HISTORY ───────────────────────────────────────────────────────
-
 async function renderAllHistoryView(container, name, growth, playerHunts52) {
   const sec = buildAllHistorySection(name, growth, playerHunts52);
   container.innerHTML = _profileHeader(name, growth, 'all') + sec.html;
   sec.mount();
 }
 
-// ─── VIEW: MEMBER (3-tab hub) ────────────────────────────────────────────────
+async function renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData) {
+  let nameChangesHtml = '';
+  if (growth && growth.name_history && growth.name_history.length > 0) {
+    nameChangesHtml = `<div class="card" style="margin-bottom:1.5rem;">
+      <div class="card-header" style="cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <h2 style="font-size:1.1rem; color:var(--text-primary);"><span style="margin-right:8px;">📝</span> Identity Tracker (${growth.name_history.length} Previous Names) <span style="font-size:0.8rem;float:right;color:var(--text-secondary);font-weight:normal;">Click to expand ▾</span></h2>
+      </div>
+      <div class="card-body" style="display:none; padding:0; border-top:1px solid var(--border);">
+        <table style="border:none;margin:0;">
+          <thead><tr><th>Old Name</th><th class="right">Used Until Date</th></tr></thead>
+          <tbody>
+            ${growth.name_history.map(nh => `<tr><td style="color:var(--text-secondary);text-decoration:line-through">${nh.name}</td><td class="right mono">${nh.until}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  }
 
-async function renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52) {
   container.innerHTML = `
     ${_profileHeader(name, growth, 'member')}
+    ${nameChangesHtml}
     <div style="display:flex;gap:.5rem;margin:1.2rem 0;flex-wrap:wrap;">
       <button id="btn-war"  class="player-tab active" onclick="switchMemberTab('war')">🏰 War</button>
       <button id="btn-hunt" class="player-tab" onclick="switchMemberTab('hunt')">🦅 Hunt</button>
+      <button id="btn-fest" class="player-tab" onclick="switchMemberTab('fest')">🎪 Festival</button>
       <button id="btn-all"  class="player-tab" onclick="switchMemberTab('all')">📊 All History</button>
     </div>
     <div id="tab-war"></div>
     <div id="tab-hunt" style="display:none;"></div>
+    <div id="tab-fest" style="display:none;"></div>
     <div id="tab-all"  style="display:none;"></div>`;
 
-  const mounted = { war: false, hunt: false, all: false };
+  const mounted = { war: false, hunt: false, fest: false, all: false };
 
   function mountTab(tab) {
     if (mounted[tab]) return;
@@ -405,6 +457,7 @@ async function renderMemberView(container, name, growth, warDailyData, huntDaily
     let   sec;
     if      (tab === 'war')  sec = buildWarSection(name, urlMonth, warDailyData, growth);
     else if (tab === 'hunt') sec = buildHuntSection(name, urlWeek, huntDailyData, playerHunts52);
+    else if (tab === 'fest') sec = buildFestivalSection(name, growth, festivalData);
     else                     sec = buildAllHistorySection(name, growth, playerHunts52);
     el.innerHTML = sec.html;
     sec.mount();
@@ -414,7 +467,7 @@ async function renderMemberView(container, name, growth, warDailyData, huntDaily
   mountTab('war');
 
   window.switchMemberTab = function(tab) {
-    ['war','hunt','all'].forEach(t => {
+    ['war','hunt','fest','all'].forEach(t => {
       document.getElementById(`tab-${t}`).style.display  = t === tab ? '' : 'none';
       document.getElementById(`btn-${t}`).classList.toggle('active', t === tab);
     });
@@ -438,17 +491,19 @@ async function initPlayer() {
   setLoading(container, `Loading ${name}…`);
 
   try {
-    const [histRes, mhuntsRes, warDailyRes, huntDailyRes] = await Promise.allSettled([
+    const [histRes, mhuntsRes, warDailyRes, huntDailyRes, festRes] = await Promise.allSettled([
       loadJSON('history.json'),
       loadJSON('member_hunts.json'),
       loadJSON('member_war_daily.json'),
       loadJSON('member_hunt_daily.json'),
+      loadJSON('festival.json'),
     ]);
 
     const histData      = histRes.status      === 'fulfilled' ? histRes.value      : { members: [] };
     const mhunts        = mhuntsRes.status    === 'fulfilled' ? mhuntsRes.value    : {};
     const warDailyData  = warDailyRes.status  === 'fulfilled' ? warDailyRes.value  : {};
     const huntDailyData = huntDailyRes.status === 'fulfilled' ? huntDailyRes.value : {};
+    const festivalData  = festRes.status      === 'fulfilled' ? festRes.value      : [];
 
     const growth       = (histData.members || []).find(m => m.name === name) || null;
     const playerHunts52 = mhunts[name] || [];
@@ -456,7 +511,7 @@ async function initPlayer() {
     if      (view === 'war')    await renderWarView(container, name, month, growth, warDailyData);
     else if (view === 'hunt')   await renderHuntView(container, name, week, huntDailyData, playerHunts52);
     else if (view === 'all')    await renderAllHistoryView(container, name, growth, playerHunts52);
-    else /* member */           await renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52);
+    else /* member */           await renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData);
 
   } catch(err) {
     setError(container, 'Could not load player data: ' + err.message);
