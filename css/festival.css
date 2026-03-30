@@ -1,0 +1,135 @@
+/* ═══════════════════════════════════════════════
+   festival.css — Guild Festival page styles
+   ═══════════════════════════════════════════════ */
+
+/* ── Festival accent color ── */
+:root {
+  --festival-accent: #a855f7;   /* purple */
+  --festival-pass:   #22c55e;   /* green */
+  --festival-fail:   #ef4444;   /* red   */
+  --festival-best:   #f59e0b;   /* amber — personal best */
+}
+
+/* ── Session cards: festival-specific accent ── */
+#festival-list .session-card::before {
+  background: var(--festival-accent);
+}
+
+#festival-list .session-card:hover {
+  border-color: var(--festival-accent);
+}
+
+#festival-list .session-card .view-btn {
+  background: rgba(168,85,247,0.1);
+  border-color: rgba(168,85,247,0.25);
+  color: var(--festival-accent);
+}
+
+#festival-list .session-card:hover .view-btn {
+  background: rgba(168,85,247,0.2);
+}
+
+/* ── Score pill ── */
+.score-pill {
+  display: inline-block;
+  background: rgba(168,85,247,0.12);
+  border: 1px solid rgba(168,85,247,0.3);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--festival-accent);
+  font-family: var(--font-mono);
+}
+
+/* ── Min-met badge ── */
+.met-yes {
+  color: var(--festival-pass);
+  font-weight: 700;
+}
+
+.met-no {
+  color: var(--festival-fail);
+  font-weight: 700;
+}
+
+/* ── Pass / fail bar ── */
+.pass-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 0.82rem;
+}
+
+.pass-bar-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(239,68,68,0.25);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.pass-bar-fill {
+  height: 100%;
+  background: var(--festival-pass);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+/* ── Member quick-pick chips ── */
+#member-list-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.member-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.member-chip:hover {
+  border-color: var(--festival-accent);
+  color: var(--festival-accent);
+  background: rgba(168,85,247,0.08);
+}
+
+/* ── Member summary header ── */
+#member-summary-box h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+/* ── Festival detail header ── */
+.festival-score-big {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--festival-accent);
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+
+/* ── stat-card purple variant for festival ── */
+.stat-card.purple {
+  border-left: 3px solid var(--festival-accent);
+}
+
+.stat-card.purple .stat-value {
+  color: var(--festival-accent);
+}
+
+/* ── row highlights ── */
+tr.row-pass td:first-child { border-left: 2px solid var(--festival-pass); }
+tr.row-fail td:first-child { border-left: 2px solid var(--festival-fail); }
+tr.row-best { background: rgba(245,158,11,0.06) !important; }
