@@ -266,7 +266,7 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52) {
   html += `<div class="section-label">📊 All History — 52 Weeks</div>`;
   html += `<div class="chart-grid">`;
   html += playerHunts52.length >= 2 ? _card('🦅 Hunt Points — 52 Weeks', 'chart-hunt-pts-52w') : _noData('🦅 Hunt Points — 52 Weeks', 'At least 2 weeks of data needed.');
-  html += playerHunts52.length >= 1 ? _card('📦 Monsters & Chests — Latest Week', 'chart-hunt-bar-52w') : _noData('📦 Monsters & Chests (latest)');
+  html += playerHunts52.length >= 1 ? _card('📦 Monsters & Chests — 52-Week Total', 'chart-hunt-bar-52w') : _noData('📦 Monsters & Chests (52-week)');
   html += `</div>`;
 
   return { html, mount() {
@@ -283,8 +283,13 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52) {
       _lineChart('chart-hunt-pts-52w', 'Total Points', hd, playerHunts52.map(h=>h.pts_total), '#3fb950');
     }
     if (playerHunts52.length >= 1) {
-      const lh = playerHunts52[playerHunts52.length-1];
-      const { monsters={}, purchases={} } = lh;
+      const monsters = {lvl1:0,lvl2:0,lvl3:0,lvl4:0,lvl5:0}, purchases = {lvl1:0,lvl2:0,lvl3:0,lvl4:0,lvl5:0};
+      playerHunts52.forEach(h => {
+        for(let i=1; i<=5; i++) {
+          monsters[`lvl${i}`] += (h.monsters?.[`lvl${i}`] || 0);
+          purchases[`lvl${i}`] += (h.purchases?.[`lvl${i}`] || 0);
+        }
+      });
       const lvls = ['Lvl 1','Lvl 2','Lvl 3','Lvl 4','Lvl 5'];
       _barChart('chart-hunt-bar-52w', lvls, [
         { label:'Monsters Hunted',  data:[monsters.lvl1||0,monsters.lvl2||0,monsters.lvl3||0,monsters.lvl4||0,monsters.lvl5||0],   backgroundColor:'#a371f7' },
@@ -314,7 +319,7 @@ function buildAllHistorySection(name, growth, playerHunts52) {
   html += snaps52.length >= 2 ? _card('⚔️ Kills — 52 Weeks', 'chart-all-kills') : _noData('⚔️ Kills — 52 Weeks');
   html += `</div><div class="chart-grid">`;
   html += playerHunts52.length >= 2 ? _card('🦅 Hunt Points — 52 Weeks', 'chart-all-hunt-pts') : _noData('🦅 Hunt Points — 52 Weeks');
-  html += lastH52 ? _card('📦 Monsters & Chests — Latest Week', 'chart-all-hunt-bar') : _noData('📦 Monsters & Chests');
+  html += lastH52 ? _card('📦 Monsters & Chests — 52-Week Total', 'chart-all-hunt-bar') : _noData('📦 Monsters & Chests');
   html += `</div>`;
 
   return { html, mount() {
@@ -328,7 +333,13 @@ function buildAllHistorySection(name, growth, playerHunts52) {
       _lineChart('chart-all-hunt-pts','Hunt Points',hd,playerHunts52.map(h=>h.pts_total),'#3fb950');
     }
     if (lastH52) {
-      const { monsters={}, purchases={} } = lastH52;
+      const monsters = {lvl1:0,lvl2:0,lvl3:0,lvl4:0,lvl5:0}, purchases = {lvl1:0,lvl2:0,lvl3:0,lvl4:0,lvl5:0};
+      playerHunts52.forEach(h => {
+        for(let i=1; i<=5; i++) {
+          monsters[`lvl${i}`] += (h.monsters?.[`lvl${i}`] || 0);
+          purchases[`lvl${i}`] += (h.purchases?.[`lvl${i}`] || 0);
+        }
+      });
       const lvls = ['Lvl 1','Lvl 2','Lvl 3','Lvl 4','Lvl 5'];
       _barChart('chart-all-hunt-bar', lvls, [
         { label:'Monsters',data:[monsters.lvl1||0,monsters.lvl2||0,monsters.lvl3||0,monsters.lvl4||0,monsters.lvl5||0],backgroundColor:'#a371f7'},
