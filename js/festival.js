@@ -67,7 +67,6 @@ async function init() {
     // Sort oldest → newest
     festivals = [...raw].sort((a, b) => (a.date > b.date ? 1 : -1));
     renderHistoryTab();
-    renderMembersTab();
   } catch (err) {
     document.getElementById('festival-list').innerHTML =
       `<div class="error-state">⚠️ Could not load festival data: ${err.message}</div>`;
@@ -82,7 +81,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tab-history-content').style.display  = tab === 'history'  ? '' : 'none';
-    document.getElementById('tab-members-content').style.display  = tab === 'members'  ? '' : 'none';
     document.getElementById('tab-tasks-content').style.display    = tab === 'tasks'    ? '' : 'none';
     activeTab = tab;
     if (tab === 'tasks' && !window._tasksLoaded) { window._tasksLoaded = true; initTasks(); }
@@ -91,34 +89,31 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // ── HISTORY TAB ──────────────────────────────────────────────────────────────
 
+
 function renderHistoryTab() {
   if (!festivals.length) {
     document.getElementById('festival-list').innerHTML =
-      `<div class="empty-state">
-        <div class="empty-icon">🎪</div>
-        <h3>No festival data yet</h3>
-        <p>Upload a GUILD_FESTIVAL Excel via the Telegram bot.</p>
-       </div>`;
+      `<div class="empty-state"><div class="empty-icon">🎪</div><h3>No festival data yet</h3></div>`;
     return;
   }
 
-  // Stat cards
-  const latest   = festivals[festivals.length - 1];
-  const players  = latest.players || [];
-  const passed   = players.filter(p => p.score >= FESTIVAL_MIN).length;
-  const failed   = players.length - passed;
+  let sumAvgScore = 0; let sumPass = 0; let sumFail = 0; let sumBonus = 0;
+  festivals.forEach(f => {
+     const pLen = f.summary.total_players || 1;
+     sumAvgScore += Math.round(f.summary.total_score / pLen);
+     sumPass += f.summary.passed_min;
+     sumFail += f.summary.failed_min;
+     sumBonus += f.summary.completed_bonus || 0;
+  });
+  const n = festivals.length;
+  document.getElementById('stat-festivals').textContent    = n;
+  document.getElementById('stat-avg-score').textContent    = fmtComma(Math.round(sumAvgScore / n));
+  document.getElementById('stat-avg-pass').textContent     = Math.round(sumPass / n);
+  document.getElementById('stat-avg-fail').textContent     = Math.round(sumFail / n);
+  document.getElementById('stat-avg-bonus').textContent    = Math.round(sumBonus / n);
+  document.getElementById('festival-count-badge').textContent = `${n} event(s)`;
 
-  document.getElementById('stat-festivals').textContent    = festivals.length;
-  document.getElementById('stat-latest-score').textContent = fmtNum(latest.summary.total_score);
-  document.getElementById('stat-passed').textContent       = passed;
-  document.getElementById('stat-failed').textContent       = failed;
-  document.getElementById('festival-count-badge').textContent = `${festivals.length} event(s)`;
-
-  // Charts
-  buildHistoryLineChart();
-  buildHistoryBarChart();
-
-  // Festival list
+  buildHistoryComboChart();
   renderFestivalList(festivals);
 }
 
@@ -258,272 +253,80 @@ document.getElementById('back-to-list').addEventListener('click', e => {
   selectedFest = null;
 });
 
+
 // ── HISTORY CHARTS ────────────────────────────────────────────────────────────
-
-function buildHistoryLineChart() {
+function buildHistoryComboChart() {
   destroyChart(chartHistLine);
+  
   const labels = festivals.map(f => shortDate(f.date));
-  const scores = festivals.map(f => f.summary.total_score);
+  const avgScores = festivals.map(f => Math.round(f.summary.total_score / (f.summary.total_players || 1)));
+  const passed = festivals.map(f => f.summary.passed_min);
+  const failed = festivals.map(f => f.summary.failed_min);
 
-  const ctx = document.getElementById('chart-history-line').getContext('2d');
+  const ctx = document.getElementById('chart-history-combo').getContext('2d');
   chartHistLine = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Total Score',
-        data: scores,
-        borderColor: '#a855f7',
-        backgroundColor: 'rgba(168,85,247,0.12)',
-        pointBackgroundColor: scores.map((s, i) =>
-          i === scores.length - 1 ? '#f59e0b' : '#a855f7'),
-        pointRadius: 6,
-        tension: 0.35,
-        fill: true,
-      }]
-    },
-    options: {
-      responsive: true,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => ` Score: ${fmtComma(ctx.raw)}`
-          }
-        }
-      },
-      scales: {
-        y: {
-          grid: { color: 'rgba(255,255,255,0.05)' },
-          ticks: { callback: v => fmtNum(v) }
-        },
-        x: { grid: { color: 'rgba(255,255,255,0.04)' } }
-      }
-    }
-  });
-}
-
-function buildHistoryBarChart() {
-  destroyChart(chartHistBar);
-  const labels = festivals.map(f => shortDate(f.date));
-  const scores = festivals.map(f => f.summary.total_score);
-
-  const ctx = document.getElementById('chart-history-bar').getContext('2d');
-  chartHistBar = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Total Score',
-        data: scores,
-        backgroundColor: scores.map((_, i) =>
-          i === scores.length - 1 ? 'rgba(245,158,11,0.7)' : 'rgba(168,85,247,0.55)'),
-        borderColor: scores.map((_, i) =>
-          i === scores.length - 1 ? '#f59e0b' : '#a855f7'),
-        borderWidth: 1.5,
-        borderRadius: 4,
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` Score: ${fmtComma(ctx.raw)}` } }
-      },
-      scales: {
-        y: {
-          grid: { color: 'rgba(255,255,255,0.05)' },
-          ticks: { callback: v => fmtNum(v) }
-        },
-        x: { grid: { display: false } }
-      }
-    }
-  });
-}
-
-// ── MEMBER PERFORMANCE TAB ────────────────────────────────────────────────────
-
-function renderMembersTab() {
-  // Build a unique sorted member list from all festivals
-  const memberSet = new Map();
-  festivals.forEach(f => {
-    (f.players || []).forEach(p => {
-      if (!memberSet.has(p.name)) {
-        const allScores = festivals
-          .map(ff => (ff.players || []).find(x => x.name === p.name)?.score ?? 0);
-        memberSet.set(p.name, allScores);
-      }
-    });
-  });
-
-  // Render quick-pick chips (sorted by latest festival score desc)
-  const members = [...memberSet.entries()].sort((a, b) => {
-    const aLast = a[1][a[1].length - 1] || 0;
-    const bLast = b[1][b[1].length - 1] || 0;
-    return bLast - aLast;
-  });
-
-  const chipsEl = document.getElementById('member-list-quick');
-  chipsEl.innerHTML = members.slice(0, 30).map(([name]) =>
-    `<span class="member-chip" onclick="lookupMember('${name.replace(/'/g,"\\'")}')">👤 ${name}</span>`
-  ).join('');
-}
-
-document.getElementById('member-search-btn').addEventListener('click', () => {
-  const q = document.getElementById('member-search-input').value.trim();
-  if (q) lookupMember(q);
-});
-document.getElementById('member-search-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('member-search-btn').click();
-});
-
-function lookupMember(nameQuery) {
-  const q = nameQuery.toLowerCase();
-  // Find canonical name
-  let canonical = null;
-  for (const f of festivals) {
-    const hit = (f.players || []).find(p => p.name.toLowerCase().includes(q));
-    if (hit) { canonical = hit.name; break; }
-  }
-
-  if (!canonical) {
-    document.getElementById('member-result').style.display = 'none';
-    document.getElementById('member-list-quick').innerHTML =
-      `<div class="error-state" style="margin-top:0.5rem">❌ Member not found: <strong>${nameQuery}</strong></div>`;
-    return;
-  }
-
-  // Collect scores per festival
-  const labels = [];
-  const scores = [];
-  const rows   = [];
-
-  festivals.forEach(f => {
-    const p = (f.players || []).find(x => x.name === canonical);
-    labels.push(shortDate(f.date));
-    const score = p ? p.score : 0;
-    scores.push(score);
-    rows.push({ date: f.date, score, completed: p?.completed ?? '—', total: p?.total ?? '—', bonus: p?.bonus ?? false, found: !!p });
-  });
-
-  const best  = Math.max(...scores);
-  const avg   = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
-  const passed = scores.filter(s => s >= FESTIVAL_MIN).length;
-
-  // Summary box
-  document.getElementById('member-summary-box').innerHTML = `
-    <h2>👤 ${canonical}</h2>
-    <div class="meta-row">
-      <div class="meta-item">🎪 Festivals: <strong>${scores.length}</strong></div>
-      <div class="meta-item">🏆 Best: <strong>${fmtComma(best)}</strong></div>
-      <div class="meta-item">📊 Avg: <strong>${fmtComma(avg)}</strong></div>
-      <div class="meta-item met-yes">✅ Passed min: <strong>${passed}/${scores.length}</strong></div>
-    </div>`;
-
-  document.getElementById('member-result').style.display = '';
-
-  // Charts
-  buildMemberLineChart(labels, scores, canonical);
-  buildMemberBarChart(labels, scores, canonical);
-
-  // Table
-  const tbody = document.getElementById('member-tbody');
-  tbody.innerHTML = [...rows].reverse().map(r => {
-    const met    = r.score >= FESTIVAL_MIN;
-    const isBest = r.score === best && best > 0;
-    const cls    = isBest ? 'row-best' : (met ? 'row-pass' : 'row-fail');
-    return `<tr class="${cls}">
-      <td>${fullDate(r.date)}</td>
-      <td class="right"><strong>${r.found ? fmtComma(r.score) : '—'}</strong></td>
-      <td class="center ${met?'met-yes':'met-no'}">${r.found ? (met ? '✅ YES' : '❌ NO') : '—'}</td>
-      <td class="center">${r.found ? r.completed+'/'+r.total : '—'}</td>
-      <td class="center">${r.found ? (r.bonus ? '✅' : '—') : '—'}</td>
-    </tr>`;
-  }).join('');
-}
-
-function buildMemberLineChart(labels, scores, name) {
-  destroyChart(chartMemberLine);
-  const ctx = document.getElementById('chart-member-line').getContext('2d');
-  chartMemberLine = new Chart(ctx, {
-    type: 'line',
     data: {
       labels,
       datasets: [
         {
-          label: name,
-          data: scores,
-          borderColor: '#a855f7',
-          backgroundColor: 'rgba(168,85,247,0.08)',
-          pointBackgroundColor: scores.map(s =>
-            s >= FESTIVAL_MIN ? '#22c55e' : '#ef4444'),
-          pointRadius: 6,
+          type: 'line',
+          label: 'Avg Points/Player',
+          data: avgScores,
+          borderColor: '#f59e0b',
+          backgroundColor: '#f59e0b',
+          pointBackgroundColor: '#0d1117',
+          pointBorderWidth: 2,
+          pointRadius: 5,
           tension: 0.3,
-          fill: true,
+          borderWidth: 2.5,
+          yAxisID: 'y2'
         },
         {
-          label: `Min. (${fmtComma(FESTIVAL_MIN)})`,
-          data: new Array(labels.length).fill(FESTIVAL_MIN),
-          borderColor: 'rgba(239,68,68,0.6)',
-          borderDash: [6, 4],
-          borderWidth: 1.5,
-          pointRadius: 0,
-          fill: false,
+          type: 'bar',
+          label: 'Passed Min',
+          data: passed,
+          backgroundColor: 'rgba(34,197,94,0.7)',
+          barPercentage: 0.6,
+          categoryPercentage: 0.8,
+          borderRadius: 4,
+          yAxisID: 'y1'
+        },
+        {
+          type: 'bar',
+          label: 'Failed Min',
+          data: failed,
+          backgroundColor: 'rgba(239,68,68,0.7)',
+          barPercentage: 0.6,
+          categoryPercentage: 0.8,
+          borderRadius: 4,
+          yAxisID: 'y1'
         }
       ]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${fmtComma(ctx.raw)}` } }
+        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 10, color: 'rgba(255,255,255,0.7)' } },
+        tooltip: {
+          backgroundColor: 'rgba(13,17,23,.95)',
+          titleColor: '#c9d1d9', bodyColor: '#c9d1d9',
+          borderColor: '#30363d', borderWidth: 1
+        }
       },
       scales: {
-        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => fmtNum(v) } },
-        x: { grid: { color: 'rgba(255,255,255,0.04)' } }
-      }
-    }
-  });
-}
-
-function buildMemberBarChart(labels, scores, name) {
-  destroyChart(chartMemberBar);
-  const best = Math.max(...scores);
-  const ctx = document.getElementById('chart-member-bar').getContext('2d');
-  chartMemberBar = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Score',
-        data: scores,
-        backgroundColor: scores.map((s, i) => {
-          if (s === best && best > 0) return 'rgba(245,158,11,0.7)';
-          if (s >= FESTIVAL_MIN)      return 'rgba(34,197,94,0.55)';
-          return 'rgba(239,68,68,0.5)';
-        }),
-        borderColor: scores.map((s, i) => {
-          if (s === best && best > 0) return '#f59e0b';
-          if (s >= FESTIVAL_MIN)      return '#22c55e';
-          return '#ef4444';
-        }),
-        borderWidth: 1.5,
-        borderRadius: 4,
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` Score: ${fmtComma(ctx.raw)}` } }
-      },
-      scales: {
-        y: {
+        x: { grid: { display: false }, stacked: true },
+        y1: {
+          type: 'linear', position: 'left', stacked: true,
           grid: { color: 'rgba(255,255,255,0.05)' },
-          ticks: { callback: v => fmtNum(v) }
+          title: { display: true, text: 'Number of Players', color: 'rgba(255,255,255,0.5)' }
         },
-        x: { grid: { display: false } }
+        y2: {
+          type: 'linear', position: 'right',
+          grid: { display: false },
+          title: { display: true, text: 'Avg. Points per Player', color: 'rgba(255,255,255,0.5)' }
+        }
       }
     }
   });
