@@ -137,99 +137,33 @@ async function initIndex() {
         <div class="stat-card blue">
           <div class="stat-icon">🏰</div>
           <div class="stat-value">${warsData.length}</div>
-          <div class="stat-label">War Reports</div>
-          <div class="stat-delta neutral">${latestWar ? 'Latest: ' + latestWar.label : 'No data yet'}</div>
+          <div class="stat-label">War Reports Uploaded</div>
         </div>
         <div class="stat-card green">
           <div class="stat-icon">🦅</div>
           <div class="stat-value">${huntsData.length}</div>
-          <div class="stat-label">Hunt Reports</div>
-          <div class="stat-delta neutral">${latestHunt ? 'Latest: ' + latestHunt.date : 'No data yet'}</div>
+          <div class="stat-label">Hunt Reports Uploaded</div>
         </div>
         <div class="stat-card purple">
           <div class="stat-icon">👥</div>
           <div class="stat-value">${memberCount}</div>
           <div class="stat-label">Tracked Members</div>
-          <div class="stat-delta neutral">${historyData.last_updated ? 'Updated: ' + historyData.last_updated : 'No data yet'}</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-value">${latestWar ? fmtNum(latestWar.total_might) : '—'}</div>
+          <div class="stat-label">Current Guild Power</div>
         </div>
         <div class="stat-card yellow">
           <div class="stat-icon">⚔️</div>
           <div class="stat-value">${latestWar ? fmtNum(latestWar.total_kills) : '—'}</div>
-          <div class="stat-label">Total Kills (Latest)</div>
-          <div class="stat-delta neutral">${latestWar ? latestWar.label : '—'}</div>
+          <div class="stat-label">Current Guild Kills</div>
         </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;">
-        ${renderRecentWars(warsData)}
-        ${renderRecentHunts(huntsData)}
       </div>`;
 
   } catch (err) {
     setError(container, 'Could not load dashboard data. ' + err.message);
   }
-}
-
-function renderRecentWars(wars) {
-  const recent = [...wars].reverse().slice(0, 5);
-  return `
-    <div class="card">
-      <div class="card-header">
-        <h2>🏰 Recent War Reports</h2>
-        <a href="war.html" class="btn btn-secondary" style="font-size:0.8rem;padding:5px 10px;">View All</a>
-      </div>
-      <div class="card-body" style="padding:0;">
-        ${recent.length === 0
-          ? '<div class="empty-state" style="padding:2rem;"><p>No war reports yet.</p></div>'
-          : recent.map(w => `
-            <a href="war.html#${w.month}" style="text-decoration:none;">
-              <div style="padding:0.9rem 1.2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;transition:background 0.15s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background=''">
-                <div>
-                  <div style="font-weight:600;color:var(--text-primary);">${w.label}</div>
-                  <div style="font-size:0.8rem;color:var(--text-secondary);">${w.total_members} members · ${w.snapshots_count} snapshots</div>
-                </div>
-                <div style="text-align:right;">
-                  <div style="font-family:var(--font-mono);font-size:0.88rem;color:var(--accent-yellow);">${fmtNum(w.total_kills)}</div>
-                  <div style="font-size:0.75rem;color:var(--text-muted);">kills</div>
-                </div>
-              </div>
-            </a>`).join('')
-        }
-      </div>
-    </div>`;
-}
-
-function renderRecentHunts(hunts) {
-  const recent = [...hunts].reverse().slice(0, 5);
-  return `
-    <div class="card">
-      <div class="card-header">
-        <h2>🦅 Recent Hunt Reports</h2>
-        <a href="hunt.html" class="btn btn-secondary" style="font-size:0.8rem;padding:5px 10px;">View All</a>
-      </div>
-      <div class="card-body" style="padding:0;">
-        ${recent.length === 0
-          ? '<div class="empty-state" style="padding:2rem;"><p>No hunt reports yet.</p></div>'
-          : recent.map(h => {
-              const pct = h.summary.total_players > 0
-                ? Math.round((h.summary.met_minimum / h.summary.total_players) * 100) : 0;
-              return `
-              <a href="hunt.html#${h.id}" style="text-decoration:none;">
-                <div style="padding:0.9rem 1.2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;transition:background 0.15s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background=''">
-                  <div>
-                    <div style="font-weight:600;color:var(--text-primary);">${h.date}</div>
-                    <div style="font-size:0.8rem;color:var(--text-secondary);">${h.summary.total_players} players</div>
-                  </div>
-                  <div style="text-align:right;">
-                    <div style="font-weight:700;color:${pct >= 80 ? 'var(--accent-green)' : pct >= 50 ? 'var(--accent-yellow)' : 'var(--accent-red)'};">${pct}%</div>
-                    <div style="font-size:0.75rem;color:var(--text-muted);">met goal</div>
-                  </div>
-                </div>
-              </a>`;
-            }).join('')
-        }
-      </div>
-    </div>`;
 }
 
 // ══════════════════════════════════════════════════════════
@@ -296,6 +230,10 @@ function renderWarList(container, wars) {
   }
 
   const sorted = [...wars].reverse(); // newest first
+  const chartWars = [...wars].slice(-52);
+  const chartLabels = chartWars.map(w => w.label);
+  const chartMight = chartWars.map(w => w.total_might);
+  const chartKills = chartWars.map(w => w.total_kills);
 
   // Summary stats from most recent war
   const latest = sorted[0];
@@ -321,6 +259,22 @@ function renderWarList(container, wars) {
         <div class="stat-icon">🏰</div>
         <div class="stat-value">${fmtNum(latest.avg_might)}</div>
         <div class="stat-label">Avg. Might (Latest)</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="card-header">
+        <h2>📈 52-Week History — Power & Kills</h2>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:1.5rem;">
+          <div class="chart-box" style="position:relative;height:250px;">
+            <canvas id="chart-war-might-guild"></canvas>
+          </div>
+          <div class="chart-box" style="position:relative;height:250px;">
+            <canvas id="chart-war-kills-guild"></canvas>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -351,6 +305,29 @@ function renderWarList(container, wars) {
         <div style="margin-top:8px;font-size:0.8rem;color:var(--accent-blue);">View full report →</div>
       </div>
     </a>`).join('');
+
+  if (chartWars.length >= 2 && window.Chart) {
+    Chart.defaults.color = '#8b949e';
+    Chart.defaults.borderColor = '#30363d';
+    const baseOpt = {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { beginAtZero: false, ticks: { callback: v => v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'k':v } }
+      }
+    };
+    new Chart(document.getElementById('chart-war-might-guild'), {
+      type: 'line',
+      data: { labels: chartLabels, datasets: [{ label: 'Guild Might', data: chartMight, borderColor: '#58a6ff', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#0d1117' }] },
+      options: baseOpt
+    });
+    new Chart(document.getElementById('chart-war-kills-guild'), {
+      type: 'line',
+      data: { labels: chartLabels, datasets: [{ label: 'Guild Kills', data: chartKills, borderColor: '#f85149', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#0d1117' }] },
+      options: baseOpt
+    });
+  }
 }
 
 function renderWarDetail(container, war) {
@@ -569,6 +546,24 @@ function renderHuntList(container, hunts) {
   }
 
   const sorted = [...hunts].reverse();
+  const chartHunts = [...hunts].slice(-52);
+  const chartLabels = chartHunts.map(h => h.date);
+  const chartTotalPts = [];
+  const chartMonsters = [0,0,0,0,0];
+  const chartChests = [0,0,0,0,0];
+  
+  chartHunts.forEach(h => {
+    let wTot = 0;
+    (h.players || []).forEach(p => {
+      wTot += (p.pts_total || 0);
+      for(let i=1; i<=5; i++) {
+        chartMonsters[i-1] += (p.monsters?.[`lvl${i}`] || 0);
+        chartChests[i-1] += (p.purchases?.[`lvl${i}`] || 0);
+      }
+    });
+    chartTotalPts.push(wTot);
+  });
+
   const totalPlayers = hunts.reduce((s, h) => s + (h.summary.total_players || 0), 0);
   const avgMet = hunts.length
     ? Math.round(hunts.reduce((s, h) => {
@@ -596,6 +591,28 @@ function renderHuntList(container, hunts) {
         <div class="stat-icon">🎯</div>
         <div class="stat-value">${sorted[0]?.summary?.min_required || '—'}</div>
         <div class="stat-label">Min. Required Points</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="card-header">
+        <h2>📈 52-Week History — Guild Hunt Points</h2>
+      </div>
+      <div class="card-body">
+        <div class="chart-box" style="position:relative;height:250px;">
+          <canvas id="chart-hunt-pts-guild"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="card-header">
+        <h2>📦 52-Week History — Guild Monsters & Chests</h2>
+      </div>
+      <div class="card-body">
+        <div class="chart-box" style="position:relative;height:250px;">
+          <canvas id="chart-hunt-box-guild"></canvas>
+        </div>
       </div>
     </div>
 
@@ -653,6 +670,35 @@ function renderHuntList(container, hunts) {
         </table>
       </div>
     </div>`;
+
+  if (chartHunts.length >= 2 && window.Chart) {
+    Chart.defaults.color = '#8b949e';
+    Chart.defaults.borderColor = '#30363d';
+    
+    new Chart(document.getElementById('chart-hunt-pts-guild'), {
+      type: 'line',
+      data: { labels: chartLabels, datasets: [{ label: 'Guild Hunt Points', data: chartTotalPts, borderColor: '#3fb950', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#0d1117' }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { grid: { display: false } }, y: { beginAtZero: false, ticks: { callback: v => v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'k':v } } }
+      }
+    });
+
+    const lvls = ['Lvl 1','Lvl 2','Lvl 3','Lvl 4','Lvl 5'];
+    new Chart(document.getElementById('chart-hunt-box-guild'), {
+      type: 'bar',
+      data: { labels: lvls, datasets: [
+        { label: 'Monsters Hunted (All)', data: chartMonsters, backgroundColor: '#a371f7', borderRadius: 4 },
+        { label: 'Chests Purchased (All)', data: chartChests, backgroundColor: '#e3b341', borderRadius: 4 }
+      ]},
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top', labels: { boxWidth: 12, usePointStyle: true } } },
+        scales: { x: { grid: { display: false } }, y: { beginAtZero: true } }
+      }
+    });
+  }
 }
 
 function renderHuntDetail(container, hunt) {
