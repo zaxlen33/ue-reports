@@ -113,7 +113,7 @@ function renderHistoryTab() {
   document.getElementById('stat-avg-bonus').textContent    = Math.round(sumBonus / n);
   document.getElementById('festival-count-badge').textContent = `${n} event(s)`;
 
-  buildHistoryComboChart();
+  buildHistoryCharts();
   renderFestivalList(festivals);
 }
 
@@ -255,51 +255,36 @@ document.getElementById('back-to-list').addEventListener('click', e => {
 
 
 // ── HISTORY CHARTS ────────────────────────────────────────────────────────────
-function buildHistoryComboChart() {
+function buildHistoryCharts() {
   destroyChart(chartHistLine);
+  destroyChart(chartHistBar);
   
   const labels = festivals.map(f => shortDate(f.date));
   const avgScores = festivals.map(f => Math.round(f.summary.total_score / (f.summary.total_players || 1)));
   const passed = festivals.map(f => f.summary.passed_min);
   const failed = festivals.map(f => f.summary.failed_min);
 
-  const ctx = document.getElementById('chart-history-combo').getContext('2d');
-  chartHistLine = new Chart(ctx, {
+  const ctxBar = document.getElementById('chart-history-bar').getContext('2d');
+  chartHistBar = new Chart(ctxBar, {
+    type: 'bar',
     data: {
       labels,
       datasets: [
         {
-          type: 'line',
-          label: 'Avg Points/Player',
-          data: avgScores,
-          borderColor: '#f59e0b',
-          backgroundColor: '#f59e0b',
-          pointBackgroundColor: '#0d1117',
-          pointBorderWidth: 2,
-          pointRadius: 5,
-          tension: 0.3,
-          borderWidth: 2.5,
-          yAxisID: 'y2'
-        },
-        {
-          type: 'bar',
           label: 'Passed Min',
           data: passed,
           backgroundColor: 'rgba(34,197,94,0.7)',
           barPercentage: 0.6,
           categoryPercentage: 0.8,
-          borderRadius: 4,
-          yAxisID: 'y1'
+          borderRadius: 4
         },
         {
-          type: 'bar',
           label: 'Failed Min',
           data: failed,
           backgroundColor: 'rgba(239,68,68,0.7)',
           barPercentage: 0.6,
           categoryPercentage: 0.8,
-          borderRadius: 4,
-          yAxisID: 'y1'
+          borderRadius: 4
         }
       ]
     },
@@ -316,16 +301,53 @@ function buildHistoryComboChart() {
         }
       },
       scales: {
-        x: { grid: { display: false }, stacked: true },
-        y1: {
-          type: 'linear', position: 'left', stacked: true,
+        x: { grid: { display: false }, stacked: false },
+        y: {
           grid: { color: 'rgba(255,255,255,0.05)' },
-          title: { display: true, text: 'Number of Players', color: 'rgba(255,255,255,0.5)' }
-        },
-        y2: {
-          type: 'linear', position: 'right',
-          grid: { display: false },
-          title: { display: true, text: 'Avg. Points per Player', color: 'rgba(255,255,255,0.5)' }
+          title: { display: true, text: 'Number of Players', color: 'rgba(255,255,255,0.5)' },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  const ctxLine = document.getElementById('chart-history-line').getContext('2d');
+  chartHistLine = new Chart(ctxLine, {
+    type: festivals.length === 1 ? 'bar' : 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Avg Points/Player',
+          data: avgScores,
+          borderColor: '#f59e0b',
+          backgroundColor: festivals.length === 1 ? 'rgba(245,158,11,0.7)' : 'rgba(245,158,11,0.1)',
+          pointBackgroundColor: '#0d1117',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          tension: 0.3,
+          borderWidth: 2.5,
+          fill: festivals.length !== 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(13,17,23,.95)',
+          titleColor: '#c9d1d9', bodyColor: '#c9d1d9',
+          borderColor: '#30363d', borderWidth: 1
+        }
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          title: { display: true, text: 'Avg Points', color: 'rgba(255,255,255,0.5)' },
+          beginAtZero: false
         }
       }
     }
