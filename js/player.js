@@ -301,26 +301,37 @@ function buildFestivalSection(name, growth, rawFestivalData) {
   rawFestivalData.forEach(fest => {
     // Find player by UID or current Name
     const p = fest.players.find(x => x.uid === uid || x.name === name);
-    if (p || fest.players.length > 0) {
+    if (p) {
+      let dateSpan = fest.date;
+      try {
+        const dEnd = new Date(fest.date + 'T00:00:00');
+        const dStart = new Date(dEnd);
+        dStart.setDate(dStart.getDate() - 7);
+        dateSpan = `${dStart.toLocaleDateString('en-US',{month:'short',day:'numeric'})} – ${dEnd.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`;
+      } catch (e) {}
       festHist.push({
         date: fest.date,
+        dateSpan,
         score: p ? p.score : 0,
         participated: !!p,
         min: fest.summary.festival_min_score || 3100
       });
     }
   });
+
+  const last12 = festHist.slice(-12);
   
   html += `<div class="section-label">📊 Festival Performance — Last 12 Events</div>`;
-  html += `<div class="chart-grid" style="grid-template-columns:1fr;">`;
-  html += festHist.length > 0 ? _card('🎪 Festival Scores', 'chart-player-fest') : _noData('🎪 Festival');
+  html += `<div class="chart-grid">`;
+  html += last12.length > 0 ? _card('🎪 Festival Scores (Line)', 'chart-player-fest-line') : _noData('🎪 Festival Line');
+  html += last12.length > 0 ? _card('🎪 Festival Scores (Bar)', 'chart-player-fest-bar') : _noData('🎪 Festival Bar');
   html += `</div>`;
   
   html += `<div class="card table-wrapper" style="margin-top:1.5rem">
     <table>
-      <thead><tr><th>Festival Date</th><th class="right">Score</th></tr></thead>
+      <thead><tr><th>Festival Week</th><th class="right">Score</th></tr></thead>
       <tbody>
-        ${festHist.slice().reverse().map(f => `<tr><td>${f.date}</td><td class="right mono ${f.score >= f.min ? 'text-green' : 'text-red'}">${f.participated ? Number(f.score).toLocaleString() : '—'}</td></tr>`).join('')}
+        ${last12.slice().reverse().map(f => `<tr><td>${f.dateSpan}</td><td class="right mono ${f.score >= f.min ? 'text-green' : 'text-red'}">${f.participated ? Number(f.score).toLocaleString() : '—'}</td></tr>`).join('')}
       </tbody>
     </table>
   </div>`;
@@ -328,10 +339,11 @@ function buildFestivalSection(name, growth, rawFestivalData) {
   return {
     html,
     mount() {
-      if (festHist.length > 0) {
-        _barChart('chart-player-fest', festHist.map(f => f.date), [
-          { label: 'Festival Score', data: festHist.map(f => f.score), backgroundColor: '#a371f7' }
+      if (last12.length > 0) {
+        _barChart('chart-player-fest-bar', last12.map(f => f.dateSpan), [
+          { label: 'Festival Score', data: last12.map(f => f.score), backgroundColor: '#a371f7' }
         ]);
+        _lineChart('chart-player-fest-line', 'Festival Score', last12.map(f => f.dateSpan), last12.map(f => f.score), '#a371f7');
       }
     }
   };
@@ -339,7 +351,7 @@ function buildFestivalSection(name, growth, rawFestivalData) {
 
 // ─── Build "All History" section (52w only) ──────────────────────────────────
 
-function buildAllHistorySection(name, growth, playerHunts52) {
+function buildAllHistorySection(name, growth, playerHunts52, rawFestivalData) {
   const snaps52 = growth ? (growth.snapshots||[]) : [];
   const last52  = snaps52.length ? snaps52[snaps52.length-1] : null;
   const lastH52 = playerHunts52.length ? playerHunts52[playerHunts52.length-1] : null;
@@ -358,6 +370,31 @@ function buildAllHistorySection(name, growth, playerHunts52) {
   html += `</div><div class="chart-grid">`;
   html += playerHunts52.length >= 2 ? _card('🦅 Hunt Points — 52 Weeks', 'chart-all-hunt-pts') : _noData('🦅 Hunt Points — 52 Weeks');
   html += lastH52 ? _card('📦 Monsters & Chests — 52-Week Total', 'chart-all-hunt-bar') : _noData('📦 Monsters & Chests');
+  html += `</div>`;
+  
+  const uid = growth ? (growth.uid || 'N/A') : 'N/A';
+  const festHist = [];
+  if (rawFestivalData) {
+    rawFestivalData.forEach(fest => {
+      const p = fest.players.find(x => x.uid === uid || x.name === name);
+      if (p) {
+        let dateSpan = fest.date;
+        try {
+          const dEnd = new Date(fest.date + 'T00:00:00');
+          const dStart = new Date(dEnd);
+          dStart.setDate(dStart.getDate() - 7);
+          dateSpan = `${dStart.toLocaleDateString('en-US', {month:'short',day:'numeric'})} – ${dEnd.toLocaleDateString('en-US', {month:'short',day:'numeric'})}`;
+        } catch(e) {}
+        festHist.push({ dateSpan, score: p ? p.score : 0, participated: !!p });
+      }
+    });
+  }
+  const last12Fest = festHist.slice(-12);
+
+  html += `<div class="section-label">🎪 Guild Festival — Last 12 Events</div>`;
+  html += `<div class="chart-grid">`;
+  html += last12Fest.length > 0 ? _card('🎪 Festival Scores (Line)', 'chart-all-fest-line') : _noData('🎪 Festival Line');
+  html += last12Fest.length > 0 ? _card('🎪 Festival Scores (Bar)', 'chart-all-fest-bar') : _noData('🎪 Festival Bar');
   html += `</div>`;
 
   return { html, mount() {
@@ -384,6 +421,12 @@ function buildAllHistorySection(name, growth, playerHunts52) {
         { label:'Chests',data:[purchases.lvl1||0,purchases.lvl2||0,purchases.lvl3||0,purchases.lvl4||0,purchases.lvl5||0],backgroundColor:'#e3b341'}
       ]);
     }
+    if (last12Fest.length > 0) {
+      _barChart('chart-all-fest-bar', last12Fest.map(f => f.dateSpan), [
+        { label: 'Festival Score', data: last12Fest.map(f => f.score), backgroundColor: '#a371f7' }
+      ]);
+      _lineChart('chart-all-fest-line', 'Festival Score', last12Fest.map(f => f.dateSpan), last12Fest.map(f => f.score), '#a371f7');
+    }
   }};
 }
 
@@ -408,8 +451,8 @@ async function renderHuntView(container, name, week, huntDailyData, playerHunts5
   sec.mount();
 }
 
-async function renderAllHistoryView(container, name, growth, playerHunts52) {
-  const sec = buildAllHistorySection(name, growth, playerHunts52);
+async function renderAllHistoryView(container, name, growth, playerHunts52, festivalData) {
+  const sec = buildAllHistorySection(name, growth, playerHunts52, festivalData);
   container.innerHTML = _profileHeader(name, growth, 'all') + sec.html;
   sec.mount();
 }
@@ -458,7 +501,7 @@ async function renderMemberView(container, name, growth, warDailyData, huntDaily
     if      (tab === 'war')  sec = buildWarSection(name, urlMonth, warDailyData, growth);
     else if (tab === 'hunt') sec = buildHuntSection(name, urlWeek, huntDailyData, playerHunts52);
     else if (tab === 'fest') sec = buildFestivalSection(name, growth, festivalData);
-    else                     sec = buildAllHistorySection(name, growth, playerHunts52);
+    else                     sec = buildAllHistorySection(name, growth, playerHunts52, festivalData);
     el.innerHTML = sec.html;
     sec.mount();
   }
@@ -510,7 +553,7 @@ async function initPlayer() {
 
     if      (view === 'war')    await renderWarView(container, name, month, growth, warDailyData);
     else if (view === 'hunt')   await renderHuntView(container, name, week, huntDailyData, playerHunts52);
-    else if (view === 'all')    await renderAllHistoryView(container, name, growth, playerHunts52);
+    else if (view === 'all')    await renderAllHistoryView(container, name, growth, playerHunts52, festivalData);
     else /* member */           await renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData);
 
   } catch(err) {
