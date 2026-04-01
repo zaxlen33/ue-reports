@@ -280,8 +280,8 @@ function buildHistoryCharts() {
     data: {
       labels,
       datasets: [
-        { label: 'Passed Min',   data: passed, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.08)',   borderWidth: 2.5, tension: 0.3, fill: false, ..._ptStyle('#22c55e') },
-        { label: 'Failed Min',   data: failed, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.08)',   borderWidth: 2.5, tension: 0.3, fill: false, ..._ptStyle('#ef4444') },
+        { label: 'Participants Completed',   data: passed, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.08)',   borderWidth: 2.5, tension: 0.3, fill: false, ..._ptStyle('#22c55e') },
+        { label: "Participants Didn't Complete",   data: failed, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.08)',   borderWidth: 2.5, tension: 0.3, fill: false, ..._ptStyle('#ef4444') },
         { label: 'Bonus Earned', data: bonus,  borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.08)',  borderWidth: 2.5, tension: 0.3, fill: false, borderDash: [5,3], ..._ptStyle('#a855f7') }
       ]
     },
@@ -299,7 +299,7 @@ function buildHistoryCharts() {
   // ── Average points line chart ────────────────────────────────────────────────
   const ctxLine = document.getElementById('chart-history-line').getContext('2d');
   chartHistLine = new Chart(ctxLine, {
-    type: festivals.length === 1 ? 'bar' : 'line',
+    type: 'line',
     data: {
       labels,
       datasets: [{
@@ -308,7 +308,7 @@ function buildHistoryCharts() {
         borderColor: '#f59e0b',
         backgroundColor: festivals.length === 1 ? 'rgba(245,158,11,0.7)' : 'rgba(245,158,11,0.12)',
         borderWidth: 2.5, tension: 0.3,
-        fill: festivals.length !== 1,
+        fill: true,
         ..._ptStyle('#f59e0b')
       }]
     },
