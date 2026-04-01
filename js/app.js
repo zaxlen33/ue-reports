@@ -174,20 +174,24 @@ async function initWar() {
   const detailView = document.getElementById('war-detail-view');
   if (!listView && !detailView) return;
 
-  // Always load wars.json first — this is the fix for GitHub Pages:
-  // Never rely on sessionStorage or passed state. Always fetch fresh.
-  let wars;
+  // Load both data sources:
+  // - weekly.json → weekly overview list + 52-week chart
+  // - wars.json   → member detail view (unchanged)
+  let wars, weekly;
   try {
-    wars = await loadJSON('wars.json');
+    [wars, weekly] = await Promise.all([
+      loadJSON('wars.json'),
+      loadJSON('weekly.json'),
+    ]);
   } catch (err) {
-    if (listView) setError(listView, 'Could not load wars.json. ' + err.message);
+    if (listView) setError(listView, 'Could not load war data. ' + err.message);
     return;
   }
 
   const hash = getHashParam();
 
   if (hash) {
-    // ── Detail view ──
+    // ── Detail view ── (month hash e.g. #2026-03)
     if (listView)   listView.style.display   = 'none';
     if (detailView) detailView.style.display = '';
 
@@ -201,7 +205,7 @@ async function initWar() {
     // ── List view ──
     if (listView)   listView.style.display   = '';
     if (detailView) detailView.style.display = 'none';
-    renderWarList(listView, wars);
+    renderWarList(listView, weekly, wars);
   }
 
   // React to hash changes without full reload
@@ -217,98 +221,106 @@ async function initWar() {
     } else {
       if (listView)   listView.style.display   = '';
       if (detailView) detailView.style.display = 'none';
-      renderWarList(listView, wars);
+      renderWarList(listView, weekly, wars);
       window.scrollTo(0, 0);
     }
   });
 }
 
-function renderWarList(container, wars) {
-  if (!wars.length) {
-    setEmpty(container, 'No war reports yet', 'Upload a Guild List Excel file to start tracking war data.');
+function renderWarList(container, weekly, wars) {
+  if (!weekly || !weekly.length) {
+    setEmpty(container, 'No weekly war reports yet', 'Upload a Guild List Excel file to start tracking war data.');
     return;
   }
 
-  const sorted = [...wars].reverse(); // newest first
-  const chartWars = [...wars].slice(-52);
-  const chartLabels    = chartWars.map(w => w.label);
-  const chartMight      = chartWars.map(w => w.total_might);
-  const chartKills      = chartWars.map(w => w.total_kills);
-  const chartMightGained = chartWars.map(w => w.total_might_gained || 0);
-  const chartKillsGained = chartWars.map(w => w.total_kills_gained || 0);
+  const sorted     = [...weekly].reverse(); // newest first
+  const chartWeeks = [...weekly].slice(-52); // oldest → newest for the chart
+  const chartLabels = chartWeeks.map(w => w.chart_label || w.label);
+  const chartPower  = chartWeeks.map(w => w.total_power);
+  const chartKills  = chartWeeks.map(w => w.total_kills);
 
-  // Summary stats from most recent war
+  // Summary stats from the most recent weekly entry
   const latest = sorted[0];
+
+  // Map a week date (YYYY-MM-DD) to its month (YYYY-MM)
+  function weekToMonth(weekDate) {
+    return weekDate ? weekDate.slice(0, 7) : '';
+  }
 
   container.innerHTML = `
     <div class="stats-grid" style="margin-bottom:1.5rem;">
       <div class="stat-card blue">
         <div class="stat-icon">📅</div>
-        <div class="stat-value">${wars.length}</div>
-        <div class="stat-label">Total Reports</div>
+        <div class="stat-value">${weekly.length}</div>
+        <div class="stat-label">Weekly Reports</div>
       </div>
       <div class="stat-card green">
         <div class="stat-icon">👥</div>
-        <div class="stat-value">${latest.total_members}</div>
+        <div class="stat-value">${latest.member_count || '—'}</div>
         <div class="stat-label">Members (Latest)</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-icon">🏰</div>
+        <div class="stat-value">${fmtNum(latest.total_power)}</div>
+        <div class="stat-label">Guild Power (Latest)</div>
       </div>
       <div class="stat-card yellow">
         <div class="stat-icon">⚔️</div>
         <div class="stat-value">${fmtNum(latest.total_kills)}</div>
         <div class="stat-label">Total Kills (Latest)</div>
       </div>
-      <div class="stat-card purple">
-        <div class="stat-icon">🏰</div>
-        <div class="stat-value">${fmtNum(latest.avg_might)}</div>
-        <div class="stat-label">Avg. Might (Latest)</div>
-      </div>
     </div>
 
     <div class="card" style="margin-bottom:1.5rem;">
       <div class="card-header">
-        <h2>📈 52-Week History — Power & Kills</h2>
+        <h2>📈 52-Week History — Power &amp; Kills</h2>
       </div>
       <div class="card-body">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:1.5rem;">
-          <div class="chart-box" style="position:relative;height:250px;">
-            <canvas id="chart-war-might-guild"></canvas>
-          </div>
-          <div class="chart-box" style="position:relative;height:250px;">
-            <canvas id="chart-war-kills-guild"></canvas>
-          </div>
+        <div class="chart-box" style="position:relative;height:250px;">
+          <canvas id="chart-war-combined-guild"></canvas>
         </div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <h2>📋 All War Reports</h2>
-        <span class="badge-count">${wars.length} report${wars.length !== 1 ? 's' : ''}</span>
+        <h2>📋 All Weekly Reports</h2>
+        <span class="badge-count">${weekly.length} week${weekly.length !== 1 ? 's' : ''}</span>
+      </div>
+      <div style="padding: 10px 15px; background: rgba(88,166,255,0.05); border-bottom: 1px solid var(--border); font-size: 0.85rem; color: var(--text-secondary); display:flex; gap:8px; align-items:center;">
+        <span>ℹ️</span> <span><strong>Note:</strong> Click a week to view the full member breakdown for that month.</span>
       </div>
       <div class="card-body" style="padding:0;">
-        <div id="war-month-list"></div>
+        <div id="war-week-list"></div>
       </div>
     </div>`;
 
-  const list = document.getElementById('war-month-list');
-  list.innerHTML = sorted.map(w => `
-    <a href="war.html#${w.month}" style="text-decoration:none;">
+  const list = document.getElementById('war-week-list');
+  list.innerHTML = sorted.map((w, i) => {
+    const month      = weekToMonth(w.week);
+    const matchWar   = wars ? wars.find(x => x.month === month) : null;
+    const linkHref   = matchWar ? `war.html#${month}` : '#';
+    const linkFooter = matchWar ? 'View member breakdown →' : 'No member detail for this week yet';
+    const isLatest   = i === 0;
+    return `
+    <a href="${linkHref}" style="text-decoration:none;">
       <div class="session-card" style="border-radius:0;border-left:none;border-right:none;border-top:none;margin:0;cursor:pointer;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background=''">
         <div class="session-title">
-          <span>🏰 ${w.label}</span>
-          <span style="font-size:0.78rem;color:var(--text-muted);">${w.snapshots_count} snapshot${w.snapshots_count !== 1 ? 's' : ''}</span>
+          <span>🏰 ${w.label}${isLatest ? ' <span class="badge" style="font-size:0.7rem;margin-left:6px;">Latest</span>' : ''}</span>
+          <span style="font-size:0.78rem;color:var(--text-muted);">Week ${weekly.length - i}</span>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.5rem;font-size:0.85rem;color:var(--text-secondary);">
-          <div>👥 Members: <strong style="color:var(--text-primary);">${w.total_members}</strong></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.5rem;font-size:0.85rem;color:var(--text-secondary);">
+          <div>👥 Members: <strong style="color:var(--text-primary);">${w.member_count || '—'}</strong></div>
+          <div>🏰 Guild Power: <strong style="color:var(--accent-blue);">${fmtNum(w.total_power)}</strong></div>
           <div>⚔️ Total Kills: <strong style="color:var(--accent-yellow);">${fmtNum(w.total_kills)}</strong></div>
-          <div>🏰 Avg. Might: <strong style="color:var(--accent-blue);">${fmtNum(w.avg_might)}</strong></div>
-          <div>📅 Month: <strong style="color:var(--text-primary);">${w.month}</strong></div>
+          <div>📈 Kills Gained: <strong style="color:var(--accent-green);">${fmtNum(w.total_kills_gained)}</strong></div>
         </div>
-        <div style="margin-top:8px;font-size:0.8rem;color:var(--accent-blue);">View full report →</div>
+        <div style="margin-top:8px;font-size:0.8rem;color:var(--accent-blue);">${linkFooter}</div>
       </div>
-    </a>`).join('');
+    </a>`;
+  }).join('');
 
-  if (chartWars.length >= 1 && window.Chart) {
+  if (chartWeeks.length >= 1 && window.Chart) {
     Chart.defaults.color = '#8b949e';
     Chart.defaults.borderColor = '#30363d';
 
@@ -327,25 +339,17 @@ function renderWarList(container, wars) {
       }
     });
 
-    new Chart(document.getElementById('chart-war-might-guild'), {
+    new Chart(document.getElementById('chart-war-combined-guild'), {
       type: 'line',
       data: { labels: chartLabels, datasets: [
-        { label: 'Total Power',  data: chartMight,       borderColor: '#58a6ff', backgroundColor: 'rgba(88,166,255,0.08)',  borderWidth: 2.5, tension: 0.3, fill: true,  pointRadius: 3, pointBackgroundColor: '#0d1117', pointBorderColor: '#58a6ff', pointBorderWidth: 2, yAxisID: 'y'  },
-        { label: 'Weekly Gain', data: chartMightGained, borderColor: '#3fb950', backgroundColor: 'rgba(63,185,80,0.08)',   borderWidth: 2,   tension: 0.3, fill: false, pointRadius: 3, borderDash: [5,3], yAxisID: 'y2' }
-      ]},
-      options: _dualOpt()
-    });
-
-    new Chart(document.getElementById('chart-war-kills-guild'), {
-      type: 'line',
-      data: { labels: chartLabels, datasets: [
-        { label: 'Total Kills',  data: chartKills,       borderColor: '#f85149', backgroundColor: 'rgba(248,81,73,0.08)',  borderWidth: 2.5, tension: 0.3, fill: true,  pointRadius: 3, pointBackgroundColor: '#0d1117', pointBorderColor: '#f85149', pointBorderWidth: 2, yAxisID: 'y'  },
-        { label: 'Weekly Gain', data: chartKillsGained, borderColor: '#e3b341', backgroundColor: 'rgba(227,179,65,0.08)', borderWidth: 2,   tension: 0.3, fill: false, pointRadius: 3, borderDash: [5,3], yAxisID: 'y2' }
+        { label: 'Guild Power', data: chartPower, borderColor: '#58a6ff', backgroundColor: 'rgba(88,166,255,0.08)', borderWidth: 2.5, tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: '#0d1117', pointBorderColor: '#58a6ff', pointBorderWidth: 2, yAxisID: 'y'  },
+        { label: 'Total Kills', data: chartKills, borderColor: '#f85149', backgroundColor: 'rgba(248,81,73,0.08)',  borderWidth: 2.5, tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: '#0d1117', pointBorderColor: '#f85149', pointBorderWidth: 2, yAxisID: 'y2' }
       ]},
       options: _dualOpt()
     });
   }
 }
+
 
 function renderWarDetail(container, war) {
   // Sort members: by kills desc
@@ -704,7 +708,7 @@ function renderHuntList(container, hunts) {
         responsive: true, maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
         plugins: {
-          legend: { display: false },
+          legend: { display: true, position: 'top', labels: { boxWidth: 10, usePointStyle: true, color: '#8b949e', padding: 14 } },
           tooltip: { backgroundColor: 'rgba(13,17,23,.95)', titleColor: '#c9d1d9', bodyColor: '#c9d1d9', borderColor: '#30363d', borderWidth: 1 }
         },
         scales: { x: { grid: { display: false } }, y: { beginAtZero: false, ticks: { callback: v => v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'k':v } } }
