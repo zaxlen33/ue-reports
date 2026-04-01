@@ -555,7 +555,7 @@ function renderHuntList(container, hunts) {
 
   const sorted = [...hunts].reverse();
   const chartHunts = [...hunts].slice(-52);
-  const chartLabels = chartHunts.map(h => h.date);
+  const chartLabels = chartHunts.map(h => h.chart_label || h.id || h.date);
   const chartTotalPts = [];
   const chartMonsters = [0,0,0,0,0];
   const chartChests = [0,0,0,0,0];
