@@ -231,9 +231,11 @@ function renderWarList(container, wars) {
 
   const sorted = [...wars].reverse(); // newest first
   const chartWars = [...wars].slice(-52);
-  const chartLabels = chartWars.map(w => w.label);
-  const chartMight = chartWars.map(w => w.total_might);
-  const chartKills = chartWars.map(w => w.total_kills);
+  const chartLabels    = chartWars.map(w => w.label);
+  const chartMight      = chartWars.map(w => w.total_might);
+  const chartKills      = chartWars.map(w => w.total_kills);
+  const chartMightGained = chartWars.map(w => w.total_might_gained || 0);
+  const chartKillsGained = chartWars.map(w => w.total_kills_gained || 0);
 
   // Summary stats from most recent war
   const latest = sorted[0];
@@ -309,23 +311,38 @@ function renderWarList(container, wars) {
   if (chartWars.length >= 1 && window.Chart) {
     Chart.defaults.color = '#8b949e';
     Chart.defaults.borderColor = '#30363d';
-    const baseOpt = {
+
+    const _tickFmt = v => v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'k':v;
+    const _dualOpt = () => ({
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: true, position: 'top', labels: { boxWidth: 10, usePointStyle: true, color: '#8b949e', padding: 14 } },
+        tooltip: { backgroundColor: 'rgba(13,17,23,.95)', titleColor: '#c9d1d9', bodyColor: '#c9d1d9', borderColor: '#30363d', borderWidth: 1 }
+      },
       scales: {
         x: { grid: { display: false } },
-        y: { beginAtZero: false, ticks: { callback: v => v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'k':v } }
+        y:  { beginAtZero: false, ticks: { callback: _tickFmt }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y2: { position: 'right', beginAtZero: false, ticks: { callback: _tickFmt }, grid: { drawOnChartArea: false } }
       }
-    };
-    new Chart(document.getElementById('chart-war-might-guild'), {
-      type: 'bar',
-      data: { labels: chartLabels, datasets: [{ label: 'Guild Might', data: chartMight, backgroundColor: 'rgba(88,166,255,0.7)', borderColor: '#58a6ff', borderWidth: 1, borderRadius: 4 }] },
-      options: baseOpt
     });
+
+    new Chart(document.getElementById('chart-war-might-guild'), {
+      type: 'line',
+      data: { labels: chartLabels, datasets: [
+        { label: 'Total Power',  data: chartMight,       borderColor: '#58a6ff', backgroundColor: 'rgba(88,166,255,0.08)',  borderWidth: 2.5, tension: 0.3, fill: true,  pointRadius: 3, pointBackgroundColor: '#0d1117', pointBorderColor: '#58a6ff', pointBorderWidth: 2, yAxisID: 'y'  },
+        { label: 'Weekly Gain', data: chartMightGained, borderColor: '#3fb950', backgroundColor: 'rgba(63,185,80,0.08)',   borderWidth: 2,   tension: 0.3, fill: false, pointRadius: 3, borderDash: [5,3], yAxisID: 'y2' }
+      ]},
+      options: _dualOpt()
+    });
+
     new Chart(document.getElementById('chart-war-kills-guild'), {
-      type: 'bar',
-      data: { labels: chartLabels, datasets: [{ label: 'Guild Kills', data: chartKills, backgroundColor: 'rgba(248,81,73,0.7)', borderColor: '#f85149', borderWidth: 1, borderRadius: 4 }] },
-      options: baseOpt
+      type: 'line',
+      data: { labels: chartLabels, datasets: [
+        { label: 'Total Kills',  data: chartKills,       borderColor: '#f85149', backgroundColor: 'rgba(248,81,73,0.08)',  borderWidth: 2.5, tension: 0.3, fill: true,  pointRadius: 3, pointBackgroundColor: '#0d1117', pointBorderColor: '#f85149', pointBorderWidth: 2, yAxisID: 'y'  },
+        { label: 'Weekly Gain', data: chartKillsGained, borderColor: '#e3b341', backgroundColor: 'rgba(227,179,65,0.08)', borderWidth: 2,   tension: 0.3, fill: false, pointRadius: 3, borderDash: [5,3], yAxisID: 'y2' }
+      ]},
+      options: _dualOpt()
     });
   }
 }
@@ -676,11 +693,20 @@ function renderHuntList(container, hunts) {
     Chart.defaults.borderColor = '#30363d';
     
     new Chart(document.getElementById('chart-hunt-pts-guild'), {
-      type: 'bar',
-      data: { labels: chartLabels, datasets: [{ label: 'Guild Hunt Points', data: chartTotalPts, backgroundColor: 'rgba(63,185,80,0.7)', borderColor: '#3fb950', borderWidth: 1, borderRadius: 4 }] },
+      type: 'line',
+      data: { labels: chartLabels, datasets: [{
+        label: 'Guild Hunt Points', data: chartTotalPts,
+        borderColor: '#3fb950', backgroundColor: 'rgba(63,185,80,0.1)',
+        borderWidth: 2.5, tension: 0.3, fill: true,
+        pointRadius: 3, pointBackgroundColor: '#0d1117', pointBorderColor: '#3fb950', pointBorderWidth: 2
+      }]},
       options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: { backgroundColor: 'rgba(13,17,23,.95)', titleColor: '#c9d1d9', bodyColor: '#c9d1d9', borderColor: '#30363d', borderWidth: 1 }
+        },
         scales: { x: { grid: { display: false } }, y: { beginAtZero: false, ticks: { callback: v => v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'k':v } } }
       }
     });
