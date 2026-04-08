@@ -238,10 +238,14 @@ function renderWarList(container, weekly, wars) {
   const latest = sortedWars[0];
 
   // Chart data from weekly.json (weekly granularity, up to 52 weeks)
+  // Each entry uses the LAST GUILD_LIST report of that week as the single source of truth.
   const chartWeeks  = weekly ? [...weekly].slice(-52) : [];
   const chartLabels = chartWeeks.map(w => w.chart_label || w.label);
   const chartPower  = chartWeeks.map(w => w.total_power);
   const chartKills  = chartWeeks.map(w => w.total_kills);
+  // report_date: the exact GUILD_LIST day used for that week's totals
+  const chartReportDates  = chartWeeks.map(w => w.report_date || '');
+  const chartMemberCounts = chartWeeks.map(w => w.member_count || 0);
 
   container.innerHTML = `
     <div class="stats-grid" style="margin-bottom:1.5rem;">
@@ -313,19 +317,6 @@ function renderWarList(container, weekly, wars) {
     Chart.defaults.borderColor = '#30363d';
 
     const _tickFmt = v => v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'k':v;
-    const _dualOpt = () => ({
-      responsive: true, maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { display: true, position: 'top', labels: { boxWidth: 10, usePointStyle: true, color: '#8b949e', padding: 14 } },
-        tooltip: { backgroundColor: 'rgba(13,17,23,.95)', titleColor: '#c9d1d9', bodyColor: '#c9d1d9', borderColor: '#30363d', borderWidth: 1 }
-      },
-      scales: {
-        x: { grid: { display: false } },
-        y:  { beginAtZero: false, ticks: { callback: _tickFmt }, grid: { color: 'rgba(255,255,255,0.05)' } },
-        y2: { position: 'right', beginAtZero: false, ticks: { callback: _tickFmt }, grid: { drawOnChartArea: false } }
-      }
-    });
 
     new Chart(document.getElementById('chart-war-combined-guild'), {
       type: 'line',
@@ -333,7 +324,33 @@ function renderWarList(container, weekly, wars) {
         { label: 'Guild Power', data: chartPower, borderColor: '#58a6ff', backgroundColor: 'rgba(88,166,255,0.08)', borderWidth: 2.5, tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: '#0d1117', pointBorderColor: '#58a6ff', pointBorderWidth: 2, yAxisID: 'y'  },
         { label: 'Total Kills', data: chartKills, borderColor: '#f85149', backgroundColor: 'rgba(248,81,73,0.08)',  borderWidth: 2.5, tension: 0.3, fill: true, pointRadius: 3, pointBackgroundColor: '#0d1117', pointBorderColor: '#f85149', pointBorderWidth: 2, yAxisID: 'y2' }
       ]},
-      options: _dualOpt()
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: true, position: 'top', labels: { boxWidth: 10, usePointStyle: true, color: '#8b949e', padding: 14 } },
+          tooltip: {
+            backgroundColor: 'rgba(13,17,23,.95)', titleColor: '#c9d1d9', bodyColor: '#c9d1d9', borderColor: '#30363d', borderWidth: 1,
+            callbacks: {
+              title: (items) => {
+                const i = items[0]?.dataIndex ?? 0;
+                const rd = chartReportDates[i];
+                const mc = chartMemberCounts[i];
+                return rd ? `Week of ${chartLabels[i]}  (Report: ${rd}, ${mc} members)` : `Week of ${chartLabels[i]}`;
+              },
+              label: (item) => {
+                const val = item.raw;
+                return ` ${item.dataset.label}: ${_tickFmt(val)}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y:  { beginAtZero: false, ticks: { callback: _tickFmt }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          y2: { position: 'right', beginAtZero: false, ticks: { callback: _tickFmt }, grid: { drawOnChartArea: false } }
+        }
+      }
     });
   }
 }
