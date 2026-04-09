@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
           el.placeholder = translation;
         } else {
-          el.innerText = translation;
+          el.innerHTML = translation;
         }
       });
 
@@ -68,8 +68,20 @@ document.addEventListener('DOMContentLoaded', () => {
     },
 
     initSwitcher() {
-      const switcher = document.getElementById('lang-switcher');
-      if (switcher) {
+      const container = document.querySelector('.lang-switcher-container');
+      if (container) {
+        container.innerHTML = `
+          <select class="lang-select" id="lang-switcher">
+            <option value="en">🇬🇧 English</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="pt">🇧🇷 Português</option>
+            <option value="vi">🇻🇳 Tiếng Việt</option>
+            <option value="ja">🇯🇵 日本語</option>
+            <option value="zh">🇨🇳 简体中文</option>
+          </select>
+        `;
+        const switcher = document.getElementById('lang-switcher');
         switcher.value = this.currentLang;
         switcher.addEventListener('change', (e) => {
           this.setLanguage(e.target.value);
