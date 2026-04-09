@@ -18,7 +18,11 @@ _style.textContent = `
   .profile-info h1{margin:0 0 4px;font-size:1.7rem;color:var(--text-primary); display:flex; align-items:center;}
   .profile-info p{margin:0;color:var(--text-secondary);font-family:var(--font-mono);font-size:.88rem;}
   .section-label{color:var(--text-secondary);margin:1.5rem 0 .6rem;font-size:.8rem;text-transform:uppercase;letter-spacing:1px;font-weight:600;}
-  @media(max-width:520px){.chart-grid{grid-template-columns:1fr;}}
+  @media(max-width:520px){ 
+    .chart-grid{grid-template-columns:1fr;} 
+    .ph-top, .ph-bottom { justify-content:center !important; } 
+    .profile-info { text-align:center; }
+  }
 `;
 document.head.appendChild(_style);
 
@@ -97,7 +101,7 @@ function _quotaBadge(killsDiff) {
       <div style="font-size:2.2rem;">${met?'✅':'❌'}</div>
       <div style="flex:1;">
         <div style="font-weight:700;font-size:1rem;color:${col};">${met ? t('quota_met') : t('quota_not_met')}</div>
-        <div style="color:var(--text-secondary);margin-top:3px;">${fmtNum(killsDiff)} / 1,000,000 ${t('kills_this_month')}</div>
+        <div style="color:var(--text-secondary);margin-top:3px;">${fmtCompact(killsDiff)} / 1M ${t('kills_this_month')}</div>
         <div style="margin-top:8px;">
           <div class="progress-bar" style="width:100%;max-width:280px;"><div class="progress-fill" style="width:${pct}%;background:${col};"></div></div>
           <span style="font-family:var(--font-mono);font-size:.83rem;color:${col};">${pct}%</span>
@@ -113,7 +117,7 @@ function _statCards(cards) {
       <div class="stat-icon">${c.icon}</div>
       <div class="stat-value">${c.value}</div>
       <div class="stat-label">${c.label}</div>
-      ${c.delta!==undefined ? `<div class="stat-delta ${c.delta>0?'positive':c.delta<0?'negative':'neutral'}">${fmtDelta(c.delta,false)} ${c.deltaLabel||''}</div>` : ''}
+      ${c.delta!==undefined ? `<div class="stat-delta ${c.delta>0?'positive':c.delta<0?'negative':'neutral'}">${fmtDelta(c.delta,false)}${c.deltaLabel ? `<span style="opacity:0.5; margin-left:6px; font-weight:500;">• ${c.deltaLabel}</span>` : ''}</div>` : ''}
     </div>`).join('')}</div>`;
 }
 
@@ -129,9 +133,16 @@ function _profileHeader(name, growth, view, telegram) {
   else if (view==='all')    { backLink='./history.html'; backText=t('nav_history') || '📈 History'; }
   else                      { backLink='./members.html'; backText=t('nav_members'); }
 
-  const tgBadge = telegram
-    ? `<span style="font-size:0.78rem;color:var(--accent-orange);border:1px solid var(--accent-orange);border-radius:4px;padding:2px 7px;margin-left:6px;vertical-align:middle;font-family:var(--font-mono);white-space:nowrap;">💬 ${telegram}</span>`
-    : '';
+  const badgeStyle = 'font-size:0.8rem;padding:4px 8px;display:inline-flex;align-items:center;line-height:1;margin:0;';
+  const tgBadge   = telegram ? `<span class="tg-badge" style="${badgeStyle}">💬 ${telegram}</span>` : '';
+  const uidBadge  = `<span class="uid-badge" style="${badgeStyle}">🔐 ${uid}</span>`;
+  let rBadge = '';
+  if (last && last.rank) {
+    rBadge = rankBadge(last.rank).replace('class="rank-badge', `style="${badgeStyle}" class="rank-badge`);
+  }
+
+  const firstSeen = growth && growth.first_seen ? growth.first_seen : '—';
+  const lastSeen  = last ? last.date : '—';
 
   return `
     <div class="breadcrumb" style="margin-bottom:1.5rem;">
@@ -139,9 +150,20 @@ function _profileHeader(name, growth, view, telegram) {
     </div>
     <div class="profile-header">
       <div class="profile-avatar">${initial}</div>
-      <div class="profile-info">
-        <h1>${name} <span style="font-size:0.8rem;color:var(--accent-orange);border:1px solid var(--accent-orange);border-radius:4px;padding:2px 6px;margin-left:8px;vertical-align:middle;font-family:var(--font-mono);">${uid}</span>${tgBadge}</h1>
-        <p>${t('rank_label')}: ${last?last.rank||'—':'—'} &nbsp;|&nbsp; ${t('first_seen')}: ${growth?growth.first_seen||'—':'—'}</p>
+      <div class="profile-info" style="width:100%;">
+        <div class="ph-top" style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;">
+          <h1 style="margin:0;">${name}</h1>
+          <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">
+            ${uidBadge}
+            ${rBadge}
+            ${tgBadge}
+          </div>
+        </div>
+        <div class="ph-bottom" style="margin-top:12px;display:inline-flex;align-items:center;flex-wrap:wrap;gap:12px;color:var(--text-secondary);font-size:0.85rem;background:rgba(255,255,255,0.03);padding:7px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.05);">
+          <div><span style="opacity:0.6;">${t('first_seen_label') || t('first_seen') || 'First seen'}:</span> <strong style="color:var(--text-primary);letter-spacing:0.5px;">${firstSeen}</strong></div>
+          <div style="width:1px;height:12px;background:rgba(255,255,255,0.1);"></div>
+          <div><span style="opacity:0.6;">${t('last_seen_label') || 'Last seen'}:</span> <strong style="color:var(--text-primary);letter-spacing:0.5px;">${lastSeen}</strong></div>
+        </div>
       </div>
     </div>`;
 }
@@ -177,7 +199,14 @@ function buildWarSection(name, month, warDailyData, growth, warsData) {
     { icon:'⚔️', value: last30 ? fmtCompact(last30.kills) : '—', label: t('current_kills'), color:'yellow', delta: killsDiff, deltaLabel: month ? t('latest') : t('last_30_days') },
   ]);
 
-  html += _quotaBadge(killsDiff);
+  let quotaKillsDiff = killsDiff;
+  if (warsData && warsData.length > 0) {
+    const targetMonth = month || warsData[warsData.length - 1].month;
+    const warMonth = warsData.find(w => w.month === targetMonth);
+    const warMember = warMonth ? (warMonth.members || []).find(m => m.name === name) : null;
+    quotaKillsDiff = warMember ? (warMember.kills_diff || 0) : 0;
+  }
+  html += _quotaBadge(quotaKillsDiff);
 
   // Chart section — always shows last 30 days of daily snapshots
   html += `<div class="section-label">📅 ${t('last_30_days')}</div>`;
@@ -272,13 +301,13 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52) {
 
   html += `<div class="section-label">🗓️ ${t('last_30_days')}</div>`;
   html += `<div class="chart-grid">`;
-  html += sortedChartDays.length >= 1 ? _card('📈 ' + t('hunt_history'), 'chart-hunt-pts-7d') : _noData(t('hunt_history'));
+  html += sortedChartDays.length >= 1 ? _card(t('hunt_history'), 'chart-hunt-pts-7d') : _noData(t('hunt_history'));
   html += sortedChartDays.length >= 1 ? _card('📦 ' + t('monsters_hunted') + ' & ' + t('chests_purchased'), 'chart-hunt-bar-7d') : _noData(t('monsters_hunted'));
   html += `</div>`;
 
-  html += `<div class="section-label">📊 ${t('yearly_history')}</div>`;
+  html += `<div class="section-label">📊 ${t('hunt_history_title') || '52-Week History — Hunt Data'}</div>`;
   html += `<div class="chart-grid">`;
-  html += playerHunts52.length >= 2 ? _card('🦅 ' + t('hunt_history'), 'chart-hunt-pts-52w') : _noData(t('hunt_history'));
+  html += playerHunts52.length >= 2 ? _card(t('hunt_history'), 'chart-hunt-pts-52w') : _noData(t('hunt_history'));
   html += playerHunts52.length >= 1 ? _card('📦 ' + t('monsters_hunted') + ' & ' + t('chests_purchased'), 'chart-hunt-bar-52w') : _noData(t('chests_purchased'));
   html += `</div>`;
 
@@ -292,7 +321,10 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52) {
       ]);
     }
     if (playerHunts52.length >= 2) {
-      const hd = playerHunts52.map((h,i) => i===playerHunts52.length-1 ? h.date+' ⟳' : h.date);
+      const hd = playerHunts52.map((h, i) => {
+        let d = h.date.split(' to ')[0];
+        return i === playerHunts52.length - 1 ? d + ' ⟳' : d;
+      });
       _lineChart('chart-hunt-pts-52w', t('hunt_history'), hd, playerHunts52.map(h=>h.pts_total), '#3fb950');
     }
     if (playerHunts52.length >= 1) {
@@ -353,7 +385,7 @@ function buildFestivalSection(name, growth, rawFestivalData) {
     <table>
       <thead><tr><th>${t('date')}</th><th class="right">${t('score')}</th></tr></thead>
       <tbody>
-        ${last12.slice().reverse().map(f => `<tr><td>${f.dateSpan}</td><td class="right mono ${f.score >= f.min ? 'text-green' : 'text-red'}">${f.participated ? Number(f.score).toLocaleString() : '—'}</td></tr>`).join('')}
+        ${last12.slice().reverse().map(f => `<tr style="transition:background 0.15s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background=''"><td class="card-main">${f.dateSpan}</td><td data-label="${t('score')}" class="right mono">${f.participated ? Number(f.score).toLocaleString() : '—'}</td></tr>`).join('')}
       </tbody>
     </table>
   </div>`;
@@ -390,7 +422,7 @@ function buildAllHistorySection(name, growth, playerHunts52, rawFestivalData) {
   html += snaps52.length >= 2 ? _card('🏰 ' + t('power_52w'), 'chart-all-might') : _noData(t('power_52w'));
   html += snaps52.length >= 2 ? _card('⚔️ ' + t('kills_52w'), 'chart-all-kills') : _noData(t('kills_52w'));
   html += `</div><div class="chart-grid">`;
-  html += playerHunts52.length >= 2 ? _card('🦅 ' + t('hunt_pts_52w'), 'chart-all-hunt-pts') : _noData(t('hunt_pts_52w'));
+  html += playerHunts52.length >= 2 ? _card(t('hunt_pts_52w'), 'chart-all-hunt-pts') : _noData(t('hunt_pts_52w'));
   html += lastH52 ? _card('📦 ' + t('monsters_chests_52w'), 'chart-all-hunt-bar') : _noData(t('monsters_chests_52w'));
   html += `</div>`;
   
@@ -426,8 +458,11 @@ function buildAllHistorySection(name, growth, playerHunts52, rawFestivalData) {
       _lineChart('chart-all-kills', t('kills'), dates, snaps52.map(s=>s.kills), '#f85149');
     }
     if (playerHunts52.length >= 2) {
-      const hd = playerHunts52.map((h,i)=>i===playerHunts52.length-1?h.date+' ⟳':h.date);
-      _lineChart('chart-all-hunt-pts', t('points'),hd,playerHunts52.map(h=>h.pts_total),'#3fb950');
+      const hd = playerHunts52.map((h, i) => {
+        let d = h.date.split(' to ')[0];
+        return i === playerHunts52.length - 1 ? d + ' ⟳' : d;
+      });
+      _lineChart('chart-all-hunt-pts', t('points'), hd, playerHunts52.map(h => h.pts_total), '#3fb950');
     }
     if (lastH52) {
       const monsters = {lvl1:0,lvl2:0,lvl3:0,lvl4:0,lvl5:0}, purchases = {lvl1:0,lvl2:0,lvl3:0,lvl4:0,lvl5:0};
@@ -463,12 +498,9 @@ async function renderWarView(container, name, month, growth, warDailyData, teleg
 async function renderHuntView(container, name, week, huntDailyData, playerHunts52, telegram, growth) {
   const initial  = name.charAt(0).toUpperCase();
   const uid      = growth && growth.uid ? growth.uid : null;
-  const tgBadge  = telegram
-    ? `<span style="font-size:0.78rem;color:var(--accent-orange);border:1px solid var(--accent-orange);border-radius:4px;padding:2px 7px;margin-left:6px;vertical-align:middle;font-family:var(--font-mono);white-space:nowrap;">💬 ${telegram}</span>`
-    : '';
-  const uidBadge = uid
-    ? `<span style="font-size:0.8rem;color:var(--accent-orange);border:1px solid var(--accent-orange);border-radius:4px;padding:2px 6px;margin-left:8px;vertical-align:middle;font-family:var(--font-mono);">${uid}</span>`
-    : '';
+  const tgBadge  = telegram ? `<span class="tg-badge" style="margin-left:8px;vertical-align:middle;">💬 ${telegram}</span>` : '';
+  const uidBadge = uid ? `<span class="uid-badge" style="margin-left:8px;vertical-align:middle;">🔐 ${uid}</span>` : '';
+
   const breadcrumb = `<div class="breadcrumb" style="margin-bottom:1.5rem;">
     <a href="./hunt.html">${t('nav_hunt')}</a><span class="sep">›</span><span class="current">${name}</span>
   </div>
@@ -498,7 +530,7 @@ async function renderMemberView(container, name, growth, warDailyData, huntDaily
         <table style="border:none;margin:0;">
           <thead><tr><th>${t('old_name_new_name')}</th><th class="right">${t('until_date')}</th></tr></thead>
           <tbody>
-            ${growth.name_history.map(nh => `<tr><td style="color:var(--text-secondary);text-decoration:line-through">${nh.name}</td><td class="right mono">${nh.until}</td></tr>`).join('')}
+            ${growth.name_history.map(nh => `<tr style="transition:background 0.15s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background=''"><td class="card-main" style="color:var(--text-secondary);text-decoration:line-through">${nh.name}</td><td class="right mono" data-label="${t('until_date')}">${nh.until}</td></tr>`).join('')}
           </tbody>
         </table>
       </div>
