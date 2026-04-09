@@ -5,7 +5,7 @@ async function initRankings() {
   const container = document.getElementById('rankings-container');
   if (!container) return;
 
-  setLoading(container, 'Loading rankings…');
+  setLoading(container, t('loading_rankings'));
 
   try {
     const [warsRes, huntsRes, festRes] = await Promise.allSettled([
@@ -56,14 +56,14 @@ async function initRankings() {
 
     container.innerHTML = `
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-bottom:2rem;">
-        ${renderWarLeaderboard('📈 Top 5 — Power Growth (30d)', top5MightGrowth, 'might_diff', 'var(--accent-blue)', warMonth, warMonthId)}
-        ${renderWarLeaderboard('⚔️ Top 5 — Kills Growth (30d)', top5KillsGrowth, 'kills_diff', 'var(--accent-yellow)', warMonth, warMonthId)}
-        ${renderHuntLeaderboard('🦅 Top 5 — Hunt Points (7d)', top5Hunt, huntWeek, huntWeekId)}
-        ${renderFestivalLeaderboard('🎪 Top 5 — Guild Festival (Last Event)', top5Fest, festDate)}
+        ${renderWarLeaderboard(t('rank_power_growth'), top5MightGrowth, 'might_diff', 'var(--accent-blue)', warMonth, warMonthId)}
+        ${renderWarLeaderboard(t('rank_kills_growth'), top5KillsGrowth, 'kills_diff', 'var(--accent-yellow)', warMonth, warMonthId)}
+        ${renderHuntLeaderboard(t('rank_hunt_pts'), top5Hunt, huntWeek, huntWeekId)}
+        ${renderFestivalLeaderboard(t('rank_festival_pts'), top5Fest, festDate)}
       </div>`;
 
   } catch (err) {
-    setError(container, 'Could not load rankings: ' + err.message);
+    setError(container, t('error_loading') + ': ' + err.message);
   }
 }
 
@@ -71,7 +71,7 @@ function renderWarLeaderboard(title, members, metric, color, monthLabel, monthId
   if (!members.length) {
     return `<div class="card" style="border-top:3px solid ${color};">
       <div class="card-header"><h2>${title}</h2></div>
-      <div class="card-body"><p style="color:var(--text-muted);text-align:center;padding:1.5rem;">No war data yet.</p></div>
+      <div class="card-body"><p style="color:var(--text-muted);text-align:center;padding:1.5rem;">${t('no_war_data')}</p></div>
     </div>`;
   }
 
@@ -104,7 +104,7 @@ function renderHuntLeaderboard(title, players, weekLabel, weekId) {
   if (!players.length) {
     return `<div class="card" style="border-top:3px solid var(--accent-green);">
       <div class="card-header"><h2>${title}</h2></div>
-      <div class="card-body"><p style="color:var(--text-muted);text-align:center;padding:1.5rem;">No hunt data yet.</p></div>
+      <div class="card-body"><p style="color:var(--text-muted);text-align:center;padding:1.5rem;">${t('no_hunt_data')}</p></div>
     </div>`;
   }
 
@@ -139,6 +139,17 @@ function renderHuntLeaderboard(title, players, weekLabel, weekId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.location.pathname.split('/').pop() !== 'rankings.html') return;
+  // Wait for i18n to be ready before first render
+  const checkI18n = setInterval(() => {
+    if (window.i18n && Object.keys(window.i18n.data).length > 0) {
+      clearInterval(checkI18n);
+      initRankings();
+    }
+  }, 50);
+});
+
+window.addEventListener('languageChanged', () => {
   if (window.location.pathname.split('/').pop() === 'rankings.html') initRankings();
 });
 
@@ -146,7 +157,7 @@ function renderFestivalLeaderboard(title, players, dateLabel) {
   if (!players.length) {
     return `<div class="card" style="border-top:3px solid #a855f7;">
       <div class="card-header"><h2>${title}</h2></div>
-      <div class="card-body"><p style="color:var(--text-muted);text-align:center;padding:1.5rem;">No festival data yet.</p></div>
+      <div class="card-body"><p style="color:var(--text-muted);text-align:center;padding:1.5rem;">${t('no_fest_data')}</p></div>
     </div>`;
   }
 
