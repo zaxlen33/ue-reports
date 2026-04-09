@@ -29,7 +29,7 @@ async function loadJSON(filename) {
 /** Format a large number with commas */
 function fmtNum(n) {
   if (n === null || n === undefined) return '—';
-  return Number(n).toLocaleString();
+  return Number(n).toLocaleString(window.i18n?.currentLang || 'en');
 }
 
 /** Format a delta value (+X / -X / 0) */
@@ -58,8 +58,9 @@ function getHashParam() {
 }
 
 /** Set loading state for a container */
-function setLoading(el, msg = 'Loading data…') {
-  if (el) el.innerHTML = `<div class="loading-state"><div class="spinner"></div><p>${msg}</p></div>`;
+function setLoading(el, msg) {
+  const loadingMsg = msg || t('loading_data');
+  if (el) el.innerHTML = `<div class="loading-state"><div class="spinner"></div><p>${loadingMsg}</p></div>`;
 }
 
 /** Set error state for a container */
@@ -68,12 +69,14 @@ function setError(el, msg) {
 }
 
 /** Set empty state for a container */
-function setEmpty(el, title = 'No data yet', msg = '') {
+function setEmpty(el, title, msg) {
+  const emptyTitle = title || t('not_found');
+  const emptyMsg = msg || '';
   el.innerHTML = `
     <div class="empty-state">
       <div class="empty-icon">📭</div>
-      <h3>${title}</h3>
-      ${msg ? `<p>${msg}</p>` : ''}
+      <h3>${emptyTitle}</h3>
+      ${emptyMsg ? `<p>${emptyMsg}</p>` : ''}
     </div>`;
 }
 
@@ -115,7 +118,7 @@ async function initIndex() {
   const container = document.getElementById('dashboard');
   if (!container) return;
 
-  setLoading(container, 'Loading dashboard…');
+  setLoading(container, t('loading_dashboard'));
 
   try {
     const [wars, hunts, history, weekly] = await Promise.allSettled([
@@ -137,28 +140,28 @@ async function initIndex() {
       <div class="stats-grid">
         <div class="stat-card blue">
           <div class="stat-icon">🏰</div>
-          <div class="stat-value">${warsData.length}</div>
-          <div class="stat-label">War Reports Uploaded</div>
+          <div class="stat-value">${fmtNum(warsData.length)}</div>
+          <div class="stat-label">${t('war_reports')}</div>
         </div>
         <div class="stat-card green">
           <div class="stat-icon">🦅</div>
           <div class="stat-value">${huntsData.length}</div>
-          <div class="stat-label">Hunt Reports Uploaded</div>
+          <div class="stat-label" data-i18n="hunt_reports">${t('hunt_reports')}</div>
         </div>
         <div class="stat-card purple">
           <div class="stat-icon">👥</div>
           <div class="stat-value">${memberCount}</div>
-          <div class="stat-label">Tracked Members</div>
+          <div class="stat-label" data-i18n="tracked_members">${t('tracked_members')}</div>
         </div>
         <div class="stat-card orange">
           <div class="stat-icon">⭐</div>
           <div class="stat-value">${latestWeek ? fmtNum(latestWeek.total_power) : '—'}</div>
-          <div class="stat-label">Current Guild Power</div>
+          <div class="stat-label" data-i18n="guild_power">${t('guild_power')}</div>
         </div>
         <div class="stat-card yellow">
           <div class="stat-icon">⚔️</div>
           <div class="stat-value">${latestWeek ? fmtNum(latestWeek.total_kills) : '—'}</div>
-          <div class="stat-label">Current Guild Kills</div>
+          <div class="stat-label" data-i18n="guild_kills">${t('guild_kills')}</div>
         </div>
       </div>`;
 
@@ -209,23 +212,7 @@ async function initWar() {
     renderWarList(listView, weekly, wars);
   }
 
-  // React to hash changes without full reload
-  window.addEventListener('hashchange', () => {
-    const h = getHashParam();
-    if (h) {
-      if (listView)   listView.style.display   = 'none';
-      if (detailView) detailView.style.display = '';
-      const w = wars.find(x => x.month === h);
-      if (!w) { setError(detailView, `No data for "${h}".`); return; }
-      renderWarDetail(detailView, w);
-      window.scrollTo(0, 0);
-    } else {
-      if (listView)   listView.style.display   = '';
-      if (detailView) detailView.style.display = 'none';
-      renderWarList(listView, weekly, wars);
-      window.scrollTo(0, 0);
-    }
-  });
+  // Hashchange handled by global router below
 }
 
 function renderWarList(container, weekly, wars) {
@@ -260,33 +247,33 @@ function renderWarList(container, weekly, wars) {
       <div class="stat-card blue">
         <div class="stat-icon">📅</div>
         <div class="stat-value">${wars.length}</div>
-        <div class="stat-label">Monthly Reports</div>
+        <div class="stat-label">${t('monthly_reports')}</div>
       </div>
       <div class="stat-card green">
         <div class="stat-icon">👥</div>
         <div class="stat-value">${lrMembers}</div>
-        <div class="stat-label">Members (Last Report)</div>
+        <div class="stat-label">${t('members_last')}</div>
       </div>
       <div class="stat-card orange">
         <div class="stat-icon">🏰</div>
         <div class="stat-value">${fmtNum(lrPower)}</div>
-        <div class="stat-label">Total Might (Last Report)</div>
+        <div class="stat-label">${t('might_last')}</div>
       </div>
       <div class="stat-card yellow">
         <div class="stat-icon">⚔️</div>
         <div class="stat-value">${fmtNum(lrKills)}</div>
-        <div class="stat-label">Total Kills (Last Report)</div>
+        <div class="stat-label">${t('kills_last')}</div>
       </div>
       <div class="stat-card purple">
         <div class="stat-icon">📊</div>
         <div class="stat-value">${fmtNum(lrAvg)}</div>
-        <div class="stat-label">Avg. Might (Last Report)</div>
+        <div class="stat-label">${t('avg_might_last')}</div>
       </div>
     </div>
 
     <div class="card" style="margin-bottom:1.5rem;">
       <div class="card-header">
-        <h2>📈 52-Week History — Guild Power &amp; Kills</h2>
+        <h2>📈 ${t('yearly_history')}</h2>
       </div>
       <div class="card-body">
         <div class="chart-box" style="position:relative;height:250px;">
@@ -297,8 +284,8 @@ function renderWarList(container, weekly, wars) {
 
     <div class="card">
       <div class="card-header">
-        <h2>📋 All War Reports</h2>
-        <span class="badge-count">${wars.length} report${wars.length !== 1 ? 's' : ''}</span>
+        <h2>📋 ${t('all_war_reports')}</h2>
+        <span class="badge-count">${wars.length} ${wars.length !== 1 ? t('reports_suffix') : t('reports_suffix').replace(/s$/, '')}</span>
       </div>
       <div class="card-body" style="padding:0;">
         <div id="war-month-list"></div>
@@ -311,16 +298,16 @@ function renderWarList(container, weekly, wars) {
     <a href="war.html#${w.month}" style="text-decoration:none;">
       <div class="session-card" style="border-radius:0;border-left:none;border-right:none;border-top:none;margin:0;cursor:pointer;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background=''">
         <div class="session-title">
-          <span>🏰 ${w.label}${i === 0 ? ' <span class="badge" style="font-size:0.7rem;margin-left:6px;">Latest</span>' : ''}</span>
-          <span style="font-size:0.78rem;color:var(--text-muted);">${w.snapshots_count} snapshot${w.snapshots_count !== 1 ? 's' : ''}</span>
+          <span>🏰 ${w.label}${i === 0 ? ` <span class="badge" style="font-size:0.7rem;margin-left:6px;">${t('latest')}</span>` : ''}</span>
+          <span style="font-size:0.78rem;color:var(--text-muted);">${w.snapshots_count} ${w.snapshots_count !== 1 ? t('snapshots_suffix') : t('snapshots_suffix').replace(/s$/, '')}</span>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.5rem;font-size:0.85rem;color:var(--text-secondary);">
-          <div>👥 Members: <strong style="color:var(--text-primary);">${w.total_members}</strong></div>
-          <div>⚔️ Total Kills: <strong style="color:var(--accent-yellow);">${fmtNum(w.total_kills)}</strong></div>
-          <div>🏰 Avg. Might: <strong style="color:var(--accent-blue);">${fmtNum(w.avg_might)}</strong></div>
-          <div>📈 Kills Gained: <strong style="color:var(--accent-green);">${fmtNum(w.total_kills_gained)}</strong></div>
+          <div>👥 ${t('players')}: <strong style="color:var(--text-primary);">${w.total_members}</strong></div>
+          <div>⚔️ ${t('guild_kills')}: <strong style="color:var(--accent-yellow);">${fmtNum(w.total_kills)}</strong></div>
+          <div>🏰 ${t('average')} ${t('might')}: <strong style="color:var(--accent-blue);">${fmtNum(w.avg_might)}</strong></div>
+          <div>📈 ${t('kills_gained_title')}: <strong style="color:var(--accent-green);">${fmtNum(w.total_kills_gained)}</strong></div>
         </div>
-        <div style="margin-top:8px;font-size:0.8rem;color:var(--accent-blue);">View member breakdown →</div>
+        <div style="margin-top:8px;font-size:0.8rem;color:var(--accent-blue);">${t('view_breakdown')}</div>
       </div>
     </a>`).join('');
 
@@ -374,7 +361,7 @@ function renderWarDetail(container, war) {
 
   container.innerHTML = `
     <div class="breadcrumb">
-      <a href="war.html">🏰 War Reports</a>
+      <a href="war.html">${t('nav_war')}</a>
       <span class="sep">›</span>
       <span class="current">${war.label}</span>
     </div>
@@ -382,11 +369,11 @@ function renderWarDetail(container, war) {
     <div class="detail-header">
       <h2>🏰 ${war.label}</h2>
       <div class="meta-row">
-        <div class="meta-item">📅 Month: <strong>${war.month}</strong></div>
-        <div class="meta-item">👥 Members: <strong>${war.total_members}</strong></div>
-        <div class="meta-item">⚔️ Total Kills: <strong>${fmtNum(war.total_kills)}</strong></div>
-        <div class="meta-item">🏰 Avg. Might: <strong>${fmtNum(war.avg_might)}</strong></div>
-        <div class="meta-item">📊 Snapshots: <strong>${war.snapshots_count}</strong></div>
+        <div class="meta-item">📅 ${t('date')}: <strong>${war.month}</strong></div>
+        <div class="meta-item">👥 ${t('players')}: <strong>${war.total_members}</strong></div>
+        <div class="meta-item">⚔️ ${t('guild_kills')}: <strong>${fmtNum(war.total_kills)}</strong></div>
+        <div class="meta-item">🏰 ${t('average')} ${t('might')}: <strong>${fmtNum(war.avg_might)}</strong></div>
+        <div class="meta-item">📊 ${t('snapshots_suffix')}: <strong>${war.snapshots_count}</strong></div>
       </div>
     </div>
 
@@ -394,45 +381,45 @@ function renderWarDetail(container, war) {
       <div class="stat-card blue">
         <div class="stat-icon">🏰</div>
         <div class="stat-value">${fmtNum(war.total_might)}</div>
-        <div class="stat-label">Total Guild Might</div>
+        <div class="stat-label">${t('guild_power_title')}</div>
       </div>
       <div class="stat-card yellow">
         <div class="stat-icon">⚔️</div>
         <div class="stat-value">${fmtNum(war.total_kills)}</div>
-        <div class="stat-label">Total Guild Kills</div>
+        <div class="stat-label">${t('guild_kills_title')}</div>
       </div>
       <div class="stat-card green">
         <div class="stat-icon">📈</div>
         <div class="stat-value">${fmtNum(war.total_might_gained)}</div>
-        <div class="stat-label">Total Might Gained</div>
+        <div class="stat-label">${t('might_gained_title')}</div>
       </div>
       <div class="stat-card orange">
         <div class="stat-icon">🗡️</div>
         <div class="stat-value">${fmtNum(war.total_kills_gained)}</div>
-        <div class="stat-label">Total Kills Gained</div>
+        <div class="stat-label">${t('kills_gained_title')}</div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <h2>👥 Member Rankings</h2>
-        <span class="badge-count">${members.length} members</span>
+        <h2>👥 ${t('members_rankings')}</h2>
+        <span class="badge-count">${members.length} ${t('players')}</span>
       </div>
       <div class="card-body" style="padding:0.5rem;">
         <div class="toolbar">
           <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" id="war-search" placeholder="Search by name…" autocomplete="off">
+            <input type="text" id="war-search" placeholder="${t('search_placeholder')}" autocomplete="off">
           </div>
           <select class="select-box" id="war-sort">
-            <option value="kills">Sort by Kills</option>
-            <option value="kills_diff">Sort by Kills Gained</option>
-            <option value="might">Sort by Might</option>
-            <option value="might_diff">Sort by Might Gained</option>
-            <option value="name">Sort by Name</option>
+            <option value="kills">${t('sort_kills')}</option>
+            <option value="kills_diff">${t('sort_kills_diff')}</option>
+            <option value="might">${t('sort_might')}</option>
+            <option value="might_diff">${t('sort_might_diff')}</option>
+            <option value="name">${t('sort_name')}</option>
           </select>
           <select class="select-box" id="war-rank-filter">
-            <option value="">All Ranks</option>
+            <option value="">${t('all_ranks')}</option>
             <option value="r5">R5</option>
             <option value="r4">R4</option>
             <option value="r3">R3</option>
@@ -445,14 +432,14 @@ function renderWarDetail(container, war) {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Player</th>
-                <th class="center">Rank</th>
-                <th class="right">Might</th>
-                <th class="right">Might Gained</th>
-                <th class="right">Kills</th>
-                <th class="right">Kills Gained</th>
-                <th class="right">Goal %</th>
-                <th class="center">Status</th>
+                <th>${t('table_player')}</th>
+                <th class="center">${t('table_rank')}</th>
+                <th class="right">${t('table_might')}</th>
+                <th class="right">${t('table_might_gained')}</th>
+                <th class="right">${t('table_kills')}</th>
+                <th class="right">${t('table_kills_gained')}</th>
+                <th class="right">${t('table_goal')}</th>
+                <th class="center">${t('table_status')}</th>
               </tr>
             </thead>
             <tbody id="war-tbody"></tbody>
@@ -466,7 +453,7 @@ function renderWarDetail(container, war) {
 
   function renderRows() {
     if (!currentMembers.length) {
-      tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state" style="padding:2rem;"><p>No members match the filter.</p></div></td></tr>';
+      tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state" style="padding:2rem;"><p>${t('no_filter_match')}</p></div></td></tr>`;
       return;
     }
     const KILL_GOAL = 1_000_000;
@@ -496,8 +483,8 @@ function renderWarDetail(container, war) {
           </div>
         </td>
         <td class="center">${met
-          ? '<span class="badge-met">✅ MET</span>'
-          : '<span class="badge-not-met">❌ MISS</span>'}
+          ? `<span class="badge-met">✅ ${t('status_met')}</span>`
+          : `<span class="badge-not-met">❌ ${t('status_miss')}</span>`}
         </td>
       </tr>`;
     }).join('');
@@ -578,27 +565,12 @@ async function initHunt() {
     renderHuntList(listView, hunts);
   }
 
-  window.addEventListener('hashchange', () => {
-    const h = getHashParam();
-    if (h) {
-      if (listView)   listView.style.display   = 'none';
-      if (detailView) detailView.style.display = '';
-      const hunt = hunts.find(x => x.id === h || x.date === h);
-      if (!hunt) { setError(detailView, `No data for "${h}".`); return; }
-      renderHuntDetail(detailView, hunt);
-      window.scrollTo(0, 0);
-    } else {
-      if (listView)   listView.style.display   = '';
-      if (detailView) detailView.style.display = 'none';
-      renderHuntList(listView, hunts);
-      window.scrollTo(0, 0);
-    }
-  });
+  // Hashchange handled by global router below
 }
 
 function renderHuntList(container, hunts) {
   if (!hunts.length) {
-    setEmpty(container, 'No hunt reports yet', 'Upload a GIFT_STATS Excel file to start tracking hunt data.');
+    setEmpty(container, t('no_hunt_reports'), t('upload_gift_stats_help'));
     return;
   }
 
@@ -632,28 +604,28 @@ function renderHuntList(container, hunts) {
       <div class="stat-card blue">
         <div class="stat-icon">📋</div>
         <div class="stat-value">${hunts.length}</div>
-        <div class="stat-label">Total Hunt Reports</div>
+        <div class="stat-label">${t('total_hunt_reports')}</div>
       </div>
       <div class="stat-card green">
         <div class="stat-icon">✅</div>
         <div class="stat-value">${avgMet}%</div>
-        <div class="stat-label">Avg. Goal Met Rate</div>
+        <div class="stat-label">${t('avg_goal_met_rate')}</div>
       </div>
       <div class="stat-card yellow">
         <div class="stat-icon">👥</div>
         <div class="stat-value">${sorted[0]?.summary?.total_players || '—'}</div>
-        <div class="stat-label">Players (Latest)</div>
+        <div class="stat-label">${t('players_latest')}</div>
       </div>
       <div class="stat-card purple">
         <div class="stat-icon">🎯</div>
         <div class="stat-value">${sorted[0]?.summary?.min_required || '—'}</div>
-        <div class="stat-label">Min. Required Points</div>
+        <div class="stat-label">${t('min_required_pts')}</div>
       </div>
     </div>
 
     <div class="card" style="margin-bottom:1.5rem;">
       <div class="card-header">
-        <h2>📈 52-Week History — Guild Hunt Points</h2>
+        <h2>📈 ${t('hunt_history_title')}</h2>
       </div>
       <div class="card-body">
         <div class="chart-box" style="position:relative;height:250px;">
@@ -664,7 +636,7 @@ function renderHuntList(container, hunts) {
 
     <div class="card" style="margin-bottom:1.5rem;">
       <div class="card-header">
-        <h2>📦 52-Week History — Guild Monsters & Chests</h2>
+        <h2>📦 ${t('hunt_box_history_title')}</h2>
       </div>
       <div class="card-body">
         <div class="chart-box" style="position:relative;height:250px;">
@@ -675,24 +647,24 @@ function renderHuntList(container, hunts) {
 
     <div class="card">
       <div class="card-header">
-        <h2>📋 All Hunt Reports</h2>
-        <span class="badge-count">${hunts.length} report${hunts.length !== 1 ? 's' : ''}</span>
+        <h2>📋 ${t('all_hunt_reports')}</h2>
+        <span class="badge-count">${hunts.length} ${hunts.length !== 1 ? t('reports_suffix') : t('reports_suffix').replace(/s$/, '')}</span>
       </div>
       <div style="padding: 10px 15px; background: rgba(88,166,255,0.05); border-bottom: 1px solid var(--border); font-size: 0.85rem; color: var(--text-secondary); display:flex; gap:8px; align-items:center;">
-        <span>ℹ️</span> <span><strong>Note:</strong> The most recent report may represent an ongoing week and could be incomplete.</span>
+        <span>ℹ️</span> <span>${t('latest_report_note')}</span>
       </div>
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
               <th>#</th>
-              <th>Date</th>
-              <th class="right">Players</th>
-              <th class="right">Met Goal</th>
-              <th class="right">Not Met</th>
-              <th class="right">Min. Required</th>
-              <th class="center">Goal Rate</th>
-              <th class="center">Action</th>
+              <th>${t('date')}</th>
+              <th class="right">${t('players')}</th>
+              <th class="right">${t('met_goal')}</th>
+              <th class="right">${t('not_met')}</th>
+              <th class="right">${t('min_required')}</th>
+              <th class="center">${t('goal_rate')}</th>
+              <th class="center">${t('table_action')}</th>
             </tr>
           </thead>
           <tbody>
@@ -718,7 +690,7 @@ function renderHuntList(container, hunts) {
                 </td>
                 <td class="center">
                   <a href="hunt.html#${h.id}" class="btn btn-primary" style="font-size:0.78rem;padding:4px 10px;">
-                    View →
+                    ${t('view_arrow')}
                   </a>
                 </td>
               </tr>`;
@@ -735,7 +707,7 @@ function renderHuntList(container, hunts) {
     new Chart(document.getElementById('chart-hunt-pts-guild'), {
       type: 'line',
       data: { labels: chartLabels, datasets: [{
-        label: 'Guild Hunt Points', data: chartTotalPts,
+        label: t('hunt_history_title'), data: chartTotalPts,
         borderColor: '#3fb950', backgroundColor: 'rgba(63,185,80,0.1)',
         borderWidth: 2.5, tension: 0.3, fill: true,
         pointRadius: 3, pointBackgroundColor: '#0d1117', pointBorderColor: '#3fb950', pointBorderWidth: 2
@@ -755,8 +727,8 @@ function renderHuntList(container, hunts) {
     new Chart(document.getElementById('chart-hunt-box-guild'), {
       type: 'bar',
       data: { labels: lvls, datasets: [
-        { label: 'Monsters Hunted (All)', data: chartMonsters, backgroundColor: '#a371f7', borderRadius: 4 },
-        { label: 'Chests Purchased (All)', data: chartChests, backgroundColor: '#e3b341', borderRadius: 4 }
+        { label: t('monsters_hunted_all'), data: chartMonsters, backgroundColor: '#a371f7', borderRadius: 4 },
+        { label: t('chests_purchased_all'), data: chartChests, backgroundColor: '#e3b341', borderRadius: 4 }
       ]},
       options: {
         responsive: true, maintainAspectRatio: false,
@@ -775,17 +747,17 @@ function renderHuntDetail(container, hunt) {
 
   container.innerHTML = `
     <div class="breadcrumb">
-      <a href="hunt.html">🦅 Hunt Reports</a>
+      <a href="hunt.html">${t('nav_hunt')}</a>
       <span class="sep">›</span>
       <span class="current">${hunt.date}</span>
     </div>
 
     <div class="detail-header">
-      <h2>🦅 Hunt Report — ${hunt.date}</h2>
+      <h2>🦅 ${hunt.date}</h2>
       <div class="meta-row">
-        <div class="meta-item">📅 Date: <strong>${hunt.date}</strong></div>
-        <div class="meta-item">📁 File: <strong>${hunt.filename || '—'}</strong></div>
-        <div class="meta-item">🕐 Recorded: <strong>${hunt.recorded_at || '—'}</strong></div>
+        <div class="meta-item">📅 ${t('date')}: <strong>${hunt.date}</strong></div>
+        <div class="meta-item">📁 ${t('file')}: <strong>${hunt.filename || '—'}</strong></div>
+        <div class="meta-item">🕐 ${t('recorded')}: <strong>${hunt.recorded_at || '—'}</strong></div>
       </div>
     </div>
 
@@ -793,47 +765,47 @@ function renderHuntDetail(container, hunt) {
       <div class="stat-card blue">
         <div class="stat-icon">👥</div>
         <div class="stat-value">${hunt.summary.total_players}</div>
-        <div class="stat-label">Total Players</div>
+        <div class="stat-label">${t('players')}</div>
       </div>
       <div class="stat-card green">
         <div class="stat-icon">✅</div>
         <div class="stat-value">${hunt.summary.met_minimum}</div>
-        <div class="stat-label">Met Goal (≥${minReq} pts)</div>
+        <div class="stat-label">${t('met_goal_label')} (≥${minReq} pts)</div>
       </div>
       <div class="stat-card red">
         <div class="stat-icon">❌</div>
         <div class="stat-value">${hunt.summary.not_met}</div>
-        <div class="stat-label">Did Not Meet Goal</div>
+        <div class="stat-label">${t('did_not_meet_goal')}</div>
       </div>
       <div class="stat-card ${pct >= 80 ? 'green' : pct >= 50 ? 'yellow' : 'red'}">
         <div class="stat-icon">🎯</div>
         <div class="stat-value">${pct}%</div>
-        <div class="stat-label">Goal Met Rate</div>
+        <div class="stat-label">${t('goal_met_rate')}</div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <h2>🏆 Player Rankings</h2>
-        <span class="badge-count">${players.length} players</span>
+        <h2>🏆 ${t('player_rankings_title')}</h2>
+        <span class="badge-count">${players.length} ${t('players_suffix')}</span>
       </div>
       <div class="card-body" style="padding:0.5rem;">
         <div class="toolbar">
           <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" id="hunt-search" placeholder="Search player…" autocomplete="off">
+            <input type="text" id="hunt-search" placeholder="${t('search_player_placeholder')}" autocomplete="off">
           </div>
           <select class="select-box" id="hunt-filter">
-            <option value="">All Players</option>
-            <option value="met">✅ Met Goal</option>
-            <option value="not_met">❌ Not Met</option>
+            <option value="">${t('all_players_filter')}</option>
+            <option value="met">✅ ${t('met_goal_label')}</option>
+            <option value="not_met">❌ ${t('did_not_meet_goal')}</option>
           </select>
           <select class="select-box" id="hunt-sort">
-            <option value="pts_total">Sort by Total Points</option>
-            <option value="pts_hunt">Sort by Hunt Points</option>
-            <option value="pts_purchase">Sort by Purchase Points</option>
-            <option value="total_kills">Sort by Total Kills</option>
-            <option value="name">Sort by Name</option>
+            <option value="pts_total">${t('sort_total_pts')}</option>
+            <option value="pts_hunt">${t('sort_hunt_pts')}</option>
+            <option value="pts_purchase">${t('sort_purchase_pts')}</option>
+            <option value="total_kills">${t('sort_total_kills')}</option>
+            <option value="name">${t('sort_name')}</option>
           </select>
         </div>
         <div class="table-wrapper">
@@ -841,11 +813,11 @@ function renderHuntDetail(container, hunt) {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Player</th>
-                <th class="center">Rank</th>
-                <th class="right">Total Pts</th>
-                <th class="center">Goal %</th>
-                <th class="center">Status</th>
+                <th>${t('table_player')}</th>
+                <th class="center">${t('table_rank')}</th>
+                <th class="right">${t('total_score')}</th>
+                <th class="center">${t('table_goal')}</th>
+                <th class="center">${t('table_status')}</th>
               </tr>
             </thead>
             <tbody id="hunt-tbody"></tbody>
@@ -859,7 +831,7 @@ function renderHuntDetail(container, hunt) {
 
   function renderHuntRows() {
     if (!currentPlayers.length) {
-      tbody.innerHTML = '<tr><td colspan="10"><div class="empty-state" style="padding:1.5rem;"><p>No players match.</p></div></td></tr>';
+      tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state" style="padding:1.5rem;"><p>${t('no_players_match')}</p></div></td></tr>`;
       return;
     }
     tbody.innerHTML = currentPlayers.map((p, i) => {
@@ -1001,24 +973,24 @@ function renderHistoryList(container, members, lastUpdated) {
 
     <div class="card">
       <div class="card-header">
-        <h2>📈 Member History Overview</h2>
-        <span class="badge-count">${members.length} members</span>
+        <h2>📈 ${t('member_history_overview')}</h2>
+        <span class="badge-count">${members.length} ${t('players')}</span>
       </div>
       <div class="card-body" style="padding:0.5rem;">
         <div class="toolbar">
           <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" id="history-search" placeholder="Search member…" autocomplete="off">
+            <input type="text" id="history-search" placeholder="${t('search_member_placeholder')}" autocomplete="off">
           </div>
           <select class="select-box" id="history-sort">
-            <option value="might">Sort by Might</option>
-            <option value="kills">Sort by Kills</option>
-            <option value="might_diff">Sort by Might Gained</option>
-            <option value="kills_diff">Sort by Kills Gained</option>
-            <option value="name">Sort by Name</option>
+            <option value="might">${t('sort_might')}</option>
+            <option value="kills">${t('sort_kills')}</option>
+            <option value="might_diff">${t('sort_might_diff')}</option>
+            <option value="kills_diff">${t('sort_kills_diff')}</option>
+            <option value="name">${t('sort_name')}</option>
           </select>
           <select class="select-box" id="history-rank-filter">
-            <option value="">All Ranks</option>
+            <option value="">${t('all_ranks')}</option>
             <option value="r5">R5</option>
             <option value="r4">R4</option>
             <option value="r3">R3</option>
@@ -1031,14 +1003,14 @@ function renderHistoryList(container, members, lastUpdated) {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Name</th>
-                <th class="center">Rank</th>
-                <th class="right">Current Might</th>
-                <th class="right">Might Gained</th>
-                <th class="right">Current Kills</th>
-                <th class="right">Kills Gained</th>
-                <th class="right">Snapshots</th>
-                <th class="center">Detail</th>
+                <th>${t('player')}</th>
+                <th class="center">${t('rank_label')}</th>
+                <th class="right">${t('current_might')}</th>
+                <th class="right">${t('might_gained_label')}</th>
+                <th class="right">${t('current_kills')}</th>
+                <th class="right">${t('kills_gained_label')}</th>
+                <th class="right">${t('snapshots_label')}</th>
+                <th class="center">${t('detail_label')}</th>
               </tr>
             </thead>
             <tbody id="history-tbody"></tbody>
@@ -1052,7 +1024,7 @@ function renderHistoryList(container, members, lastUpdated) {
 
   function renderHistoryRows() {
     if (!currentMembers.length) {
-      tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state" style="padding:1.5rem;"><p>No members match.</p></div></td></tr>';
+      tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state" style="padding:1.5rem;"><p>${t('no_members_match')}</p></div></td></tr>`;
       return;
     }
     tbody.innerHTML = currentMembers.map((m, i) => {
@@ -1074,7 +1046,7 @@ function renderHistoryList(container, members, lastUpdated) {
           <td class="right">${fmtDelta(kills_diff)}</td>
           <td class="right mono">${snaps.length}</td>
           <td class="center">
-            <a href="player.html?view=all&id=${encodeURIComponent(m.name||'')}" class="btn btn-primary" style="font-size:0.78rem;padding:4px 10px;">View →</a>
+            <a href="player.html?view=all&id=${encodeURIComponent(m.name||'')}" class="btn btn-primary" style="font-size:0.78rem;padding:4px 10px;">${t('view_arrow')}</a>
           </td>
         </tr>`;
     }).join('');
@@ -1208,7 +1180,11 @@ function renderHistoryDetail(container, member, lastUpdated) {
 // ══════════════════════════════════════════════════════════
 //  ROUTER — detect current page and init
 // ══════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
+// ══════════════════════════════════════════════════════════
+//  ROUTER — detect current page and init
+// ══════════════════════════════════════════════════════════
+
+function route() {
   initMobileMenu();
   setActiveNav();
 
@@ -1219,6 +1195,23 @@ document.addEventListener('DOMContentLoaded', () => {
   else if (page === 'hunt.html')             initHunt();
   else if (page === 'history.html')          initHistory();
   else if (page === 'members.html')          initMembers();
+  
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Wait for i18n to be ready before first render
+  const checkI18n = setInterval(() => {
+    if (window.i18n && Object.keys(window.i18n.data).length > 0) {
+      clearInterval(checkI18n);
+      route();
+    }
+  }, 50);
+
+  // Re-render when language changes
+  window.addEventListener('languageChanged', () => route());
+  // Handle back/forward and anchor navigation
+  window.addEventListener('hashchange', () => route());
 });
 
 // ══════════════════════════════════════════════════════════
@@ -1228,37 +1221,37 @@ async function initMembers() {
   const container = document.getElementById('members-container');
   if (!container) return;
 
-  setLoading(container, 'Loading members…');
+  setLoading(container, t('loading_members'));
 
   let data;
   try {
     data = await loadJSON('members.json');
   } catch (err) {
-    setError(container, 'Could not load members.json. ' + err.message);
+    setError(container, t('error_loading') + ': ' + err.message);
     return;
   }
 
   if (!data.length) {
-    setEmpty(container, 'No members found', 'The guild directory is currently empty.');
+    setEmpty(container, t('no_members_match'), t('no_tracker_data')); // Use generic no data msg if file empty
     return;
   }
 
   container.innerHTML = `
     <div class="card">
       <div class="card-header">
-        <h2>👥 Active Members</h2>
-        <span class="badge-count">${data.length} members</span>
+        <h2>👥 ${t('active_members')}</h2>
+        <span class="badge-count">${data.length} ${t('players')}</span>
       </div>
       <div class="card-body" style="padding:0.5rem;">
         <div class="toolbar">
           <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" id="members-search" placeholder="Search name or @telegram…" autocomplete="off">
+            <input type="text" id="members-search" placeholder="${t('search_members_placeholder')}" autocomplete="off">
           </div>
           <select class="select-box" id="members-sort">
-            <option value="kills">Sort by Kills</option>
-            <option value="might">Sort by Might</option>
-            <option value="name">Sort by Name</option>
+            <option value="kills">${t('sort_kills')}</option>
+            <option value="might">${t('sort_might')}</option>
+            <option value="name">${t('sort_name')}</option>
           </select>
         </div>
         <div class="table-wrapper">
@@ -1266,12 +1259,12 @@ async function initMembers() {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Name</th>
-                <th class="center">Rank</th>
-                <th class="center">Telegram</th>
-                <th class="right">Might</th>
-                <th class="right">Kills</th>
-                <th class="center">Action</th>
+                <th>${t('player')}</th>
+                <th class="center">${t('rank_label')}</th>
+                <th class="center">${t('telegram')}</th>
+                <th class="right">${t('might')}</th>
+                <th class="right">${t('kills')}</th>
+                <th class="center">${t('table_action')}</th>
               </tr>
             </thead>
             <tbody id="members-tbody"></tbody>
@@ -1290,7 +1283,7 @@ async function initMembers() {
 
   function renderRows() {
     if (!currentMembers.length) {
-      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state" style="padding:1.5rem;"><p>No members match.</p></div></td></tr>';
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state" style="padding:1.5rem;"><p>${t('no_members_match')}</p></div></td></tr>`;
       return;
     }
     tbody.innerHTML = currentMembers.map((m, i) => `
@@ -1302,7 +1295,7 @@ async function initMembers() {
         <td class="right mono">${fmtNum(m.might)}</td>
         <td class="right mono" style="color:var(--accent-yellow);">${fmtNum(m.kills)}</td>
         <td class="center">
-          <a href="player.html?view=member&id=${encodeURIComponent(m.name||'')}" class="btn btn-primary" style="font-size:0.75rem;padding:4px 8px;">View Profile</a>
+          <a href="player.html?view=member&id=${encodeURIComponent(m.name||'')}" class="btn btn-primary" style="font-size:0.75rem;padding:4px 8px;">${t('view_profile')}</a>
         </td>
       </tr>`).join('');
   }
