@@ -116,7 +116,7 @@ function _statCards(cards) {
     </div>`).join('')}</div>`;
 }
 
-function _profileHeader(name, growth, view) {
+function _profileHeader(name, growth, view, telegram) {
   const snaps   = growth ? (growth.snapshots||[]) : [];
   const last    = snaps.length ? snaps[snaps.length-1] : null;
   const initial = name.charAt(0).toUpperCase();
@@ -127,6 +127,11 @@ function _profileHeader(name, growth, view) {
   else if (view==='hunt')   { backLink='./hunt.html';    backText='🦅 Hunt Reports'; }
   else if (view==='all')    { backLink='./history.html'; backText='📈 All History'; }
   else                      { backLink='./members.html'; backText='👥 Check Member'; }
+
+  const tgBadge = telegram
+    ? `<span style="font-size:0.78rem;color:var(--accent-orange);border:1px solid var(--accent-orange);border-radius:4px;padding:2px 7px;margin-left:6px;vertical-align:middle;font-family:var(--font-mono);white-space:nowrap;">💬 ${telegram}</span>`
+    : '';
+
   return `
     <div class="breadcrumb" style="margin-bottom:1.5rem;">
       <a href="${backLink}">${backText}</a><span class="sep">›</span><span class="current">${name}</span>
@@ -134,7 +139,7 @@ function _profileHeader(name, growth, view) {
     <div class="profile-header">
       <div class="profile-avatar">${initial}</div>
       <div class="profile-info">
-        <h1>${name} <span style="font-size:0.8rem;color:var(--accent-orange);border:1px solid var(--accent-orange);border-radius:4px;padding:2px 6px;margin-left:8px;vertical-align:middle;font-family:var(--font-mono);">${uid}</span></h1>
+        <h1>${name} <span style="font-size:0.8rem;color:var(--accent-orange);border:1px solid var(--accent-orange);border-radius:4px;padding:2px 6px;margin-left:8px;vertical-align:middle;font-family:var(--font-mono);">${uid}</span>${tgBadge}</h1>
         <p>Rank: ${last?last.rank:'—'} &nbsp;|&nbsp; First seen: ${growth?growth.first_seen||'—':'—'}</p>
       </div>
     </div>`;
@@ -432,32 +437,40 @@ function buildAllHistorySection(name, growth, playerHunts52, rawFestivalData) {
 
 // ─── VIEWS ───────────────────────────────────────────────────────────────────
 
-async function renderWarView(container, name, month, growth, warDailyData) {
+async function renderWarView(container, name, month, growth, warDailyData, telegram) {
   const sec = buildWarSection(name, month, warDailyData, growth);
-  container.innerHTML = _profileHeader(name, growth, 'war') + sec.html;
+  container.innerHTML = _profileHeader(name, growth, 'war', telegram) + sec.html;
   sec.mount();
 }
 
-async function renderHuntView(container, name, week, huntDailyData, playerHunts52) {
+async function renderHuntView(container, name, week, huntDailyData, playerHunts52, telegram, growth) {
+  const initial  = name.charAt(0).toUpperCase();
+  const uid      = growth && growth.uid ? growth.uid : null;
+  const tgBadge  = telegram
+    ? `<span style="font-size:0.78rem;color:var(--accent-orange);border:1px solid var(--accent-orange);border-radius:4px;padding:2px 7px;margin-left:6px;vertical-align:middle;font-family:var(--font-mono);white-space:nowrap;">💬 ${telegram}</span>`
+    : '';
+  const uidBadge = uid
+    ? `<span style="font-size:0.8rem;color:var(--accent-orange);border:1px solid var(--accent-orange);border-radius:4px;padding:2px 6px;margin-left:8px;vertical-align:middle;font-family:var(--font-mono);">${uid}</span>`
+    : '';
   const breadcrumb = `<div class="breadcrumb" style="margin-bottom:1.5rem;">
     <a href="./hunt.html">🦅 Hunt Reports</a><span class="sep">›</span><span class="current">${name}</span>
   </div>
   <div class="profile-header">
-    <div class="profile-avatar">${name.charAt(0).toUpperCase()}</div>
-    <div class="profile-info"><h1>${name}</h1><p>Hunt Player Dashboard</p></div>
+    <div class="profile-avatar">${initial}</div>
+    <div class="profile-info"><h1>${name}${uidBadge}${tgBadge}</h1><p>Hunt Player Dashboard</p></div>
   </div>`;
   const sec = buildHuntSection(name, week, huntDailyData, playerHunts52);
   container.innerHTML = breadcrumb + sec.html;
   sec.mount();
 }
 
-async function renderAllHistoryView(container, name, growth, playerHunts52, festivalData) {
+async function renderAllHistoryView(container, name, growth, playerHunts52, festivalData, telegram) {
   const sec = buildAllHistorySection(name, growth, playerHunts52, festivalData);
-  container.innerHTML = _profileHeader(name, growth, 'all') + sec.html;
+  container.innerHTML = _profileHeader(name, growth, 'all', telegram) + sec.html;
   sec.mount();
 }
 
-async function renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData) {
+async function renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData, telegram) {
   let nameChangesHtml = '';
   if (growth && growth.name_history && growth.name_history.length > 0) {
     nameChangesHtml = `<div class="card" style="margin-bottom:1.5rem;">
@@ -476,7 +489,7 @@ async function renderMemberView(container, name, growth, warDailyData, huntDaily
   }
 
   container.innerHTML = `
-    ${_profileHeader(name, growth, 'member')}
+    ${_profileHeader(name, growth, 'member', telegram)}
     ${nameChangesHtml}
     <div style="display:flex;gap:.5rem;margin:1.2rem 0;flex-wrap:wrap;">
       <button id="btn-war"  class="player-tab active" onclick="switchMemberTab('war')">🏰 War</button>
@@ -534,12 +547,13 @@ async function initPlayer() {
   setLoading(container, `Loading ${name}…`);
 
   try {
-    const [histRes, mhuntsRes, warDailyRes, huntDailyRes, festRes] = await Promise.allSettled([
+    const [histRes, mhuntsRes, warDailyRes, huntDailyRes, festRes, membersRes] = await Promise.allSettled([
       loadJSON('history.json'),
       loadJSON('member_hunts.json'),
       loadJSON('member_war_daily.json'),
       loadJSON('member_hunt_daily.json'),
       loadJSON('festival.json'),
+      loadJSON('members.json'),
     ]);
 
     const histData      = histRes.status      === 'fulfilled' ? histRes.value      : { members: [] };
@@ -547,14 +561,19 @@ async function initPlayer() {
     const warDailyData  = warDailyRes.status  === 'fulfilled' ? warDailyRes.value  : {};
     const huntDailyData = huntDailyRes.status === 'fulfilled' ? huntDailyRes.value : {};
     const festivalData  = festRes.status      === 'fulfilled' ? festRes.value      : [];
+    const membersData   = membersRes.status   === 'fulfilled' ? membersRes.value   : [];
 
-    const growth       = (histData.members || []).find(m => m.name === name) || null;
+    const growth        = (histData.members || []).find(m => m.name === name) || null;
     const playerHunts52 = mhunts[name] || [];
 
-    if      (view === 'war')    await renderWarView(container, name, month, growth, warDailyData);
-    else if (view === 'hunt')   await renderHuntView(container, name, week, huntDailyData, playerHunts52);
-    else if (view === 'all')    await renderAllHistoryView(container, name, growth, playerHunts52, festivalData);
-    else /* member */           await renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData);
+    // Resolve Telegram @username by matching name in the website members.json
+    const memberEntry = membersData.find(m => (m.name || '').toLowerCase() === name.toLowerCase());
+    const telegram    = memberEntry ? (memberEntry.telegram || '') : '';
+
+    if      (view === 'war')    await renderWarView(container, name, month, growth, warDailyData, telegram);
+    else if (view === 'hunt')   await renderHuntView(container, name, week, huntDailyData, playerHunts52, telegram, growth);
+    else if (view === 'all')    await renderAllHistoryView(container, name, growth, playerHunts52, festivalData, telegram);
+    else /* member */           await renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData, telegram);
 
   } catch(err) {
     setError(container, 'Could not load player data: ' + err.message);
