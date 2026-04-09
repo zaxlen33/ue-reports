@@ -124,7 +124,7 @@ function renderHistoryTab() {
   });
   const n = festivals.length;
   document.getElementById('stat-festivals').textContent    = n;
-  document.getElementById('stat-avg-score').textContent    = fmtComma(Math.round(sumAvgScore / n));
+  document.getElementById('stat-avg-score').textContent    = fmtNum(Math.round(sumAvgScore / n));
   document.getElementById('stat-avg-pass').textContent     = Math.round(sumPass / n);
   document.getElementById('stat-avg-fail').textContent     = Math.round(sumFail / n);
   document.getElementById('stat-avg-bonus').textContent    = Math.round(sumBonus / n);
@@ -161,7 +161,7 @@ function renderFestivalList(list) {
         <div class="session-meta">
           <div class="session-row">
             <span>🏆 ${t('total_score')}</span>
-            <span class="val">${fmtComma(s.total_score)}</span>
+            <span class="val">${fmtNum(s.total_score)}</span>
           </div>
           <div class="session-row">
             <span>👥 ${t('players')}</span>
@@ -218,7 +218,7 @@ function openFestivalDetail(date) {
   // Detail summary box
   document.getElementById('detail-summary-box').innerHTML = `
     <h2>${fullDate(f.date)}</h2>
-    <div class="festival-score-big">${fmtComma(s.total_score)}</div>
+    <div class="festival-score-big">${fmtNum(s.total_score)}</div>
     <div class="meta-row" style="margin-top:0.8rem">
       <div class="meta-item">👥 <strong>${s.total_players}</strong> ${t('players')}</div>
       <div class="meta-item">✅ ${t('bonus')}: <strong>${s.completed_bonus}</strong></div>
@@ -249,12 +249,12 @@ function renderDetailTable(players) {
     const isBest = p.score === best && best > 0;
     const cls   = isBest ? 'row-best' : (met ? 'row-pass' : 'row-fail');
     return `<tr class="${cls}">
-      <td class="center">${i+1}</td>
-      <td>${isBest ? '🥇 ' : ''}${p.name}</td>
-      <td class="right"><strong>${fmtComma(p.score)}</strong></td>
-      <td class="center ${met?'met-yes':'met-no'}">${met ? t('met_yes') : t('met_no')}</td>
-      <td class="center">${p.completed}/${p.total}</td>
-      <td class="center">${p.bonus ? '✅' : '—'}</td>
+      <td class="center" data-label="#">${i+1}</td>
+      <td data-label="${t('table_player')}">${isBest ? '🥇 ' : ''}${p.name}</td>
+      <td class="right" data-label="${t('score')}"><strong>${fmtNum(p.score)}</strong></td>
+      <td class="center ${met?'met-yes':'met-no'}" data-label="${t('table_status')}">${met ? t('met_yes') : t('met_no')}</td>
+      <td class="center" data-label="${t('bonus_completed')}">${p.completed}/${p.total}</td>
+      <td class="center ${p.bonus?'met-yes':''}" data-label="${t('bonus')}">${p.bonus ? '✅' : '—'}</td>
     </tr>`;
   }).join('');
 }
@@ -297,9 +297,9 @@ function buildHistoryCharts() {
     data: {
       labels,
       datasets: [
-        { label: 'Participants Completed',   data: passed, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.08)',   borderWidth: 2.5, tension: 0.3, fill: false, ..._ptStyle('#22c55e') },
-        { label: "Participants Didn't Complete",   data: failed, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.08)',   borderWidth: 2.5, tension: 0.3, fill: false, ..._ptStyle('#ef4444') },
-        { label: 'Bonus Earned', data: bonus,  borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.08)',  borderWidth: 2.5, tension: 0.3, fill: false, borderDash: [5,3], ..._ptStyle('#a855f7') }
+        { label: t('fest_part_completed'),   data: passed, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.08)',   borderWidth: 2.5, tension: 0.3, fill: false, ..._ptStyle('#22c55e') },
+        { label: t('fest_part_failed'),   data: failed, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.08)',   borderWidth: 2.5, tension: 0.3, fill: false, ..._ptStyle('#ef4444') },
+        { label: t('fest_bonus_earned'), data: bonus,  borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.08)',  borderWidth: 2.5, tension: 0.3, fill: false, borderDash: [5,3], ..._ptStyle('#a855f7') }
       ]
     },
     options: {
@@ -308,7 +308,7 @@ function buildHistoryCharts() {
       plugins: { legend: _legend, tooltip: _tip },
       scales: {
         x: { grid: { display: false } },
-        y: { grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: 'Players', color: 'rgba(255,255,255,0.5)' }, beginAtZero: true }
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: t('players'), color: 'rgba(255,255,255,0.5)' }, beginAtZero: true }
       }
     }
   });
@@ -320,7 +320,7 @@ function buildHistoryCharts() {
     data: {
       labels,
       datasets: [{
-        label: 'Avg Points/Player',
+        label: t('avg_pts_player_ax'),
         data: avgScores,
         borderColor: '#f59e0b',
         backgroundColor: festivals.length === 1 ? 'rgba(245,158,11,0.7)' : 'rgba(245,158,11,0.12)',
@@ -338,7 +338,7 @@ function buildHistoryCharts() {
       },
       scales: {
         x: { grid: { display: false } },
-        y: { grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: 'Avg Points', color: 'rgba(255,255,255,0.5)' }, beginAtZero: false }
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: t('avg_pts_player_ax'), color: 'rgba(255,255,255,0.5)' }, beginAtZero: false }
       }
     }
   });
@@ -391,8 +391,8 @@ async function initTasks() {
       </div>
       
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;">
-        ${renderTaskTable('🔥 200% Bonus Missions', t200, 'orange')}
-        ${renderTaskTable('🌟 120% Bonus Missions', t120, 'blue')}
+        ${renderTaskTable(t('bonus_missions_200_title'), t200, 'orange')}
+        ${renderTaskTable(t('bonus_missions_120_title'), t120, 'blue')}
       </div>
     `;
   } catch (err) {
@@ -427,13 +427,13 @@ function renderTaskTable(title, tasksList, colorClass) {
             </tr>
           </thead>
           <tbody>
-            ${tasksList.map(t => `
+            ${tasksList.map(task => `
               <tr style="transition:background 0.15s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background=''">
-                <td class="right mono" style="font-weight:700;color:var(--accent-${colorClass});font-size:0.95rem;">${t.required_points}</td>
-                <td style="font-weight:600;color:var(--text-primary);">${t.mission}</td>
-                <td>
-                  <div style="color:var(--text-secondary);font-weight:500;">${t.quantity}</div>
-                  <div style="color:var(--text-muted);font-size:0.8rem;margin-top:2px;">⏳ ${t.time_limit}</div>
+                <td class="right mono" data-label="${t('points')}" style="font-weight:700;color:var(--accent-${colorClass});font-size:0.95rem;">${task.required_points}</td>
+                <td class="card-main" data-label="${t('mission')}" style="font-weight:600;color:var(--text-primary);">${task.mission}</td>
+                <td data-label="${t('qty_time_limit')}">
+                  <div style="color:var(--text-secondary);font-weight:500;">${task.quantity}</div>
+                  <div style="color:var(--text-muted);font-size:0.8rem;margin-top:2px;">⏳ ${task.time_limit}</div>
                 </td>
               </tr>
             `).join('')}
