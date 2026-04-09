@@ -432,13 +432,14 @@ function renderWarDetail(container, war) {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Name</th>
+                <th>Player</th>
                 <th class="center">Rank</th>
                 <th class="right">Might</th>
                 <th class="right">Might Gained</th>
                 <th class="right">Kills</th>
                 <th class="right">Kills Gained</th>
-                <th class="center">1M Kill Quota</th>
+                <th class="right">Goal %</th>
+                <th class="center">Status</th>
               </tr>
             </thead>
             <tbody id="war-tbody"></tbody>
@@ -452,10 +453,16 @@ function renderWarDetail(container, war) {
 
   function renderRows() {
     if (!currentMembers.length) {
-      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state" style="padding:2rem;"><p>No members match the filter.</p></div></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state" style="padding:2rem;"><p>No members match the filter.</p></div></td></tr>';
       return;
     }
-    tbody.innerHTML = currentMembers.map((m, i) => `
+    const KILL_GOAL = 1_000_000;
+    tbody.innerHTML = currentMembers.map((m, i) => {
+      const gained  = Math.max(0, m.kills_diff || 0);
+      const killPct = Math.min(100, Math.round((gained / KILL_GOAL) * 100));
+      const pctColor = killPct >= 100 ? 'var(--accent-green)' : killPct >= 50 ? 'var(--accent-yellow)' : 'var(--accent-red)';
+      const met = gained >= KILL_GOAL;
+      return `
       <tr data-searchable="${(m.name || '').toLowerCase()} ${(m.rank || '').toLowerCase()}">
         <td class="mono" style="color:var(--text-muted);">${i + 1}</td>
         <td style="font-weight:500;"><a href="player.html?view=war&id=${encodeURIComponent(m.name||'')}&month=${war.month}" class="member-link">${m.name || '—'}</a></td>
@@ -464,11 +471,23 @@ function renderWarDetail(container, war) {
         <td class="right">${fmtDelta(m.might_diff)}</td>
         <td class="right mono" style="color:var(--accent-yellow);">${fmtNum(m.kills)}</td>
         <td class="right">${fmtDelta(m.kills_diff)}</td>
-        <td class="center">${m.kills_diff >= 1000000
+        <td class="right">
+          <span class="mono" style="font-weight:700;">${fmtNum(gained)}
+            <span style="font-size:0.75rem;color:var(--text-muted);"> / 1M</span>
+          </span>
+          <div style="display:flex;align-items:center;gap:5px;margin-top:3px;justify-content:flex-end;">
+            <div class="progress-bar" style="width:55px;">
+              <div class="progress-fill" style="width:${killPct}%;background:${pctColor};"></div>
+            </div>
+            <span class="pct-label" style="color:${pctColor};">${killPct}%</span>
+          </div>
+        </td>
+        <td class="center">${met
           ? '<span class="badge-met">✅ MET</span>'
-          : `<span class="badge-not-met" title="${fmtNum(1000000 - Math.max(0,m.kills_diff))} remaining">❌ ${fmtNum(Math.max(0,m.kills_diff))}/${fmtNum(1000000)}</span>`
-        }</td>
-      </tr>`).join('');
+          : '<span class="badge-not-met">❌ MISS</span>'}
+        </td>
+      </tr>`;
+    }).join('');
   }
 
   renderRows();
@@ -810,6 +829,7 @@ function renderHuntDetail(container, hunt) {
               <tr>
                 <th>#</th>
                 <th>Player</th>
+                <th class="center">Rank</th>
                 <th class="right">Total Pts</th>
                 <th class="center">Goal %</th>
                 <th class="center">Status</th>
@@ -826,16 +846,17 @@ function renderHuntDetail(container, hunt) {
 
   function renderHuntRows() {
     if (!currentPlayers.length) {
-      tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state" style="padding:1.5rem;"><p>No players match.</p></div></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10"><div class="empty-state" style="padding:1.5rem;"><p>No players match.</p></div></td></tr>';
       return;
     }
     tbody.innerHTML = currentPlayers.map((p, i) => {
       const goalPct = minReq > 0 ? Math.min(100, Math.round((p.pts_total / minReq) * 100)) : 0;
       const pctColor = p.met_minimum ? 'var(--accent-green)' : goalPct >= 75 ? 'var(--accent-yellow)' : 'var(--accent-red)';
       return `
-        <tr data-searchable="${(p.name || '').toLowerCase()}">
+        <tr data-searchable="${(p.name || '').toLowerCase()} ${(p.rank || '').toLowerCase()}">
           <td class="mono" style="color:var(--text-muted);">${i + 1}</td>
           <td style="font-weight:500;"><a href="player.html?view=hunt&id=${encodeURIComponent(p.name||'')}&week=${encodeURIComponent(hunt.id)}" class="member-link">${p.name || '—'}</a></td>
+          <td class="center">${rankBadge(p.rank || '')}</td>
           <td class="right mono" style="font-weight:700;">${fmtNum(p.pts_total)}
             <span style="font-size:0.75rem;color:var(--text-muted);"> / ${minReq}</span></td>
           <td class="center">
