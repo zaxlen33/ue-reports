@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guild Tracker · UE Guild Dashboard</title>
   <link rel="stylesheet" href="./css/styles.css">
+  <script src="./js/i18n.js"></script>
   <style>
     .month-card { margin-bottom: 2rem; }
     .month-header {
@@ -24,15 +25,30 @@
         <span class="logo">🏰</span>
         <span>UE Guild <span>Dashboard</span></span>
       </div>
-      <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="lang-switcher-container">
+          <select class="lang-select" id="lang-switcher">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="pt">Português</option>
+            <option value="vi">Tiếng Việt</option>
+            <option value="ja">日本語</option>
+            <option value="zh">简体中文</option>
+          </select>
+        </div>
+        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      </div>
+
       <ul class="navbar-nav">
-        <li><a href="./index.html">🏠 Home</a></li>
-        <li><a href="./war.html">🏰 War</a></li>
-        <li><a href="./hunt.html">🦅 Hunt</a></li>
-        <li><a href="./festival.html">🎪 Festival</a></li>
-        <li><a href="./rankings.html">🏆 Rankings</a></li>
-        <li><a href="./members.html">👥 Check Member</a></li>
-        <li><a href="./tracker.html" class="active">🕵️‍♂️ Tracker</a></li>
+        <li><a href="./index.html" data-i18n="nav_home">🏠 Home</a></li>
+        <li><a href="./war.html" data-i18n="nav_war">🏰 War</a></li>
+        <li><a href="./hunt.html" data-i18n="nav_hunt">🦅 Hunt</a></li>
+        <li><a href="./festival.html" data-i18n="nav_festival">🎪 Festival</a></li>
+        <li><a href="./rankings.html" data-i18n="nav_rankings">🏆 Rankings</a></li>
+        <li><a href="./members.html" data-i18n="nav_members">👥 Check Member</a></li>
+        <li><a href="./tracker.html" class="active" data-i18n="nav_tracker">🕵️‍♂️ Tracker</a></li>
       </ul>
     </div>
   </nav>
@@ -40,20 +56,20 @@
   <!-- ── Page Content ── -->
   <main class="container">
     <div class="page-header">
-      <h1>🕵️‍♂️ Guild Tracker</h1>
-      <p>Secure log of all member name changes. Identify players tracking reliably via their encrypted, permanent UID alongside their current might and kills.</p>
+      <h1 data-i18n="nav_tracker">🕵️‍♂️ Guild Tracker</h1>
+      <p data-i18n="tracker_desc">Secure log of all member name changes. Identify players tracking reliably via their encrypted, permanent UID alongside their current might and kills.</p>
     </div>
 
     <div id="tracker-container">
       <div class="loading-state">
         <div class="spinner"></div>
-        <p>Loading tracker payload…</p>
+        <p data-i18n="loading_tracker">Loading tracker payload…</p>
       </div>
     </div>
   </main>
 
   <footer class="footer">
-    <div class="container">
+    <div class="container" data-i18n="footer_text">
       UE Guild Dashboard · Data updated via Telegram Bot
     </div>
   </footer>
