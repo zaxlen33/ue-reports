@@ -32,6 +32,16 @@ function fmtNum(n) {
   return Number(n).toLocaleString(window.i18n?.currentLang || 'en');
 }
 
+/** Format large numbers compactly for stat cards (1.23B, 456.7M, 12.3K) */
+function fmtCompact(n) {
+  if (n === null || n === undefined) return '—';
+  const num = Number(n);
+  if (Math.abs(num) >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+  if (Math.abs(num) >= 1e6) return (num / 1e6).toFixed(1) + 'M';
+  if (Math.abs(num) >= 1e4) return (num / 1e3).toFixed(1) + 'K';
+  return fmtNum(n);
+}
+
 /** Format a delta value (+X / -X / 0) */
 function fmtDelta(n, html = true) {
   if (n === null || n === undefined || n === 0) return html ? '<span class="delta zero">0</span>' : '0';
@@ -85,7 +95,15 @@ function initMobileMenu() {
   const toggle = document.querySelector('.menu-toggle');
   const nav = document.querySelector('.navbar-nav');
   if (!toggle || !nav) return;
-  toggle.addEventListener('click', () => nav.classList.toggle('open'));
+  
+  // Close menu if route is called again (e.g. language change)
+  nav.classList.remove('open');
+  
+  // Only add listener once
+  if (!toggle.dataset.initialized) {
+    toggle.addEventListener('click', () => nav.classList.toggle('open'));
+    toggle.dataset.initialized = 'true';
+  }
 }
 
 /** Filter table rows by search text */
@@ -155,12 +173,12 @@ async function initIndex() {
         </div>
         <div class="stat-card orange">
           <div class="stat-icon">⭐</div>
-          <div class="stat-value">${latestWeek ? fmtNum(latestWeek.total_power) : '—'}</div>
+          <div class="stat-value">${latestWeek ? fmtCompact(latestWeek.total_power) : '—'}</div>
           <div class="stat-label" data-i18n="guild_power">${t('guild_power')}</div>
         </div>
         <div class="stat-card yellow">
           <div class="stat-icon">⚔️</div>
-          <div class="stat-value">${latestWeek ? fmtNum(latestWeek.total_kills) : '—'}</div>
+          <div class="stat-value">${latestWeek ? fmtCompact(latestWeek.total_kills) : '—'}</div>
           <div class="stat-label" data-i18n="guild_kills">${t('guild_kills')}</div>
         </div>
       </div>`;
@@ -256,17 +274,17 @@ function renderWarList(container, weekly, wars) {
       </div>
       <div class="stat-card orange">
         <div class="stat-icon">🏰</div>
-        <div class="stat-value">${fmtNum(lrPower)}</div>
+        <div class="stat-value">${fmtCompact(lrPower)}</div>
         <div class="stat-label">${t('might_last')}</div>
       </div>
       <div class="stat-card yellow">
         <div class="stat-icon">⚔️</div>
-        <div class="stat-value">${fmtNum(lrKills)}</div>
+        <div class="stat-value">${fmtCompact(lrKills)}</div>
         <div class="stat-label">${t('kills_last')}</div>
       </div>
       <div class="stat-card purple">
         <div class="stat-icon">📊</div>
-        <div class="stat-value">${fmtNum(lrAvg)}</div>
+        <div class="stat-value">${fmtCompact(lrAvg)}</div>
         <div class="stat-label">${t('avg_might_last')}</div>
       </div>
     </div>
@@ -380,22 +398,22 @@ function renderWarDetail(container, war) {
     <div class="stats-grid" style="margin-bottom:1.5rem;">
       <div class="stat-card blue">
         <div class="stat-icon">🏰</div>
-        <div class="stat-value">${fmtNum(war.total_might)}</div>
+        <div class="stat-value">${fmtCompact(war.total_might)}</div>
         <div class="stat-label">${t('guild_power_title')}</div>
       </div>
       <div class="stat-card yellow">
         <div class="stat-icon">⚔️</div>
-        <div class="stat-value">${fmtNum(war.total_kills)}</div>
+        <div class="stat-value">${fmtCompact(war.total_kills)}</div>
         <div class="stat-label">${t('guild_kills_title')}</div>
       </div>
       <div class="stat-card green">
         <div class="stat-icon">📈</div>
-        <div class="stat-value">${fmtNum(war.total_might_gained)}</div>
+        <div class="stat-value">${fmtCompact(war.total_might_gained)}</div>
         <div class="stat-label">${t('might_gained_title')}</div>
       </div>
       <div class="stat-card orange">
         <div class="stat-icon">🗡️</div>
-        <div class="stat-value">${fmtNum(war.total_kills_gained)}</div>
+        <div class="stat-value">${fmtCompact(war.total_kills_gained)}</div>
         <div class="stat-label">${t('kills_gained_title')}</div>
       </div>
     </div>
@@ -435,9 +453,9 @@ function renderWarDetail(container, war) {
                 <th>${t('table_player')}</th>
                 <th class="center">${t('table_rank')}</th>
                 <th class="right">${t('table_might')}</th>
-                <th class="right">${t('table_might_gained')}</th>
+                <th class="right hide-mobile">${t('table_might_gained')}</th>
                 <th class="right">${t('table_kills')}</th>
-                <th class="right">${t('table_kills_gained')}</th>
+                <th class="right hide-mobile">${t('table_kills_gained')}</th>
                 <th class="right">${t('table_goal')}</th>
                 <th class="center">${t('table_status')}</th>
               </tr>
@@ -467,10 +485,10 @@ function renderWarDetail(container, war) {
         <td class="mono" style="color:var(--text-muted);">${i + 1}</td>
         <td style="font-weight:500;"><a href="player.html?view=war&id=${encodeURIComponent(m.name||'')}&month=${war.month}" class="member-link">${m.name || '—'}</a></td>
         <td class="center">${rankBadge(m.rank)}</td>
-        <td class="right mono">${fmtNum(m.might)}</td>
-        <td class="right">${fmtDelta(m.might_diff)}</td>
-        <td class="right mono" style="color:var(--accent-yellow);">${fmtNum(m.kills)}</td>
-        <td class="right">${fmtDelta(m.kills_diff)}</td>
+        <td class="right mono">${fmtCompact(m.might)}</td>
+        <td class="right hide-mobile">${fmtDelta(m.might_diff)}</td>
+        <td class="right mono" style="color:var(--accent-yellow);">${fmtCompact(m.kills)}</td>
+        <td class="right hide-mobile">${fmtDelta(m.kills_diff)}</td>
         <td class="right">
           <span class="mono" style="font-weight:700;">${fmtNum(gained)}
             <span style="font-size:0.75rem;color:var(--text-muted);"> / 1M</span>
@@ -797,8 +815,8 @@ function renderHuntDetail(container, hunt) {
           </div>
           <select class="select-box" id="hunt-filter">
             <option value="">${t('all_players_filter')}</option>
-            <option value="met">✅ ${t('met_goal_label')}</option>
-            <option value="not_met">❌ ${t('did_not_meet_goal')}</option>
+            <option value="met">✅ ${t('status_met')}</option>
+            <option value="not_met">❌ ${t('status_miss')}</option>
           </select>
           <select class="select-box" id="hunt-sort">
             <option value="pts_total">${t('sort_total_pts')}</option>
@@ -854,8 +872,8 @@ function renderHuntDetail(container, hunt) {
           </td>
           <td class="center">
             ${p.met_minimum
-              ? '<span class="badge-met">✅ MET</span>'
-              : '<span class="badge-not-met">❌ MISS</span>'}
+              ? `<span class="badge-met">✅ ${t('status_met')}</span>`
+              : `<span class="badge-not-met">❌ ${t('status_miss')}</span>`}
           </td>
         </tr>`;
     }).join('');
@@ -886,7 +904,7 @@ async function initHistory() {
   const container = document.getElementById('history-container');
   if (!container) return;
 
-  setLoading(container, 'Loading history data…');
+  setLoading(container, t('loading_history'));
 
   let data;
   try {
@@ -898,7 +916,7 @@ async function initHistory() {
 
   const members = data.members || [];
   if (!members.length) {
-    setEmpty(container, 'No history data yet', 'History tracking starts after the second Excel upload.');
+    setEmpty(container, t('not_found'), t('not_enough_data'));
     return;
   }
 
@@ -952,22 +970,22 @@ function renderHistoryList(container, members, lastUpdated) {
       <div class="stat-card purple">
         <div class="stat-icon">👥</div>
         <div class="stat-value">${members.length}</div>
-        <div class="stat-label">Tracked Members</div>
+        <div class="stat-label">${t('tracked_members')}</div>
       </div>
       <div class="stat-card blue">
         <div class="stat-icon">🏰</div>
-        <div class="stat-value">${fmtNum(totalMight)}</div>
-        <div class="stat-label">Total Guild Might</div>
+        <div class="stat-value">${fmtCompact(totalMight)}</div>
+        <div class="stat-label">${t('total_guild_might_label')}</div>
       </div>
       <div class="stat-card yellow">
         <div class="stat-icon">⚔️</div>
-        <div class="stat-value">${fmtNum(totalKills)}</div>
-        <div class="stat-label">Total Guild Kills</div>
+        <div class="stat-value">${fmtCompact(totalKills)}</div>
+        <div class="stat-label">${t('total_guild_kills_label')}</div>
       </div>
       <div class="stat-card green">
         <div class="stat-icon">📅</div>
         <div class="stat-value">${lastUpdated || '—'}</div>
-        <div class="stat-label">Last Updated</div>
+        <div class="stat-label">${t('last_updated_label')}</div>
       </div>
     </div>
 
@@ -1086,7 +1104,7 @@ function renderHistoryDetail(container, member, lastUpdated) {
 
   container.innerHTML = `
     <div class="breadcrumb">
-      <a href="history.html">📈 Member History</a>
+      <a href="history.html">📈 ${t('member_history_overview')}</a>
       <span class="sep">›</span>
       <span class="current">${member.name}</span>
     </div>
@@ -1094,11 +1112,10 @@ function renderHistoryDetail(container, member, lastUpdated) {
     <div class="detail-header">
       <h2>📈 ${member.name}</h2>
       <div class="meta-row">
-
-        <div class="meta-item">📅 First Seen: <strong>${member.first_seen || '—'}</strong></div>
-        <div class="meta-item">🔄 Last Seen: <strong>${member.last_seen || '—'}</strong></div>
-        <div class="meta-item">📊 Snapshots: <strong>${snaps.length}</strong></div>
-        ${member.name_history && member.name_history.length ? `<div class="meta-item">📝 Name Changes: <strong>${member.name_history.length}</strong></div>` : ''}
+        <div class="meta-item">📅 ${t('first_seen_label')}: <strong>${member.first_seen || '—'}</strong></div>
+        <div class="meta-item">🔄 ${t('last_seen_label')}: <strong>${member.last_seen || '—'}</strong></div>
+        <div class="meta-item">📊 ${t('snapshots_label')}: <strong>${snaps.length}</strong></div>
+        ${member.name_history && member.name_history.length ? `<div class="meta-item">📝 ${t('name_changes_label')}: <strong>${member.name_history.length}</strong></div>` : ''}
       </div>
     </div>
 
@@ -1106,49 +1123,49 @@ function renderHistoryDetail(container, member, lastUpdated) {
     <div class="stats-grid" style="margin-bottom:1.5rem;">
       <div class="stat-card blue">
         <div class="stat-icon">🏰</div>
-        <div class="stat-value">${fmtNum(last.might)}</div>
-        <div class="stat-label">Current Might</div>
+        <div class="stat-value">${fmtCompact(last.might)}</div>
+        <div class="stat-label">${t('current_might')}</div>
         <div class="stat-delta ${last.might_diff > 0 ? 'positive' : last.might_diff < 0 ? 'negative' : 'neutral'}">
-          ${fmtDelta(last.might_diff, false)} this period
+          ${fmtDelta(last.might_diff, false)} ${t('this_period_label')}
         </div>
       </div>
       <div class="stat-card yellow">
         <div class="stat-icon">⚔️</div>
-        <div class="stat-value">${fmtNum(last.kills)}</div>
-        <div class="stat-label">Current Kills</div>
+        <div class="stat-value">${fmtCompact(last.kills)}</div>
+        <div class="stat-label">${t('current_kills')}</div>
         <div class="stat-delta ${last.kills_diff > 0 ? 'positive' : last.kills_diff < 0 ? 'negative' : 'neutral'}">
-          ${fmtDelta(last.kills_diff, false)} this period
+          ${fmtDelta(last.kills_diff, false)} ${t('this_period_label')}
         </div>
       </div>
       <div class="stat-card purple">
         <div class="stat-icon">🎖️</div>
         <div class="stat-value">${(last.rank || '—').toUpperCase()}</div>
-        <div class="stat-label">Current Rank</div>
+        <div class="stat-label">${t('current_rank_label')}</div>
       </div>
       <div class="stat-card green">
         <div class="stat-icon">📅</div>
         <div class="stat-value">${last.date || '—'}</div>
-        <div class="stat-label">Latest Snapshot</div>
+        <div class="stat-label">${t('latest_snapshot_label')}</div>
       </div>
     </div>` : ''}
 
     <div class="card">
       <div class="card-header">
-        <h2>📊 Snapshot History</h2>
-        <span class="badge-count">${snaps.length} snapshot${snaps.length !== 1 ? 's' : ''}</span>
+        <h2>📊 ${t('snapshot_history_label')}</h2>
+        <span class="badge-count">${snaps.length} ${t('snapshots_label')}</span>
       </div>
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
               <th>#</th>
-              <th>Date</th>
-              <th>File</th>
-              <th class="center">Rank</th>
-              <th class="right">Might</th>
-              <th class="right">Might Gained</th>
-              <th class="right">Kills</th>
-              <th class="right">Kills Gained</th>
+              <th>${t('date')}</th>
+              <th>${t('file_label')}</th>
+              <th class="center">${t('rank_label')}</th>
+              <th class="right">${t('might')}</th>
+              <th class="right">${t('might_gained_label')}</th>
+              <th class="right">${t('kills')}</th>
+              <th class="right">${t('kills_gained_label')}</th>
             </tr>
           </thead>
           <tbody>
@@ -1170,7 +1187,7 @@ function renderHistoryDetail(container, member, lastUpdated) {
 
     ${member.name_history && member.name_history.length ? `
     <div class="card">
-      <div class="card-header"><h2>📝 Name History</h2></div>
+      <div class="card-header"><h2>📝 ${t('name_history_title')}</h2></div>
       <div class="card-body">
         ${member.name_history.map(n => `<div style="padding:4px 0;font-family:var(--font-mono);font-size:0.88rem;color:var(--text-secondary);">${n}</div>`).join('')}
       </div>
