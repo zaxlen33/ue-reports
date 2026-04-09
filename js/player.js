@@ -147,45 +147,56 @@ function _profileHeader(name, growth, view, telegram) {
 
 // ─── Build war section HTML + mount charts ───────────────────────────────────
 
-function buildWarSection(name, month, warDailyData, growth) {
+function buildWarSection(name, month, warDailyData, growth, warsData) {
   const allDays  = (warDailyData[name] || []);
-  const monthDays = month
-    ? allDays.filter(s => s.date.startsWith(month))
-    : allDays.slice(-31);
+  // Chart always shows last 30 days of available daily data
+  const chartDays = allDays.slice(-31);
 
-  const snaps52  = growth ? (growth.snapshots || []) : [];
+  const last30   = chartDays.length ? chartDays[chartDays.length - 1] : null;
+  const first30  = chartDays.length ? chartDays[0] : null;
 
-  const last30   = monthDays.length ? monthDays[monthDays.length - 1] : null;
-  const first30  = monthDays.length ? monthDays[0] : null;
-  const mightDiff = (last30 && first30) ? last30.might - first30.might : 0;
-  const killsDiff = (last30 && first30) ? Math.max(0, last30.kills - first30.kills) : 0;
+  // For kills/might diff: use wars.json when a specific month is selected.
+  // wars.json has the full month delta (first→last snapshot of the month) for
+  // any historical month — no daily data window limitation.
+  let mightDiff, killsDiff;
+  if (month && warsData) {
+    const warMonth  = warsData.find(w => w.month === month);
+    const warMember = warMonth ? (warMonth.members || []).find(m => m.name === name) : null;
+    mightDiff = warMember ? (warMember.might_diff || 0) : ((last30 && first30) ? last30.might - first30.might : 0);
+    killsDiff = warMember ? (warMember.kills_diff || 0) : ((last30 && first30) ? Math.max(0, last30.kills - first30.kills) : 0);
+  } else {
+    // General "last 30 days" view — use daily delta
+    mightDiff = (last30 && first30) ? last30.might - first30.might : 0;
+    killsDiff = (last30 && first30) ? Math.max(0, last30.kills - first30.kills) : 0;
+  }
 
   let html = '';
   html += _statCards([
-    { icon:'🏰', value: last30 ? fmtNum(last30.might) : '—', label:'Current Might', color:'blue', delta: mightDiff, deltaLabel:'this month' },
-    { icon:'⚔️', value: last30 ? fmtNum(last30.kills) : '—', label:'Current Kills', color:'yellow', delta: killsDiff, deltaLabel:'this month' },
+    { icon:'🏰', value: last30 ? fmtNum(last30.might) : '—', label:'Current Might', color:'blue',   delta: mightDiff, deltaLabel: month ? 'this month' : 'last 30 days' },
+    { icon:'⚔️', value: last30 ? fmtNum(last30.kills) : '—', label:'Current Kills', color:'yellow', delta: killsDiff, deltaLabel: month ? 'this month' : 'last 30 days' },
   ]);
 
   html += _quotaBadge(killsDiff);
 
-  const monthLabel = month ? (() => { try { return new Date(month+'-02').toLocaleDateString('en',{month:'long',year:'numeric'}); } catch{ return month; } })() : 'Last 30 days';
-  html += `<div class="section-label">📅 ${monthLabel} — Daily snapshots</div>`;
+  // Chart section — always shows last 30 days of daily snapshots
+  html += `<div class="section-label">📅 Last 30 Days — Daily snapshots</div>`;
   html += `<div class="chart-grid">`;
-  html += monthDays.length >= 2 ? _card('🏰 Power — Each Day of the Month', 'chart-war-might-30d') : _noData('🏰 Power (30 days)', 'At least 2 snapshots needed for this month.');
-  html += monthDays.length >= 2 ? _card('⚔️ Kills — Each Day of the Month', 'chart-war-kills-30d') : _noData('⚔️ Kills (30 days)', 'At least 2 snapshots needed.');
+  html += chartDays.length >= 2 ? _card('🏰 Power — Last 30 Days', 'chart-war-might-30d') : _noData('🏰 Power (30 days)', 'At least 2 snapshots needed.');
+  html += chartDays.length >= 2 ? _card('⚔️ Kills — Last 30 Days', 'chart-war-kills-30d') : _noData('⚔️ Kills (30 days)', 'At least 2 snapshots needed.');
   html += `</div>`;
 
   html += `<div class="section-label">📊 All History — 52 Weeks</div>`;
+  const snaps52  = growth ? (growth.snapshots || []) : [];
   html += `<div class="chart-grid">`;
   html += snaps52.length >= 2 ? _card('🏰 Power — 52 Weeks', 'chart-war-might-52w') : _noData('🏰 Power — 52 Weeks');
   html += snaps52.length >= 2 ? _card('⚔️ Kills — 52 Weeks', 'chart-war-kills-52w') : _noData('⚔️ Kills — 52 Weeks');
   html += `</div>`;
 
   return { html, mount() {
-    if (monthDays.length >= 2) {
-      const dates  = monthDays.map(s => s.date.slice(5));
-      _lineChart('chart-war-might-30d', 'Might', dates, monthDays.map(s=>s.might), '#58a6ff');
-      _lineChart('chart-war-kills-30d', 'Kills', dates, monthDays.map(s=>s.kills), '#f85149');
+    if (chartDays.length >= 2) {
+      const dates = chartDays.map(s => s.date.slice(5));
+      _lineChart('chart-war-might-30d', 'Might', dates, chartDays.map(s=>s.might), '#58a6ff');
+      _lineChart('chart-war-kills-30d', 'Kills', dates, chartDays.map(s=>s.kills), '#f85149');
     }
     if (snaps52.length >= 2) {
       const dates = snaps52.map(s => s.date);
@@ -437,8 +448,8 @@ function buildAllHistorySection(name, growth, playerHunts52, rawFestivalData) {
 
 // ─── VIEWS ───────────────────────────────────────────────────────────────────
 
-async function renderWarView(container, name, month, growth, warDailyData, telegram) {
-  const sec = buildWarSection(name, month, warDailyData, growth);
+async function renderWarView(container, name, month, growth, warDailyData, telegram, warsData) {
+  const sec = buildWarSection(name, month, warDailyData, growth, warsData);
   container.innerHTML = _profileHeader(name, growth, 'war', telegram) + sec.html;
   sec.mount();
 }
@@ -470,12 +481,12 @@ async function renderAllHistoryView(container, name, growth, playerHunts52, fest
   sec.mount();
 }
 
-async function renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData, telegram) {
+async function renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData, telegram, warsData) {
   let nameChangesHtml = '';
   if (growth && growth.name_history && growth.name_history.length > 0) {
     nameChangesHtml = `<div class="card" style="margin-bottom:1.5rem;">
       <div class="card-header" style="cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-        <h2 style="font-size:1.1rem; color:var(--text-primary);"><span style="margin-right:8px;">📝</span> Identity Tracker (${growth.name_history.length} Previous Names) <span style="font-size:0.8rem;float:right;color:var(--text-secondary);font-weight:normal;">Click to expand ▾</span></h2>
+        <h2 style="font-size:1.1rem; color:var(--text-primary);"><span style="margin-right:8px;">📝</span>Identity Tracker (${growth.name_history.length} Previous Names) <span style="font-size:0.8rem;float:right;color:var(--text-secondary);font-weight:normal;">Click to expand ▾</span></h2>
       </div>
       <div class="card-body" style="display:none; padding:0; border-top:1px solid var(--border);">
         <table style="border:none;margin:0;">
@@ -511,7 +522,7 @@ async function renderMemberView(container, name, growth, warDailyData, huntDaily
     const urlMonth = new URLSearchParams(window.location.search).get('month') || '';
     const urlWeek  = new URLSearchParams(window.location.search).get('week')  || '';
     let   sec;
-    if      (tab === 'war')  sec = buildWarSection(name, urlMonth, warDailyData, growth);
+    if      (tab === 'war')  sec = buildWarSection(name, urlMonth, warDailyData, growth, warsData);
     else if (tab === 'hunt') sec = buildHuntSection(name, urlWeek, huntDailyData, playerHunts52);
     else if (tab === 'fest') sec = buildFestivalSection(name, growth, festivalData);
     else                     sec = buildAllHistorySection(name, growth, playerHunts52, festivalData);
@@ -519,7 +530,6 @@ async function renderMemberView(container, name, growth, warDailyData, huntDaily
     sec.mount();
   }
 
-  // Mount War immediately (default tab)
   mountTab('war');
 
   window.switchMemberTab = function(tab) {
@@ -547,13 +557,14 @@ async function initPlayer() {
   setLoading(container, `Loading ${name}…`);
 
   try {
-    const [histRes, mhuntsRes, warDailyRes, huntDailyRes, festRes, membersRes] = await Promise.allSettled([
+    const [histRes, mhuntsRes, warDailyRes, huntDailyRes, festRes, membersRes, warsRes] = await Promise.allSettled([
       loadJSON('history.json'),
       loadJSON('member_hunts.json'),
       loadJSON('member_war_daily.json'),
       loadJSON('member_hunt_daily.json'),
       loadJSON('festival.json'),
       loadJSON('members.json'),
+      loadJSON('wars.json'),       // full monthly war data — used for accurate kills/might delta
     ]);
 
     const histData      = histRes.status      === 'fulfilled' ? histRes.value      : { members: [] };
@@ -562,6 +573,7 @@ async function initPlayer() {
     const huntDailyData = huntDailyRes.status === 'fulfilled' ? huntDailyRes.value : {};
     const festivalData  = festRes.status      === 'fulfilled' ? festRes.value      : [];
     const membersData   = membersRes.status   === 'fulfilled' ? membersRes.value   : [];
+    const warsData      = warsRes.status      === 'fulfilled' ? warsRes.value      : [];
 
     const growth        = (histData.members || []).find(m => m.name === name) || null;
     const playerHunts52 = mhunts[name] || [];
@@ -570,10 +582,10 @@ async function initPlayer() {
     const memberEntry = membersData.find(m => (m.name || '').toLowerCase() === name.toLowerCase());
     const telegram    = memberEntry ? (memberEntry.telegram || '') : '';
 
-    if      (view === 'war')    await renderWarView(container, name, month, growth, warDailyData, telegram);
+    if      (view === 'war')    await renderWarView(container, name, month, growth, warDailyData, telegram, warsData);
     else if (view === 'hunt')   await renderHuntView(container, name, week, huntDailyData, playerHunts52, telegram, growth);
     else if (view === 'all')    await renderAllHistoryView(container, name, growth, playerHunts52, festivalData, telegram);
-    else /* member */           await renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData, telegram);
+    else /* member */           await renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData, telegram, warsData);
 
   } catch(err) {
     setError(container, 'Could not load player data: ' + err.message);
