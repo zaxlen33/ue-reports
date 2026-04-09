@@ -126,6 +126,80 @@ a:hover { text-decoration: underline; }
   padding: 4px;
 }
 
+/* Language Switcher */
+.lang-switcher-container {
+  display: flex;
+  align-items: center;
+  margin-left: 0.75rem;
+  position: relative;
+}
+
+.lang-switcher-container::before {
+  content: "🌐";
+  position: absolute;
+  left: 12px;
+  font-size: 0.85rem;
+  pointer-events: none;
+  opacity: 0.8;
+  z-index: 1;
+}
+
+.lang-select {
+  background: rgba(35, 44, 61, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-primary);
+  padding: 6px 32px 6px 34px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.lang-select:hover {
+  border-color: var(--accent-blue);
+  background: rgba(88, 166, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(88, 166, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.lang-select:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+}
+
+/* Custom indicator for the select */
+.lang-switcher-container::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 52%;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid var(--text-muted);
+  border-bottom: 2px solid var(--text-muted);
+  transform: translateY(-50%) rotate(45deg);
+  pointer-events: none;
+  transition: border-color 0.2s;
+}
+
+.lang-switcher-container:hover::after {
+  border-color: var(--accent-blue);
+}
+
+@media (max-width: 768px) {
+  .lang-switcher-container {
+    margin-left: 0;
+    margin-right: 10px;
+  }
+}
+
 /* ── Page Header ── */
 .page-header {
   padding: 2.5rem 0 1.5rem;
