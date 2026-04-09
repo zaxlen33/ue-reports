@@ -14,9 +14,21 @@
     .leaderboard-rank.top-1 { color: #ffd700; text-shadow: 0 0 5px rgba(255,215,0,0.5); font-size: 1.4rem; }
     .leaderboard-rank.top-2 { color: #c0c0c0; text-shadow: 0 0 5px rgba(192,192,192,0.5); font-size: 1.3rem; }
     .leaderboard-rank.top-3 { color: #cd7f32; text-shadow: 0 0 5px rgba(205,127,50,0.5); font-size: 1.2rem; }
-    .leaderboard-name { font-weight: 600; color: var(--text-primary); margin-left: 10px; flex-grow: 1; text-decoration: none; }
+    .leaderboard-name { font-weight: 600; color: var(--text-primary); margin-left: 10px; flex-grow: 1; text-decoration: none; overflow: hidden; text-overflow: ellipsis; }
     .leaderboard-name:hover { text-decoration: underline; color: var(--accent-blue); }
-    .leaderboard-value { font-family: var(--font-mono); font-weight: 700; font-size: 1.1rem; }
+    .leaderboard-value { font-family: var(--font-mono); font-weight: 700; font-size: 1.1rem; white-space: nowrap; }
+    @media (max-width: 768px) {
+      .leaderboard-container { grid-template-columns: 1fr; }
+      .leaderboard-row { padding: 10px 8px; }
+      .leaderboard-name { font-size: 0.85rem; }
+      .leaderboard-value { font-size: 0.9rem; }
+    }
+    @media (max-width: 480px) {
+      .leaderboard-container { grid-template-columns: 1fr; gap: 1rem; }
+      .leaderboard-rank { width: 24px; font-size: 1rem; }
+      .leaderboard-name { font-size: 0.8rem; margin-left: 6px; }
+      .leaderboard-value { font-size: 0.82rem; }
+    }
   </style>
 </head>
 <body>
