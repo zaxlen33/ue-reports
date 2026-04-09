@@ -86,14 +86,14 @@ async function initTracker() {
               <tbody>
                 ${items.map(item => `
                   <tr>
-                    <td class="mono" style="color:var(--accent-orange); font-weight:800; font-size:0.95rem;">${item.uid}</td>
-                    <td>
+                    <td data-label="UID"><span class="uid-badge">🔐 ${item.uid}</span></td>
+                    <td data-label="${t('old_name_new_name')}">
                       <span style="color:var(--text-secondary); text-decoration:line-through; font-size:0.9rem;">${item.oldName}</span>
                       <strong style="color:var(--text-primary); margin-left:8px; display:inline-block;">➔ ${item.currentName}</strong>
                     </td>
-                    <td class="right mono" style="color:var(--text-secondary)">${item.until}</td>
-                    <td class="right mono font-number">${item.might.toLocaleString(window.i18n?.currentLang || 'en')}</td>
-                    <td class="right mono font-number">${item.kills.toLocaleString(window.i18n?.currentLang || 'en')}</td>
+                    <td class="right mono" data-label="${t('until_date')}" style="color:var(--text-secondary)">${item.until}</td>
+                    <td class="right mono font-number" data-label="${t('current_might')}">${fmtCompact(item.might)}</td>
+                    <td class="right mono font-number" data-label="${t('current_kills')}">${fmtCompact(item.kills)}</td>
                   </tr>
                 `).join('')}
               </tbody>
