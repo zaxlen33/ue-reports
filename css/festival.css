@@ -133,3 +133,10 @@
 tr.row-pass td:first-child { border-left: 2px solid var(--festival-pass); }
 tr.row-fail td:first-child { border-left: 2px solid var(--festival-fail); }
 tr.row-best { background: rgba(245,158,11,0.06) !important; }
+
+@media (max-width: 768px) {
+  tr.row-pass td:first-child,
+  tr.row-fail td:first-child { border-left: none; }
+  tr.row-pass { border-left: 4px solid var(--festival-pass) !important; }
+  tr.row-fail { border-left: 4px solid var(--festival-fail) !important; }
+}
