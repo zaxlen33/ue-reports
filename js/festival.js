@@ -297,9 +297,9 @@ function buildHistoryCharts() {
     data: {
       labels,
       datasets: [
-        { label: t('fest_part_completed'),   data: passed, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.08)',   borderWidth: 2.5, tension: 0.3, fill: false, ..._ptStyle('#22c55e') },
-        { label: t('fest_part_failed'),   data: failed, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.08)',   borderWidth: 2.5, tension: 0.3, fill: false, ..._ptStyle('#ef4444') },
-        { label: t('fest_bonus_earned'), data: bonus,  borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.08)',  borderWidth: 2.5, tension: 0.3, fill: false, borderDash: [5,3], ..._ptStyle('#a855f7') }
+        { label: 'Participants Completed',   data: passed, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.08)',   borderWidth: 2.5, tension: 0.3, fill: false, ..._ptStyle('#22c55e') },
+        { label: "Participants Didn't Complete",   data: failed, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.08)',   borderWidth: 2.5, tension: 0.3, fill: false, ..._ptStyle('#ef4444') },
+        { label: 'Bonus Earned', data: bonus,  borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.08)',  borderWidth: 2.5, tension: 0.3, fill: false, borderDash: [5,3], ..._ptStyle('#a855f7') }
       ]
     },
     options: {
@@ -308,7 +308,7 @@ function buildHistoryCharts() {
       plugins: { legend: _legend, tooltip: _tip },
       scales: {
         x: { grid: { display: false } },
-        y: { grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: t('players'), color: 'rgba(255,255,255,0.5)' }, beginAtZero: true }
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: 'Players', color: 'rgba(255,255,255,0.5)' }, beginAtZero: true }
       }
     }
   });
@@ -320,7 +320,7 @@ function buildHistoryCharts() {
     data: {
       labels,
       datasets: [{
-        label: t('avg_pts_player_ax'),
+        label: 'Avg Points/Player',
         data: avgScores,
         borderColor: '#f59e0b',
         backgroundColor: festivals.length === 1 ? 'rgba(245,158,11,0.7)' : 'rgba(245,158,11,0.12)',
@@ -338,7 +338,7 @@ function buildHistoryCharts() {
       },
       scales: {
         x: { grid: { display: false } },
-        y: { grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: t('avg_pts_player_ax'), color: 'rgba(255,255,255,0.5)' }, beginAtZero: false }
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: 'Avg Points', color: 'rgba(255,255,255,0.5)' }, beginAtZero: false }
       }
     }
   });
@@ -391,8 +391,8 @@ async function initTasks() {
       </div>
       
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;">
-        ${renderTaskTable(t('bonus_missions_200_title'), t200, 'orange')}
-        ${renderTaskTable(t('bonus_missions_120_title'), t120, 'blue')}
+        ${renderTaskTable('🔥 200% Bonus Missions', t200, 'orange')}
+        ${renderTaskTable('🌟 120% Bonus Missions', t120, 'blue')}
       </div>
     `;
   } catch (err) {
