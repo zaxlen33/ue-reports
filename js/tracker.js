@@ -86,7 +86,7 @@ async function initTracker() {
               <tbody>
                 ${items.map(item => `
                   <tr>
-                    <td class="mono" data-label="UID" style="color:var(--accent-orange); font-weight:800; font-size:0.95rem;">${item.uid}</td>
+                    <td data-label="UID"><span class="uid-badge">🔐 ${item.uid}</span></td>
                     <td data-label="${t('old_name_new_name')}">
                       <span style="color:var(--text-secondary); text-decoration:line-through; font-size:0.9rem;">${item.oldName}</span>
                       <strong style="color:var(--text-primary); margin-left:8px; display:inline-block;">➔ ${item.currentName}</strong>
