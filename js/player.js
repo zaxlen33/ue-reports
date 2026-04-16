@@ -255,15 +255,18 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52, huntUidKey
   }
 
   // ── 1. Calculate quota/stats for the SPECIFIED week (statWeekId) ──
-  const statDays = statWeekId ? (playerWeeks[statWeekId] || []) : [];
   let weekTotal = 0;
-  for (const d of statDays) weekTotal += d.pts_total;
-  
-  // Minimum points required — read from the weekly data if available so it
-  // stays in sync with the Python config without re-deploying JS.
-  const minPts   = (statDays.length > 0 && statDays[0].min_required) ||
-                   (memberHuntEntry && memberHuntEntry.hunt_min) || 56;
-  const met      = weekTotal >= minPts;
+  let minPts = 56;
+  let met = false;
+  if (statWeekId) {
+    const statWeek = playerHunts52.find(w => w.date && w.date.startsWith(statWeekId));
+    if (statWeek) {
+      weekTotal = statWeek.pts_total || 0;
+      minPts = statWeek.min_required || (memberHuntEntry && memberHuntEntry.hunt_min) || 56;
+      met = weekTotal >= minPts;
+    }
+  }
+
   const pct      = Math.min(100, Math.round((weekTotal / minPts) * 100));
   const pctColor = met ? 'var(--accent-green)' : pct >= 75 ? 'var(--accent-yellow)' : 'var(--accent-red)';
 
@@ -338,13 +341,8 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52, huntUidKey
       _lineChart('chart-hunt-pts-52w', t('hunt_history'), hd, playerHunts52.map(h=>h.pts_total), '#3fb950');
     }
     if (playerHunts52.length >= 1) {
-      const monsters = {lvl1:0,lvl2:0,lvl3:0,lvl4:0,lvl5:0}, purchases = {lvl1:0,lvl2:0,lvl3:0,lvl4:0,lvl5:0};
-      playerHunts52.forEach(h => {
-        for(let i=1; i<=5; i++) {
-          monsters[`lvl${i}`] += (h.monsters?.[`lvl${i}`] || 0);
-          purchases[`lvl${i}`] += (h.purchases?.[`lvl${i}`] || 0);
-        }
-      });
+      const monsters = memberHuntEntry ? (memberHuntEntry.lifetime_monsters || {}) : {};
+      const purchases = memberHuntEntry ? (memberHuntEntry.lifetime_purchases || {}) : {};
       const lvls = ['Lvl 1','Lvl 2','Lvl 3','Lvl 4','Lvl 5'];
       _barChart('chart-hunt-bar-52w', lvls, [
         { label: t('monsters'),  data:[monsters.lvl1||0,monsters.lvl2||0,monsters.lvl3||0,monsters.lvl4||0,monsters.lvl5||0],   backgroundColor:'#a371f7' },
@@ -415,7 +413,7 @@ function buildFestivalSection(name, growth, rawFestivalData) {
 
 // ─── Build "All History" section (52w only) ──────────────────────────────────
 
-function buildAllHistorySection(name, growth, playerHunts52, rawFestivalData) {
+function buildAllHistorySection(name, growth, playerHunts52, mhuntsEntry, rawFestivalData) {
   const snaps52 = growth ? (growth.snapshots||[]) : [];
   const last52  = snaps52.length ? snaps52[snaps52.length-1] : null;
   const lastH52 = playerHunts52.length ? playerHunts52[playerHunts52.length-1] : null;
@@ -475,13 +473,8 @@ function buildAllHistorySection(name, growth, playerHunts52, rawFestivalData) {
       _lineChart('chart-all-hunt-pts', t('points'), hd, playerHunts52.map(h => h.pts_total), '#3fb950');
     }
     if (lastH52) {
-      const monsters = {lvl1:0,lvl2:0,lvl3:0,lvl4:0,lvl5:0}, purchases = {lvl1:0,lvl2:0,lvl3:0,lvl4:0,lvl5:0};
-      playerHunts52.forEach(h => {
-        for(let i=1; i<=5; i++) {
-          monsters[`lvl${i}`] += (h.monsters?.[`lvl${i}`] || 0);
-          purchases[`lvl${i}`] += (h.purchases?.[`lvl${i}`] || 0);
-        }
-      });
+      const monsters = mhuntsEntry ? (mhuntsEntry.lifetime_monsters || {}) : {};
+      const purchases = mhuntsEntry ? (mhuntsEntry.lifetime_purchases || {}) : {};
       const lvls = ['Lvl 1','Lvl 2','Lvl 3','Lvl 4','Lvl 5'];
       _barChart('chart-all-hunt-bar', lvls, [
         { label: t('monsters'), data:[monsters.lvl1||0,monsters.lvl2||0,monsters.lvl3||0,monsters.lvl4||0,monsters.lvl5||0],backgroundColor:'#a371f7'},
@@ -505,7 +498,7 @@ async function renderWarView(container, name, month, growth, warDailyData, teleg
   sec.mount();
 }
 
-async function renderHuntView(container, name, week, huntDailyData, playerHunts52, telegram, growth, huntUidKey) {
+async function renderHuntView(container, name, week, huntDailyData, playerHunts52, mhuntsEntry, telegram, growth, huntUidKey) {
   const initial  = name.charAt(0).toUpperCase();
   const uid      = growth && growth.uid ? growth.uid : null;
   const tgBadge  = telegram ? `<span class="tg-badge" style="margin-left:8px;vertical-align:middle;">💬 ${telegram}</span>` : '';
@@ -518,18 +511,18 @@ async function renderHuntView(container, name, week, huntDailyData, playerHunts5
     <div class="profile-avatar">${initial}</div>
     <div class="profile-info"><h1>${name}${uidBadge}${tgBadge}</h1><p>${t('hunt_player_dashboard')}</p></div>
   </div>`;
-  const sec = buildHuntSection(name, week, huntDailyData, playerHunts52, huntUidKey);
+  const sec = buildHuntSection(name, week, huntDailyData, playerHunts52, huntUidKey, mhuntsEntry);
   container.innerHTML = breadcrumb + sec.html;
   sec.mount();
 }
 
-async function renderAllHistoryView(container, name, growth, playerHunts52, festivalData, telegram) {
-  const sec = buildAllHistorySection(name, growth, playerHunts52, festivalData);
+async function renderAllHistoryView(container, name, growth, playerHunts52, mhuntsEntry, festivalData, telegram) {
+  const sec = buildAllHistorySection(name, growth, playerHunts52, mhuntsEntry, festivalData);
   container.innerHTML = _profileHeader(name, growth, 'all', telegram) + sec.html;
   sec.mount();
 }
 
-async function renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData, telegram, warsData, warUidKey, huntUidKey) {
+async function renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, mhuntsEntry, festivalData, telegram, warsData, warUidKey, huntUidKey) {
   let nameChangesHtml = '';
   if (growth && growth.name_history && growth.name_history.length > 0) {
     nameChangesHtml = `<div class="card" style="margin-bottom:1.5rem;">
@@ -571,9 +564,9 @@ async function renderMemberView(container, name, growth, warDailyData, huntDaily
     const urlWeek  = new URLSearchParams(window.location.search).get('week')  || '';
     let   sec;
     if      (tab === 'war')  sec = buildWarSection(name, urlMonth, warDailyData, growth, warsData, warUidKey);
-    else if (tab === 'hunt') sec = buildHuntSection(name, urlWeek, huntDailyData, playerHunts52, huntUidKey);
+    else if (tab === 'hunt') sec = buildHuntSection(name, urlWeek, huntDailyData, playerHunts52, huntUidKey, mhuntsEntry);
     else if (tab === 'fest') sec = buildFestivalSection(name, growth, festivalData);
-    else                     sec = buildAllHistorySection(name, growth, playerHunts52, festivalData);
+    else                     sec = buildAllHistorySection(name, growth, playerHunts52, mhuntsEntry, festivalData);
     el.innerHTML = sec.html;
     sec.mount();
   }
@@ -670,6 +663,7 @@ async function initPlayer() {
       }
       return null;
     })();
+    const mhuntsEntry = mhuntsUidKey ? mhunts[mhuntsUidKey] : null;
     const playerHunts52 = mhuntsUidKey ? (mhunts[mhuntsUidKey].weeks || []) : [];
 
     // Resolve Telegram @username from website members.json (uses current name)
@@ -677,9 +671,9 @@ async function initPlayer() {
     const telegram    = memberEntry ? (memberEntry.telegram || '') : '';
 
     if      (view === 'war')  await renderWarView(container, name, month, growth, warDailyData, telegram, warsData, warUidKey);
-    else if (view === 'hunt') await renderHuntView(container, name, week, huntDailyData, playerHunts52, telegram, growth, huntUidKey);
-    else if (view === 'all')  await renderAllHistoryView(container, name, growth, playerHunts52, festivalData, telegram);
-    else /* member */         await renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData, telegram, warsData, warUidKey, huntUidKey);
+    else if (view === 'hunt') await renderHuntView(container, name, week, huntDailyData, playerHunts52, mhuntsEntry, telegram, growth, huntUidKey);
+    else if (view === 'all')  await renderAllHistoryView(container, name, growth, playerHunts52, mhuntsEntry, festivalData, telegram);
+    else /* member */         await renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, mhuntsEntry, festivalData, telegram, warsData, warUidKey, huntUidKey);
 
   } catch(err) {
     setError(container, t('error_loading') + ': ' + err.message);
