@@ -214,15 +214,15 @@ function buildWarSection(name, month, warDailyData, growth, warsData, warUidKey)
   // Chart section — always shows last 30 days of daily snapshots
   html += `<div class="section-label">📅 ${t('last_30_days')}</div>`;
   html += `<div class="chart-grid">`;
-  html += chartDays.length >= 2 ? _card('🏰 ' + t('power_30d'), 'chart-war-might-30d') : _noData(t('power_30d'));
-  html += chartDays.length >= 2 ? _card('⚔️ ' + t('kills_30d'), 'chart-war-kills-30d') : _noData(t('kills_30d'));
+  html += chartDays.length >= 2 ? _card(t('chart_power_30d'), 'chart-war-might-30d') : _noData(t('power_30d'));
+  html += chartDays.length >= 2 ? _card(t('chart_kills_30d'), 'chart-war-kills-30d') : _noData(t('kills_30d'));
   html += `</div>`;
 
   html += `<div class="section-label">📊 ${t('yearly_history')}</div>`;
   const snaps52  = growth ? (growth.snapshots || []) : [];
-  html += `<div class="chart-grid">`;
-  html += snaps52.length >= 2 ? _card('🏰 ' + t('war_history'), 'chart-war-might-52w') : _noData(t('war_history'));
-  html += snaps52.length >= 2 ? _card('⚔️ ' + t('war_history'), 'chart-war-kills-52w') : _noData(t('war_history'));
+  html += `<div class="chart-grid" style="margin-top:-0.5rem;">`;
+  html += snaps52.length >= 2 ? _card(t('chart_power_52w'), 'chart-war-might-52w') : _noData(t('war_history'));
+  html += snaps52.length >= 2 ? _card(t('chart_kills_52w'), 'chart-war-kills-52w') : _noData(t('war_history'));
   html += `</div>`;
 
   return { html, mount() {
@@ -241,7 +241,7 @@ function buildWarSection(name, month, warDailyData, growth, warsData, warUidKey)
 
 // ─── Build hunt section HTML + mount charts ──────────────────────────────────
 
-function buildHuntSection(name, weekId, huntDailyData, playerHunts52, huntUidKey) {
+function buildHuntSection(name, weekId, huntDailyData, playerHunts52, huntUidKey, mhuntsEntry) {
   // huntDailyData is keyed by str(user_id); resolve by uid key.
   // huntUidKey is pre-resolved in initPlayer.
   const memberHuntEntry = huntUidKey ? huntDailyData[huntUidKey] : null;
@@ -250,7 +250,14 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52, huntUidKey
   const latestWeekId  = available.length ? available[available.length - 1] : null;
   let statWeekId = weekId;
 
-  if (!statWeekId || !playerWeeks[statWeekId]) {
+  // Since playerWeeks (daily data) is now optimized to only contain the latest week,
+  // we must validate historical week requests against playerHunts52 instead.
+  let isValidHistoricalWeek = false;
+  if (statWeekId && playerHunts52 && playerHunts52.length > 0) {
+      isValidHistoricalWeek = playerHunts52.some(w => w.date.startsWith(statWeekId));
+  }
+
+  if (!statWeekId || (!playerWeeks[statWeekId] && !isValidHistoricalWeek)) {
     statWeekId = latestWeekId;
   }
 
@@ -312,16 +319,16 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52, huntUidKey
     </div>
   </div>`;
 
-  html += `<div class="section-label">🗓️ ${t('last_30_days')}</div>`;
+  html += `<div class="section-label">🗓️ ${t('last_7_days') || 'Last 7 Days'}</div>`;
   html += `<div class="chart-grid">`;
-  html += sortedChartDays.length >= 1 ? _card(t('hunt_history'), 'chart-hunt-pts-7d') : _noData(t('hunt_history'));
-  html += sortedChartDays.length >= 1 ? _card('📦 ' + t('monsters_hunted') + ' & ' + t('chests_purchased'), 'chart-hunt-bar-7d') : _noData(t('monsters_hunted'));
+  html += sortedChartDays.length >= 1 ? _card(t('chart_hunt_pts_7d'), 'chart-hunt-pts-7d') : _noData(t('hunt_history'));
+  html += sortedChartDays.length >= 1 ? _card(t('chart_hunt_bar_7d'), 'chart-hunt-bar-7d') : _noData(t('monsters_hunted'));
   html += `</div>`;
 
   html += `<div class="section-label">📊 ${t('hunt_history_title') || '52-Week History — Hunt Data'}</div>`;
   html += `<div class="chart-grid">`;
-  html += playerHunts52.length >= 2 ? _card(t('hunt_history'), 'chart-hunt-pts-52w') : _noData(t('hunt_history'));
-  html += playerHunts52.length >= 1 ? _card('📦 ' + t('monsters_hunted') + ' & ' + t('chests_purchased'), 'chart-hunt-bar-52w') : _noData(t('chests_purchased'));
+  html += playerHunts52.length >= 2 ? _card(t('chart_hunt_pts_52w'), 'chart-hunt-pts-52w') : _noData(t('hunt_history'));
+  html += playerHunts52.length >= 1 ? _card(t('chart_hunt_bar_52w'), 'chart-hunt-bar-52w') : _noData(t('chests_purchased'));
   html += `</div>`;
 
   return { html, mount() {
@@ -341,8 +348,8 @@ function buildHuntSection(name, weekId, huntDailyData, playerHunts52, huntUidKey
       _lineChart('chart-hunt-pts-52w', t('hunt_history'), hd, playerHunts52.map(h=>h.pts_total), '#3fb950');
     }
     if (playerHunts52.length >= 1) {
-      const monsters = memberHuntEntry ? (memberHuntEntry.lifetime_monsters || {}) : {};
-      const purchases = memberHuntEntry ? (memberHuntEntry.lifetime_purchases || {}) : {};
+      const monsters = mhuntsEntry ? (mhuntsEntry.lifetime_monsters || {}) : {};
+      const purchases = mhuntsEntry ? (mhuntsEntry.lifetime_purchases || {}) : {};
       const lvls = ['Lvl 1','Lvl 2','Lvl 3','Lvl 4','Lvl 5'];
       _barChart('chart-hunt-bar-52w', lvls, [
         { label: t('monsters'),  data:[monsters.lvl1||0,monsters.lvl2||0,monsters.lvl3||0,monsters.lvl4||0,monsters.lvl5||0],   backgroundColor:'#a371f7' },
@@ -383,10 +390,10 @@ function buildFestivalSection(name, growth, rawFestivalData) {
 
   const last12 = festHist.slice(-12);
   
-  html += `<div class="section-label">📊 ${t('festival_history')} — Last 12 Events</div>`;
+  html += `<div class="section-label">🎪 ${t('festival_last_12')}</div>`;
   html += `<div class="chart-grid">`;
-  html += last12.length > 0 ? _card('🎪 ' + t('score') + ' (Line)', 'chart-player-fest-line') : _noData('🎪 Festival Line');
-  html += last12.length > 0 ? _card('🎪 ' + t('score') + ' (Bar)', 'chart-player-fest-bar') : _noData('🎪 Festival Bar');
+  html += last12.length > 0 ? _card(t('chart_fest_line_12e'), 'chart-player-fest-line') : _noData(t('festival_scores_line'));
+  html += last12.length > 0 ? _card(t('chart_fest_bar_12e'), 'chart-player-fest-bar') : _noData(t('festival_scores_bar'));
   html += `</div>`;
   
   html += `<div class="card table-wrapper" style="margin-top:1.5rem">
@@ -427,11 +434,11 @@ function buildAllHistorySection(name, growth, playerHunts52, mhuntsEntry, rawFes
 
   html += `<div class="section-label">📊 ${t('all_history_52w')}</div>`;
   html += `<div class="chart-grid">`;
-  html += snaps52.length >= 2 ? _card('🏰 ' + t('power_52w'), 'chart-all-might') : _noData(t('power_52w'));
-  html += snaps52.length >= 2 ? _card('⚔️ ' + t('kills_52w'), 'chart-all-kills') : _noData(t('kills_52w'));
+  html += snaps52.length >= 2 ? _card(t('chart_power_52w'), 'chart-all-might') : _noData(t('power_52w'));
+  html += snaps52.length >= 2 ? _card(t('chart_kills_52w'), 'chart-all-kills') : _noData(t('kills_52w'));
   html += `</div><div class="chart-grid">`;
-  html += playerHunts52.length >= 2 ? _card(t('hunt_pts_52w'), 'chart-all-hunt-pts') : _noData(t('hunt_pts_52w'));
-  html += lastH52 ? _card('📦 ' + t('monsters_chests_52w'), 'chart-all-hunt-bar') : _noData(t('monsters_chests_52w'));
+  html += playerHunts52.length >= 2 ? _card(t('chart_hunt_pts_52w'), 'chart-all-hunt-pts') : _noData(t('hunt_pts_52w'));
+  html += lastH52 ? _card(t('chart_hunt_bar_52w'), 'chart-all-hunt-bar') : _noData(t('monsters_chests_52w'));
   html += `</div>`;
   
   const uid = growth ? (growth.uid || 'N/A') : 'N/A';
@@ -455,8 +462,8 @@ function buildAllHistorySection(name, growth, playerHunts52, mhuntsEntry, rawFes
 
   html += `<div class="section-label">🎪 ${t('festival_last_12')}</div>`;
   html += `<div class="chart-grid">`;
-  html += last12Fest.length > 0 ? _card('🎪 ' + t('festival_scores_line'), 'chart-all-fest-line') : _noData(t('festival_scores_line'));
-  html += last12Fest.length > 0 ? _card('🎪 ' + t('festival_scores_bar'), 'chart-all-fest-bar') : _noData(t('festival_scores_bar'));
+  html += last12Fest.length > 0 ? _card(t('chart_fest_line_12e'), 'chart-all-fest-line') : _noData(t('festival_scores_line'));
+  html += last12Fest.length > 0 ? _card(t('chart_fest_bar_12e'), 'chart-all-fest-bar') : _noData(t('festival_scores_bar'));
   html += `</div>`;
 
   return { html, mount() {
@@ -499,20 +506,8 @@ async function renderWarView(container, name, month, growth, warDailyData, teleg
 }
 
 async function renderHuntView(container, name, week, huntDailyData, playerHunts52, mhuntsEntry, telegram, growth, huntUidKey) {
-  const initial  = name.charAt(0).toUpperCase();
-  const uid      = growth && growth.uid ? growth.uid : null;
-  const tgBadge  = telegram ? `<span class="tg-badge" style="margin-left:8px;vertical-align:middle;">💬 ${telegram}</span>` : '';
-  const uidBadge = uid ? `<span class="uid-badge" style="margin-left:8px;vertical-align:middle;">🔐 ${uid}</span>` : '';
-
-  const breadcrumb = `<div class="breadcrumb" style="margin-bottom:1.5rem;">
-    <a href="./hunt.html">${t('nav_hunt')}</a><span class="sep">›</span><span class="current">${name}</span>
-  </div>
-  <div class="profile-header">
-    <div class="profile-avatar">${initial}</div>
-    <div class="profile-info"><h1>${name}${uidBadge}${tgBadge}</h1><p>${t('hunt_player_dashboard')}</p></div>
-  </div>`;
   const sec = buildHuntSection(name, week, huntDailyData, playerHunts52, huntUidKey, mhuntsEntry);
-  container.innerHTML = breadcrumb + sec.html;
+  container.innerHTML = _profileHeader(name, growth, 'hunt', telegram) + sec.html;
   sec.mount();
 }
 
