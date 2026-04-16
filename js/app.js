@@ -753,11 +753,7 @@ function renderHuntDetail(container, hunt) {
 
     <div class="detail-header">
       <h2>🦅 ${hunt.date}</h2>
-      <div class="meta-row">
-        <div class="meta-item">📅 ${t('date')}: <strong>${hunt.date}</strong></div>
-        <div class="meta-item">📁 ${t('file')}: <strong>${hunt.filename || '—'}</strong></div>
-        <div class="meta-item">🕐 ${t('recorded')}: <strong>${hunt.recorded_at || '—'}</strong></div>
-      </div>
+
     </div>
 
     <div class="stats-grid" style="margin-bottom:1.5rem;">
