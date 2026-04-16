@@ -170,8 +170,11 @@ function _profileHeader(name, growth, view, telegram) {
 
 // ─── Build war section HTML + mount charts ───────────────────────────────────
 
-function buildWarSection(name, month, warDailyData, growth, warsData) {
-  const allDays  = (warDailyData[name] || []);
+function buildWarSection(name, month, warDailyData, growth, warsData, warUidKey) {
+  // warDailyData is keyed by str(igg_id); resolve the entry by uid key.
+  // warUidKey is pre-resolved in initPlayer by matching the current name.
+  const memberEntry = warUidKey ? warDailyData[warUidKey] : null;
+  const allDays  = memberEntry ? (memberEntry.snapshots || []) : [];
   // Chart always shows last 30 days of available daily data
   const chartDays = allDays.slice(-31);
 
@@ -238,8 +241,11 @@ function buildWarSection(name, month, warDailyData, growth, warsData) {
 
 // ─── Build hunt section HTML + mount charts ──────────────────────────────────
 
-function buildHuntSection(name, weekId, huntDailyData, playerHunts52) {
-  const playerWeeks = huntDailyData[name] || {};
+function buildHuntSection(name, weekId, huntDailyData, playerHunts52, huntUidKey) {
+  // huntDailyData is keyed by str(user_id); resolve by uid key.
+  // huntUidKey is pre-resolved in initPlayer.
+  const memberHuntEntry = huntUidKey ? huntDailyData[huntUidKey] : null;
+  const playerWeeks = memberHuntEntry ? (memberHuntEntry.weeks || {}) : {};
   const available = Object.keys(playerWeeks).sort();
   const latestWeekId  = available.length ? available[available.length - 1] : null;
   let statWeekId = weekId;
@@ -489,13 +495,13 @@ function buildAllHistorySection(name, growth, playerHunts52, rawFestivalData) {
 
 // ─── VIEWS ───────────────────────────────────────────────────────────────────
 
-async function renderWarView(container, name, month, growth, warDailyData, telegram, warsData) {
-  const sec = buildWarSection(name, month, warDailyData, growth, warsData);
+async function renderWarView(container, name, month, growth, warDailyData, telegram, warsData, warUidKey) {
+  const sec = buildWarSection(name, month, warDailyData, growth, warsData, warUidKey);
   container.innerHTML = _profileHeader(name, growth, 'war', telegram) + sec.html;
   sec.mount();
 }
 
-async function renderHuntView(container, name, week, huntDailyData, playerHunts52, telegram, growth) {
+async function renderHuntView(container, name, week, huntDailyData, playerHunts52, telegram, growth, huntUidKey) {
   const initial  = name.charAt(0).toUpperCase();
   const uid      = growth && growth.uid ? growth.uid : null;
   const tgBadge  = telegram ? `<span class="tg-badge" style="margin-left:8px;vertical-align:middle;">💬 ${telegram}</span>` : '';
@@ -508,7 +514,7 @@ async function renderHuntView(container, name, week, huntDailyData, playerHunts5
     <div class="profile-avatar">${initial}</div>
     <div class="profile-info"><h1>${name}${uidBadge}${tgBadge}</h1><p>${t('hunt_player_dashboard')}</p></div>
   </div>`;
-  const sec = buildHuntSection(name, week, huntDailyData, playerHunts52);
+  const sec = buildHuntSection(name, week, huntDailyData, playerHunts52, huntUidKey);
   container.innerHTML = breadcrumb + sec.html;
   sec.mount();
 }
@@ -519,7 +525,7 @@ async function renderAllHistoryView(container, name, growth, playerHunts52, fest
   sec.mount();
 }
 
-async function renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData, telegram, warsData) {
+async function renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData, telegram, warsData, warUidKey, huntUidKey) {
   let nameChangesHtml = '';
   if (growth && growth.name_history && growth.name_history.length > 0) {
     nameChangesHtml = `<div class="card" style="margin-bottom:1.5rem;">
@@ -560,8 +566,8 @@ async function renderMemberView(container, name, growth, warDailyData, huntDaily
     const urlMonth = new URLSearchParams(window.location.search).get('month') || '';
     const urlWeek  = new URLSearchParams(window.location.search).get('week')  || '';
     let   sec;
-    if      (tab === 'war')  sec = buildWarSection(name, urlMonth, warDailyData, growth, warsData);
-    else if (tab === 'hunt') sec = buildHuntSection(name, urlWeek, huntDailyData, playerHunts52);
+    if      (tab === 'war')  sec = buildWarSection(name, urlMonth, warDailyData, growth, warsData, warUidKey);
+    else if (tab === 'hunt') sec = buildHuntSection(name, urlWeek, huntDailyData, playerHunts52, huntUidKey);
     else if (tab === 'fest') sec = buildFestivalSection(name, growth, festivalData);
     else                     sec = buildAllHistorySection(name, growth, playerHunts52, festivalData);
     el.innerHTML = sec.html;
@@ -613,17 +619,39 @@ async function initPlayer() {
     const membersData   = membersRes.status   === 'fulfilled' ? membersRes.value   : [];
     const warsData      = warsRes.status      === 'fulfilled' ? warsRes.value      : [];
 
-    const growth        = (histData.members || []).find(m => m.name === name) || null;
-    const playerHunts52 = mhunts[name] || [];
+    // ── Resolve player by name in history.json (keyed by igg_id, has current name)
+    // history.json uses name as display but uid as stable identifier.
+    const growth = (histData.members || []).find(m => m.name === name) || null;
 
-    // Resolve Telegram @username by matching name in the website members.json
-    const memberEntry = membersData.find(m => (m.name || '').toLowerCase() === name.toLowerCase());
+    // ── Resolve the stable uid keys for war_daily and hunt_daily
+    // war_daily is keyed by str(igg_id) with { name, snapshots[] }
+    // hunt_daily is keyed by str(user_id) with { name, weeks{} }
+    // member_hunts is keyed by str(user_id) with { name, uid, weeks[] }
+    // We find the matching key by comparing the stored name.
+    const nameLower = name.toLowerCase();
+
+    const warUidKey = Object.keys(warDailyData).find(
+      k => (warDailyData[k].name || '').toLowerCase() === nameLower
+    ) || null;
+
+    const huntUidKey = Object.keys(huntDailyData).find(
+      k => (huntDailyData[k].name || '').toLowerCase() === nameLower
+    ) || null;
+
+    // member_hunts: find entry by name match, then extract weeks array for charts
+    const mhuntsUidKey = Object.keys(mhunts).find(
+      k => (mhunts[k].name || '').toLowerCase() === nameLower
+    ) || null;
+    const playerHunts52 = mhuntsUidKey ? (mhunts[mhuntsUidKey].weeks || []) : [];
+
+    // Resolve Telegram @username from website members.json (uses current name)
+    const memberEntry = membersData.find(m => (m.name || '').toLowerCase() === nameLower);
     const telegram    = memberEntry ? (memberEntry.telegram || '') : '';
 
-    if      (view === 'war')    await renderWarView(container, name, month, growth, warDailyData, telegram, warsData);
-    else if (view === 'hunt')   await renderHuntView(container, name, week, huntDailyData, playerHunts52, telegram, growth);
-    else if (view === 'all')    await renderAllHistoryView(container, name, growth, playerHunts52, festivalData, telegram);
-    else /* member */           await renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData, telegram, warsData);
+    if      (view === 'war')  await renderWarView(container, name, month, growth, warDailyData, telegram, warsData, warUidKey);
+    else if (view === 'hunt') await renderHuntView(container, name, week, huntDailyData, playerHunts52, telegram, growth, huntUidKey);
+    else if (view === 'all')  await renderAllHistoryView(container, name, growth, playerHunts52, festivalData, telegram);
+    else /* member */         await renderMemberView(container, name, growth, warDailyData, huntDailyData, playerHunts52, festivalData, telegram, warsData, warUidKey, huntUidKey);
 
   } catch(err) {
     setError(container, t('error_loading') + ': ' + err.message);
