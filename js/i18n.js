@@ -22,7 +22,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         this.applyTranslations();
-        this.initSwitcher();
+
+        // Defer switcher injection so nav.js has time to inject the topbar first
+        const tryInit = () => {
+          const container = document.getElementById('topbar-lang')
+                         || document.querySelector('.lang-switcher-container');
+          if (container) {
+            this.initSwitcher();
+          } else {
+            requestAnimationFrame(tryInit);
+          }
+        };
+        requestAnimationFrame(tryInit);
+
       } catch (err) {
         console.error('Failed to load translations:', err);
       }
@@ -68,17 +80,19 @@ document.addEventListener('DOMContentLoaded', () => {
     },
 
     initSwitcher() {
-      const container = document.querySelector('.lang-switcher-container');
+      // Prefer the topbar lang container injected by nav.js, then fall back
+      const container = document.getElementById('topbar-lang')
+                     || document.querySelector('.lang-switcher-container');
       if (container) {
         container.innerHTML = `
           <select class="lang-select" id="lang-switcher">
-            <option value="en">🇬🇧 English</option>
-            <option value="es">🇪🇸 Español</option>
-            <option value="fr">🇫🇷 Français</option>
-            <option value="pt">🇧🇷 Português</option>
-            <option value="vi">🇻🇳 Tiếng Việt</option>
-            <option value="ja">🇯🇵 日本語</option>
-            <option value="zh">🇨🇳 简体中文</option>
+            <option value="en">🇬🇧 EN</option>
+            <option value="es">🇪🇸 ES</option>
+            <option value="fr">🇫🇷 FR</option>
+            <option value="pt">🇧🇷 PT</option>
+            <option value="vi">🇻🇳 VI</option>
+            <option value="ja">🇯🇵 JA</option>
+            <option value="zh">🇨🇳 ZH</option>
           </select>
         `;
         const switcher = document.getElementById('lang-switcher');
