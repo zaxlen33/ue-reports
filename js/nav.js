@@ -33,9 +33,9 @@
       const text = label.replace(/^[\u{1F000}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]\s*/u, '');
       return `
         <li>
-          <a href="${item.href}" class="nav-link ${isActive}" data-i18n="${item.key}">
+          <a href="${item.href}" class="nav-link ${isActive}">
             <span class="nav-icon">${item.icon}</span>
-            <span class="nav-text">${text}</span>
+            <span class="nav-text" data-i18n="${item.key}">${text}</span>
           </a>
         </li>`;
     }).join('');
@@ -145,6 +145,7 @@
         if (!sidebarLang.querySelector('select')) {
           const clone = select.cloneNode(true);
           clone.id = 'lang-switcher-sidebar';
+          clone.value = select.value; // Sync initial value
           clone.addEventListener('change', e => window.i18n?.setLanguage(e.target.value));
           sidebarLang.appendChild(clone);
         }
