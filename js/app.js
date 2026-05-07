@@ -338,12 +338,12 @@ function renderWarList(container, weekly, wars) {
           <span style="font-size:0.78rem;color:var(--text-muted);">${w.snapshots_count} ${w.snapshots_count !== 1 ? t('snapshots_suffix') : t('snapshots_suffix').replace(/s$/, '')}</span>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.5rem;font-size:0.85rem;color:var(--text-secondary);">
-          <div>👥 ${t('players')}: <strong style="color:var(--text-primary);">${w.total_members}</strong></div>
-          <div>⚔️ ${t('guild_kills')}: <strong style="color:var(--accent-yellow);">${fmtCompact(w.total_kills)}</strong></div>
-          <div>🏰 ${t('average')} ${t('might')}: <strong style="color:var(--accent-blue);">${fmtCompact(w.avg_might)}</strong></div>
-          <div>📈 ${t('kills_gained_title')}: <strong style="color:var(--accent-green);">${fmtCompact(w.total_kills_gained)}</strong></div>
+          <div>👥 <span data-i18n="players">${t('players')}</span>: <strong style="color:var(--text-primary);">${w.total_members}</strong></div>
+          <div>⚔️ <span data-i18n="guild_kills">${t('guild_kills')}</span>: <strong style="color:var(--accent-yellow);">${fmtCompact(w.total_kills)}</strong></div>
+          <div>🏰 <span data-i18n="average">${t('average')}</span> <span data-i18n="might">${t('might')}</span>: <strong style="color:var(--accent-blue);">${fmtCompact(w.avg_might)}</strong></div>
+          <div>📈 <span data-i18n="kills_gained_title">${t('kills_gained_title')}</span>: <strong style="color:var(--accent-green);">${fmtCompact(w.total_kills_gained)}</strong></div>
         </div>
-        <div style="margin-top:8px;font-size:0.8rem;color:var(--accent-blue);">${t('view_breakdown')}</div>
+        <div style="margin-top:8px;font-size:0.8rem;color:var(--accent-blue);" data-i18n="view_breakdown">${t('view_breakdown')}</div>
       </div>
     </a>`).join('');
 
@@ -406,11 +406,11 @@ function renderWarDetail(container, war) {
     <div class="detail-header">
       <h2>🏰 ${war.label}</h2>
       <div class="meta-row">
-        <div class="meta-item">📅 ${t('date')}: <strong>${war.month}</strong></div>
-        <div class="meta-item">👥 ${t('players')}: <strong>${war.total_members}</strong></div>
-        <div class="meta-item">⚔️ ${t('guild_kills')}: <strong>${fmtCompact(war.total_kills)}</strong></div>
-        <div class="meta-item">🏰 ${t('average')} ${t('might')}: <strong>${fmtCompact(war.avg_might)}</strong></div>
-        <div class="meta-item">📊 ${t('snapshots_suffix')}: <strong>${war.snapshots_count}</strong></div>
+        <div class="meta-item">📅 <span data-i18n="date">${t('date')}</span>: <strong>${war.month}</strong></div>
+        <div class="meta-item">👥 <span data-i18n="players">${t('players')}</span>: <strong>${war.total_members}</strong></div>
+        <div class="meta-item">⚔️ <span data-i18n="guild_kills">${t('guild_kills')}</span>: <strong>${fmtCompact(war.total_kills)}</strong></div>
+        <div class="meta-item">🏰 <span data-i18n="average">${t('average')}</span> <span data-i18n="might">${t('might')}</span>: <strong>${fmtCompact(war.avg_might)}</strong></div>
+        <div class="meta-item">📊 <span data-i18n="snapshots_suffix">${t('snapshots_suffix')}</span>: <strong>${war.snapshots_count}</strong></div>
       </div>
     </div>
 
@@ -460,14 +460,14 @@ function renderWarDetail(container, war) {
             <thead>
               <tr>
                 <th>#</th>
-                <th>${t('table_player')}</th>
-                <th class="center">${t('table_rank')}</th>
-                <th class="right">${t('table_might')}</th>
-                <th class="right hide-mobile">${t('table_might_gained')}</th>
-                <th class="right">${t('table_kills')}</th>
-                <th class="right hide-mobile">${t('table_kills_gained')}</th>
-                <th class="right">${t('table_goal')}</th>
-                <th class="center">${t('table_status')}</th>
+                <th data-i18n="table_player">${t('table_player')}</th>
+                <th class="center" data-i18n="table_rank">${t('table_rank')}</th>
+                <th class="right" data-i18n="table_might">${t('table_might')}</th>
+                <th class="right hide-mobile" data-i18n="table_might_gained">${t('table_might_gained')}</th>
+                <th class="right" data-i18n="table_kills">${t('table_kills')}</th>
+                <th class="right hide-mobile" data-i18n="table_kills_gained">${t('table_kills_gained')}</th>
+                <th class="right" data-i18n="table_goal">${t('table_goal')}</th>
+                <th class="center" data-i18n="table_status">${t('table_status')}</th>
               </tr>
             </thead>
             <tbody id="war-tbody"></tbody>
@@ -634,7 +634,7 @@ function renderHuntList(container, hunts) {
 
     <div class="card" style="margin-bottom:1.5rem;">
       <div class="card-header">
-        <h2>📈 ${t('hunt_history_title')}</h2>
+        <h2 data-i18n="hunt_history_title">📈 ${t('hunt_history_title')}</h2>
       </div>
       <div class="card-body">
         <div class="chart-box" style="position:relative;height:250px;">
@@ -645,7 +645,7 @@ function renderHuntList(container, hunts) {
 
     <div class="card" style="margin-bottom:1.5rem;">
       <div class="card-header">
-        <h2>📦 ${t('hunt_box_history_title')}</h2>
+        <h2 data-i18n="hunt_box_history_title">📦 ${t('hunt_box_history_title')}</h2>
       </div>
       <div class="card-body">
         <div class="chart-box" style="position:relative;height:250px;">
@@ -656,7 +656,7 @@ function renderHuntList(container, hunts) {
 
     <div class="card">
       <div class="card-header">
-        <h2>📋 ${t('all_hunt_reports')}</h2>
+        <h2 data-i18n="all_hunt_reports">📋 ${t('all_hunt_reports')}</h2>
         <span class="badge-count">${hunts.length} ${hunts.length !== 1 ? t('reports_suffix') : t('reports_suffix').replace(/s$/, '')}</span>
       </div>
       <div style="padding: 10px 15px; background: rgba(88,166,255,0.05); border-bottom: 1px solid var(--border); font-size: 0.85rem; color: var(--text-secondary); display:flex; gap:8px; align-items:center;">
@@ -667,13 +667,13 @@ function renderHuntList(container, hunts) {
           <thead>
             <tr>
               <th>#</th>
-              <th>${t('date')}</th>
-              <th class="right">${t('players')}</th>
-              <th class="right">${t('met_goal')}</th>
-              <th class="right">${t('not_met')}</th>
-              <th class="right">${t('min_required')}</th>
-              <th class="center">${t('goal_rate')}</th>
-              <th class="center">${t('table_action')}</th>
+              <th data-i18n="date">${t('date')}</th>
+              <th class="right" data-i18n="players">${t('players')}</th>
+              <th class="right" data-i18n="met_goal">${t('met_goal')}</th>
+              <th class="right" data-i18n="not_met">${t('not_met')}</th>
+              <th class="right" data-i18n="min_required">${t('min_required')}</th>
+              <th class="center" data-i18n="goal_rate">${t('goal_rate')}</th>
+              <th class="center" data-i18n="table_action">${t('table_action')}</th>
             </tr>
           </thead>
           <tbody>
@@ -791,8 +791,8 @@ function renderHuntDetail(container, hunt) {
 
     <div class="card">
       <div class="card-header">
-        <h2>🏆 ${t('player_rankings_title')}</h2>
-        <span class="badge-count">${players.length} ${t('players_suffix')}</span>
+        <h2 data-i18n="player_rankings_title">🏆 ${t('player_rankings_title')}</h2>
+        <span class="badge-count">${players.length} <span data-i18n="players_suffix">${t('players_suffix')}</span></span>
       </div>
       <div class="card-body" style="padding:0.5rem;">
         <div class="toolbar">
