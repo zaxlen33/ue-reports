@@ -187,11 +187,14 @@ function buildControls(activeFilter, searchValue) {
 
   return `
     <div class="fs-controls">
-      <input type="search" class="search-input fs-search" id="fs-search"
-        placeholder="${t('fs_search_placeholder')}"
-        value="${escHtml(searchValue)}"
-        autocomplete="off"
-        aria-label="${t('fs_search_placeholder')}">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="search" class="fs-search" id="fs-search"
+          placeholder="${t('fs_search_placeholder')}"
+          value="${escHtml(searchValue)}"
+          autocomplete="off"
+          aria-label="${t('fs_search_placeholder')}">
+      </div>
       <div class="fs-filter-btns" role="group" aria-label="Filter by recency">
         ${pill('all', t('fs_filter_all'))}
         ${pill('7',   '🔴 ' + t('fs_filter_7d'))}
@@ -301,24 +304,40 @@ function buildCard(m, index) {
 /* ─── Event wiring ──────────────────────────────────────── */
 
 /**
- * Attach search and filter listeners after each render.
- * Preserves cursor position in the search box.
+ * Attach search and filter listeners using event delegation on the container.
+ * This is more robust than re-attaching listeners after every render.
  */
 function wireControls() {
-  const searchEl = document.getElementById('fs-search');
-  if (searchEl) {
-    searchEl.addEventListener('input', e => {
+  const container = document.getElementById('firstseen-container');
+  if (!container || container.dataset.wired === 'true') return;
+
+  // 1. Search Input (Input events bubble)
+  container.addEventListener('input', e => {
+    if (e.target && e.target.id === 'fs-search') {
       _currentSearch = e.target.value.trim().toLowerCase();
       _rerender();
-    });
-  }
+      
+      // Maintain focus and cursor position after re-render
+      const newSearch = document.getElementById('fs-search');
+      if (newSearch) {
+        newSearch.focus();
+        const val = newSearch.value;
+        newSearch.setSelectionRange(val.length, val.length);
+      }
+    }
+  });
 
-  document.querySelectorAll('.fs-filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+  // 2. Filter Buttons (Click events bubble)
+  container.addEventListener('click', e => {
+    const btn = e.target.closest('.fs-filter-btn');
+    if (btn && btn.dataset.f) {
       _currentFilter = btn.dataset.f;
       _rerender();
-    });
+    }
   });
+
+  // Mark as wired so we don't attach multiple times if init is called again
+  container.dataset.wired = 'true';
 }
 
 // Module-level state refs so wireControls can trigger re-renders
