@@ -87,21 +87,29 @@ document.addEventListener('DOMContentLoaded', () => {
           } catch (e) {}
         }
 
-        // Surgical update: if element has children (like icons/spans), only update text nodes
-        if (el.children.length > 0) {
-          let foundText = false;
-          Array.from(el.childNodes).forEach(node => {
-            // nodeType 3 is Text
-            if (node.nodeType === 3 && node.textContent.trim().length > 1) {
-              node.textContent = translation;
-              foundText = true;
-            }
-          });
-          // If no significant text node found, we check if there's a nav-text span
-          if (!foundText) {
-            const textSpan = el.querySelector('.nav-text, .nav-label, .stat-label');
+        // If translation contains HTML tags, use innerHTML
+        const hasHTML = /<[a-z][\s\S]*>/i.test(translation);
+
+        if (hasHTML) {
+          el.innerHTML = translation;
+        } else if (el.children.length > 0) {
+          // Surgical update: find the most significant text node and update only that one
+          // to preserve icons/spans that might not be in the translation string.
+          let nodes = Array.from(el.childNodes);
+          let targetNode = nodes.find(n => n.nodeType === 3 && n.textContent.trim().length > 1);
+          
+          if (targetNode) {
+            targetNode.textContent = translation;
+          } else {
+            // Fallback: look for common text containers
+            const textSpan = el.querySelector('.nav-text, .nav-label, .stat-label, .btn-text');
             if (textSpan) {
-               textSpan.innerText = translation;
+              textSpan.innerText = translation;
+            } else {
+              // If no clear target, just update the first text node or use innerText
+              const firstText = nodes.find(n => n.nodeType === 3);
+              if (firstText) firstText.textContent = translation;
+              else el.innerText = translation;
             }
           }
         } else {
@@ -109,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             el.placeholder = translation;
           } else {
-            // Use innerText to avoid accidental HTML injection and keep it clean
             el.innerText = translation;
           }
         }
