@@ -1,52 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta name="description" content="UE Guild Dashboard — centralized guild management, war reports, hunt tracking, rankings, and member profiles.">
   <title>UE Guild Dashboard</title>
-  <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/styles.css?v=20260507">
   <script src="./js/i18n.js"></script>
 </head>
-
 <body>
 
-  <!-- ── Navigation ── -->
-  <nav class="navbar">
-    <div class="container">
-      <div class="navbar-brand">
-        <span class="logo">🏰</span>
-        <span>UE Guild <span>Dashboard</span></span>
-      </div>
-
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <div class="lang-switcher-container">
-          
-        </div>
-        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
-      </div>
-
-      <ul class="navbar-nav">
-        <li><a href="./index.html" data-i18n="nav_home">🏠 Home</a></li>
-        <li><a href="./war.html" data-i18n="nav_war">🏰 War</a></li>
-        <li><a href="./hunt.html" data-i18n="nav_hunt">🦅 Hunt</a></li>
-        <li><a href="./festival.html" data-i18n="nav_festival">🎪 Festival</a></li>
-        <li><a href="./rankings.html" data-i18n="nav_rankings">🏆 Rankings</a></li>
-        <li><a href="./members.html" data-i18n="nav_members">👥 Check Member</a></li>
-        <li><a href="./tracker.html" data-i18n="nav_tracker">🕵️‍♂️ Tracker</a></li>
-      </ul>
-    </div>
-  </nav>
+  <!-- nav.js injects sidebar + topbar here -->
 
   <!-- ── Page Content ── -->
   <main class="container">
-    <div class="page-header">
+
+    <!-- Hero / header -->
+    <div class="modules-hero">
       <h1 data-i18n="guild_dashboard">🏠 Guild Dashboard</h1>
       <p data-i18n="dashboard_desc">Current guild statistics and reports overview.</p>
     </div>
 
-    <!-- Dynamic content injected by app.js -->
-    <div id="dashboard"></div>
+    <!-- Live stats bar (populated by app.js) -->
+    <div id="dashboard-stats" class="dashboard-stats"></div>
+
+    <!-- Module navigation cards -->
+    <div class="modules-grid">
+
+      <!-- Kills / War -->
+      <a href="./war.html" class="module-card kills" id="module-kills">
+        <div class="module-icon-wrap">⚔️</div>
+        <div class="module-card-title" data-i18n="module_kills">Kills &amp; War</div>
+        <p class="module-card-desc" data-i18n="module_kills_desc">Weekly war reports — guild power, kills, member rankings, and 52-week growth tracking.</p>
+        <span class="module-card-arrow" data-i18n="view_details">View Details →</span>
+      </a>
+
+      <!-- Monster Hunting -->
+      <a href="./hunt.html" class="module-card hunt" id="module-hunt">
+        <div class="module-icon-wrap">🦅</div>
+        <div class="module-card-title" data-i18n="module_hunt">Monster Hunting</div>
+        <p class="module-card-desc" data-i18n="module_hunt_desc">Hunt performance tracking — player kills, points, goal completion rates, and hunt history.</p>
+        <span class="module-card-arrow" data-i18n="view_details">View Details →</span>
+      </a>
+
+      <!-- Guild Info -->
+      <a href="./rankings.html" class="module-card guild-info" id="module-guild">
+        <div class="module-icon-wrap">🏆</div>
+        <div class="module-card-title" data-i18n="module_guild_info">Guild Info</div>
+        <p class="module-card-desc" data-i18n="module_guild_info_desc">Rankings, festival scores, and guild-wide performance overviews across all tracked events.</p>
+        <span class="module-card-arrow" data-i18n="view_details">View Details →</span>
+      </a>
+
+      <!-- Check Members -->
+      <a href="./members.html" class="module-card members" id="module-members">
+        <div class="module-icon-wrap">👥</div>
+        <div class="module-card-title" data-i18n="module_members">Check Members</div>
+        <p class="module-card-desc" data-i18n="module_members_desc">Browse all guild members — current power, kills, rank, and detailed individual profiles.</p>
+        <span class="module-card-arrow" data-i18n="view_details">View Details →</span>
+      </a>
+
+      <!-- First Seen (security registry) -->
+      <a href="./firstseen.html" class="module-card firstseen" id="module-firstseen">
+        <div class="module-icon-wrap">👁️</div>
+        <div class="module-card-title" data-i18n="module_firstseen">First Seen</div>
+        <p class="module-card-desc" data-i18n="module_firstseen_desc">Guild registry ordered by join date — spot potential spies and monitor new members during sensitive events.</p>
+        <span class="module-card-arrow" data-i18n="view_details">View Details →</span>
+      </a>
+
+    </div>
+
+    <!-- More modules row (secondary links) -->
+    <div class="card module-card-footer">
+      <div class="card-header">
+        <h2 data-i18n="more_modules">📂 More Modules</h2>
+      </div>
+      <div class="card-body card-footer-actions">
+        <a href="./festival.html" class="btn btn-secondary" id="quick-festival">🎪 <span data-i18n="nav_festival">Festival</span></a>
+        <a href="./tracker.html" class="btn btn-secondary" id="quick-tracker">🕵️ <span data-i18n="nav_tracker">Tracker</span></a>
+      </div>
+    </div>
+
   </main>
 
   <footer class="footer">
@@ -55,7 +88,63 @@
     </div>
   </footer>
 
+  <script src="./js/nav.js"></script>
   <script src="./js/app.js"></script>
-</body>
+  <script>
+    // Render only the stats bar on the index page (not the full dashboard div)
+    document.addEventListener('DOMContentLoaded', () => {
+      // Wait for i18n + app.js to be ready
+      window.addEventListener('load', initIndexStats);
+      // Also attempt immediately in case scripts already ran
+      if (document.readyState === 'complete') initIndexStats();
+    });
 
+    async function initIndexStats() {
+      const el = document.getElementById('dashboard-stats');
+      if (!el || el.dataset.loaded) return;
+      el.dataset.loaded = 'true';
+      try {
+        const [wars, hunts, history, weekly] = await Promise.allSettled([
+          loadJSON('wars.json'), loadJSON('hunts.json'),
+          loadJSON('history.json'), loadJSON('weekly.json'),
+        ]);
+        const warsData    = wars.status    === 'fulfilled' ? wars.value    : [];
+        const huntsData   = hunts.status   === 'fulfilled' ? hunts.value   : [];
+        const historyData = history.status === 'fulfilled' ? history.value : { members: [] };
+        const weeklyData  = weekly.status  === 'fulfilled' ? weekly.value  : [];
+        const latestWeek  = weeklyData.length ? weeklyData[weeklyData.length - 1] : null;
+        const memberCount = historyData.members ? historyData.members.length : 0;
+
+        el.innerHTML = `
+          <div class="stat-card blue">
+            <div class="stat-icon">🏰</div>
+            <div class="stat-value">${fmtNum(warsData.length)}</div>
+            <div class="stat-label">${t('war_reports')}</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">🦅</div>
+            <div class="stat-value">${huntsData.length}</div>
+            <div class="stat-label">${t('hunt_reports')}</div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">${memberCount}</div>
+            <div class="stat-label">${t('tracked_members')}</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-value">${latestWeek ? fmtCompact(latestWeek.total_power) : '—'}</div>
+            <div class="stat-label">${t('guild_power')}</div>
+          </div>
+          <div class="stat-card yellow">
+            <div class="stat-icon">⚔️</div>
+            <div class="stat-value">${latestWeek ? fmtCompact(latestWeek.total_kills) : '—'}</div>
+            <div class="stat-label">${t('guild_kills')}</div>
+          </div>`;
+      } catch (e) {
+        el.innerHTML = '';
+      }
+    }
+  </script>
+</body>
 </html>
