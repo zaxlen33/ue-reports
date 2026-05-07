@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <title>Guild Festival · UE Guild Dashboard</title>
   <meta name="description" content="Guild Festival history, score comparisons, and per-member performance tracking for UE Guild.">
   <link rel="stylesheet" href="./css/styles.css">
@@ -11,32 +11,7 @@
 </head>
 <body>
 
-  <!-- ── Navigation ── -->
-  <nav class="navbar">
-    <div class="container">
-      <div class="navbar-brand">
-        <span class="logo">🏰</span>
-        <span>UE Guild <span>Dashboard</span></span>
-      </div>
-      
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <div class="lang-switcher-container">
-          
-        </div>
-        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
-      </div>
-
-      <ul class="navbar-nav">
-        <li><a href="./index.html" data-i18n="nav_home">🏠 Home</a></li>
-        <li><a href="./war.html" data-i18n="nav_war">🏰 War</a></li>
-        <li><a href="./hunt.html" data-i18n="nav_hunt">🦅 Hunt</a></li>
-        <li><a href="./festival.html" class="active" data-i18n="nav_festival">🎪 Festival</a></li>
-        <li><a href="./rankings.html" data-i18n="nav_rankings">🏆 Rankings</a></li>
-        <li><a href="./members.html" data-i18n="nav_members">👥 Check Member</a></li>
-        <li><a href="./tracker.html" data-i18n="nav_tracker">🕵️‍♂️ Tracker</a></li>
-      </ul>
-    </div>
-  </nav>
+  <!-- nav.js injects sidebar + topbar -->
 
   <!-- ── Page Content ── -->
   <main class="container">
@@ -178,17 +153,7 @@
 
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="./js/nav.js"></script>
   <script src="./js/festival.js"></script>
-  <script>
-    // Mobile nav toggle
-    document.querySelector('.menu-toggle').addEventListener('click', () => {
-      document.querySelector('.navbar-nav').classList.toggle('open');
-    });
-    // Active link highlight
-    const path = location.pathname.split('/').pop() || 'index.html';
-    document.querySelectorAll('.navbar-nav a').forEach(a => {
-      if (a.getAttribute('href').includes(path)) a.classList.add('active');
-    });
-  </script>
 </body>
 </html>
