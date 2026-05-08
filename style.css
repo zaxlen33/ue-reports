@@ -1,0 +1,309 @@
+/* RESET & BASE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at 10% 20%, rgba(10, 12, 27, 0.96), rgba(2, 3, 15, 0.98));
+    color: #eef2ff;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+}
+
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+}
+
+/* Cards con estilo glassmorphism + acentos */
+.card {
+    background: rgba(20, 25, 45, 0.75);
+    backdrop-filter: blur(12px);
+    border-radius: 2rem;
+    border: 1px solid rgba(90, 110, 150, 0.25);
+    box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s ease;
+    padding: 1.5rem 1.8rem;
+}
+
+.hero-header {
+    text-align: center;
+    background: linear-gradient(135deg, rgba(25, 35, 60, 0.9) 0%, rgba(15, 20, 40, 0.8) 100%);
+    backdrop-filter: blur(8px);
+    border-radius: 2rem;
+    padding: 1.5rem;
+    border-bottom: 3px solid #e6b422;
+}
+
+.hero-header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    background: linear-gradient(135deg, #FFE6B0, #D4AF37);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.hero-header h1 i {
+    color: #e6b422;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    color: #f5c542;
+}
+
+.meta-badge {
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 0.3rem 1rem;
+    border-radius: 60px;
+    font-size: 0.8rem;
+    margin-top: 0.7rem;
+    font-weight: 400;
+    backdrop-filter: blur(4px);
+}
+
+/* Navegación */
+.nav-card {
+    padding: 1.2rem 1.8rem;
+}
+
+.nav-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-btn, .go-btn {
+    background: rgba(15, 20, 40, 0.8);
+    border: 1px solid rgba(220, 180, 80, 0.5);
+    padding: 0.7rem 1.4rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    color: #f0e9cf;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.95rem;
+    backdrop-filter: blur(4px);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-btn:hover, .go-btn:hover {
+    background: #d4af37;
+    color: #0a0c1a;
+    border-color: #d4af37;
+    transform: scale(0.97);
+}
+
+.kingdom-jump {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.3rem 0.8rem;
+    border-radius: 3rem;
+}
+
+.kingdom-input {
+    background: #0f1222;
+    border: 1px solid #3a4560;
+    padding: 0.6rem 1rem;
+    border-radius: 2rem;
+    color: #ffefcf;
+    font-weight: 500;
+    width: 130px;
+    text-align: center;
+    font-size: 0.9rem;
+    outline: none;
+    transition: 0.2s;
+}
+
+.kingdom-input:focus {
+    border-color: #e6b422;
+    box-shadow: 0 0 6px #e6b42280;
+}
+
+.kingdom-counter {
+    text-align: center;
+    margin-top: 0.8rem;
+    font-size: 0.8rem;
+    color: #b9c3e6;
+    font-weight: 500;
+}
+
+/* Estadísticas del reino (grid) */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+    margin-top: 0.8rem;
+}
+
+.stat-item {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 1.5rem;
+    padding: 1rem 1.2rem;
+    border-left: 4px solid #e6b422;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    color: #b7c3e6;
+}
+
+.stat-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    word-break: break-word;
+    color: #fff2cf;
+}
+
+.cartography-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    background: #2a2f44;
+    padding: 0.3rem 1rem;
+    border-radius: 2rem;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: 0.2s;
+    color: #ffeaac;
+}
+
+.cartography-link:hover {
+    background: #e6b422;
+    color: #0a0c1a;
+}
+
+/* Tabla de batallas */
+.battles-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px dashed #3e4968;
+    padding-bottom: 0.7rem;
+}
+
+.battles-section h2 {
+    font-size: 1.6rem;
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+}
+
+.battle-count {
+    background: #1e243f;
+    padding: 0.2rem 1rem;
+    border-radius: 40px;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.battle-table-wrapper {
+    overflow-x: auto;
+    border-radius: 1.2rem;
+}
+
+.battle-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.battle-table th {
+    text-align: left;
+    padding: 0.9rem 0.5rem;
+    background: rgba(0, 0, 0, 0.5);
+    color: #f5cf8e;
+    font-weight: 600;
+}
+
+.battle-table td {
+    padding: 0.85rem 0.5rem;
+    border-bottom: 1px solid rgba(72, 85, 120, 0.4);
+    vertical-align: middle;
+}
+
+.battle-table tr:hover {
+    background: rgba(210, 180, 70, 0.1);
+}
+
+.outcome-badge {
+    display: inline-block;
+    background: #842c2c;
+    padding: 0.2rem 0.7rem;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
+
+.guild-name {
+    font-weight: 700;
+    color: #efcd82;
+}
+
+/* Loader esqueleto */
+.skeleton-loader {
+    padding: 2rem;
+    text-align: center;
+    color: #b0bbdf;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Footer */
+.app-footer {
+    text-align: center;
+    font-size: 0.75rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 2rem;
+    padding: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+    body {
+        padding: 1rem;
+    }
+    .nav-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .kingdom-jump {
+        justify-content: center;
+    }
+    .stat-value {
+        font-size: 1.1rem;
+    }
+    .battle-table th, .battle-table td {
+        font-size: 0.7rem;
+        padding: 0.5rem 0.3rem;
+    }
+}
