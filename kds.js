@@ -30,11 +30,11 @@ const globalUniqueCheckbox = document.getElementById('globalUniqueCheckbox');
 function escapeHtml(unsafe) {
     if (!unsafe) return '';
     return unsafe.toString()
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 // Helper: Format large numbers with M/B
@@ -48,7 +48,7 @@ function renderKingdomStats(kingdom) {
     if (!kingdom) return '<div class="skeleton-loader">Kingdom not available</div>';
     const stats = kingdom.stats || {};
     const carto = stats["View on Cartography"] || null;
-    
+
     return `
         <div class="stats-grid">
             <div class="stat-item">
@@ -78,10 +78,11 @@ function renderKingdomStats(kingdom) {
 // List of exception guilds (family, allies, or non-recruitable)
 const EXCEPTION_GUILDS = [
     "KCL", "CSK", "MOP", "CWS", "Sup", "KxQ", "VLY", "RR!", "AUF", "30B", "YES", "S:E", "YYP", "CCC", "YYY", "ZXX", "XMY", "SVF", "FEM", "Rzr",
-    "PBB", "HrP", "Ich",
+    "PBB", "HrP", "Ich", "Ash", "ZSU", "YwH",
     "DC", "M/J", "SDV", "CHV", "DtC", "msy", "-p-", "YMT", "VWI", "R~V", "D'w", "U|E", "HxT", "IWG", "(W)", "FxA", "OoO",
     "-b-", "EMP", "BMW", "I:W", "SIS", "ggi", "~NB", "VFS", "Ph9",
-    "OkM", "Egu", "ReJ"
+    "OkM", "Egu", "ReJ",
+    "#NE", "U$A"
 ];
 
 let lastCopiedElement = null;
@@ -90,7 +91,7 @@ let lastCopiedOriginalBorderColor = '';
 let lastCopiedOriginalBg = '';
 
 // Global function to copy text to clipboard
-window.copyText = function(element, text) {
+window.copyText = function (element, text) {
     if (!text || text === '?') return;
     navigator.clipboard.writeText(text).then(() => {
         // Restore previous element if it's different
@@ -99,7 +100,7 @@ window.copyText = function(element, text) {
             lastCopiedElement.style.borderColor = lastCopiedOriginalBorderColor;
             lastCopiedElement.style.background = lastCopiedOriginalBg;
         }
-        
+
         // Save original styles of the new element
         if (lastCopiedElement !== element) {
             lastCopiedOriginalColor = element.style.color;
@@ -109,7 +110,7 @@ window.copyText = function(element, text) {
         }
 
         // Apply active "copied" styling (permanently until another is clicked)
-        element.style.color = '#4CAF50'; 
+        element.style.color = '#4CAF50';
         element.style.borderColor = '#4CAF50';
         if (element.classList.contains('guild-badge')) {
             element.style.background = 'rgba(76, 175, 80, 0.1)';
@@ -122,7 +123,7 @@ function renderBattles(battles) {
     if (!battles || !battles.length) {
         return `<div class="skeleton-loader" style="background: none;"><i class="fas fa-ban"></i> No battle reports to show.</div>`;
     }
-    
+
     let tableHtml = `
         <table class="battle-table">
             <thead>
@@ -130,10 +131,10 @@ function renderBattles(battles) {
             </thead>
             <tbody>
     `;
-    
+
     battles.forEach(b => {
         const outcomeClass = b.outcome === 'burned' ? '🔥 Burned' : (b.outcome || '—');
-        
+
         const cleanAttackerGuild = b.attacker?.guild || '?';
         const cleanDefenderGuild = b.defender?.guild || '?';
         const attackerName = b.attacker?.name || '?';
@@ -142,14 +143,14 @@ function renderBattles(battles) {
         const displayAttackerGuild = cleanAttackerGuild !== '?' ? `[${escapeHtml(cleanAttackerGuild)}]` : '?';
         const displayDefenderGuild = cleanDefenderGuild !== '?' ? `[${escapeHtml(cleanDefenderGuild)}]` : '?';
 
-        const attackerGuildHtml = EXCEPTION_GUILDS.includes(cleanAttackerGuild) 
+        const attackerGuildHtml = EXCEPTION_GUILDS.includes(cleanAttackerGuild)
             ? `<span class="guild-name" onclick="copyText(this, '${cleanAttackerGuild.replace(/'/g, "\\'")}')" style="color: #ff4d4d; font-weight: bold; cursor: pointer;" title="Exception Guild - Click to copy">${displayAttackerGuild}</span>`
             : `<span class="guild-name" onclick="copyText(this, '${cleanAttackerGuild.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click to copy">${displayAttackerGuild}</span>`;
-            
+
         const defenderGuildHtml = EXCEPTION_GUILDS.includes(cleanDefenderGuild)
             ? `<span class="guild-name" onclick="copyText(this, '${cleanDefenderGuild.replace(/'/g, "\\'")}')" style="color: #ff4d4d; font-weight: bold; cursor: pointer;" title="Exception Guild - Click to copy">${displayDefenderGuild}</span>`
             : `<span class="guild-name" onclick="copyText(this, '${cleanDefenderGuild.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click to copy">${displayDefenderGuild}</span>`;
-        
+
         const attackerNameHtml = `<span onclick="copyText(this, '${attackerName.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click to copy name">${escapeHtml(attackerName)}</span>`;
         const defenderNameHtml = `<span onclick="copyText(this, '${defenderName.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click to copy name">${escapeHtml(defenderName)}</span>`;
 
@@ -176,10 +177,10 @@ function updateUI() {
     if (!allKingdoms.length) return;
     const kingdom = allKingdoms[currentKingdomIndex];
     if (!kingdom) return;
-    
+
     // Update counter and navigation
-    kingdomCounterSpan.innerHTML = `<i class="fas fa-crown"></i> Kingdom ${currentKingdomIndex+1} of ${allKingdoms.length} · ID ${kingdom.kingdom_id}`;
-    
+    kingdomCounterSpan.innerHTML = `<i class="fas fa-crown"></i> Kingdom ${currentKingdomIndex + 1} of ${allKingdoms.length} · ID ${kingdom.kingdom_id}`;
+
     // Render stats
     statsArea.innerHTML = renderKingdomStats(kingdom);
 
@@ -193,10 +194,10 @@ function updateUI() {
             const leaderName = b.attacker?.name;
             if (!leaderName || leaderName === '?') return true; // Keep if unknown
             if (seenLeaders.has(leaderName)) return false;
-            
+
             // If global unique is enabled, only show them in their very first appearance kingdom
             if (isGlobal && firstSeenLeader.get(leaderName) !== kingdom.kingdom_id) return false;
-            
+
             seenLeaders.add(leaderName);
             return true;
         });
@@ -206,27 +207,27 @@ function updateUI() {
             const defenderName = b.defender?.name;
             if (!defenderName || defenderName === '?') return true; // Keep if unknown
             if (seenDefenders.has(defenderName)) return false;
-            
+
             // If global unique is enabled, only show them in their very first appearance kingdom
             if (isGlobal && firstSeenDefender.get(defenderName) !== kingdom.kingdom_id) return false;
-            
+
             seenDefenders.add(defenderName);
             return true;
         });
     } else if (currentFilterMode === 'guilds') {
         const seenGuilds = new Set();
         const uniqueGuilds = [];
-        
+
         // Loop through ALL kingdoms, not just the active one
         allKingdoms.forEach(k => {
             let battlesToProcess = k.battles || [];
             battlesToProcess.forEach(b => {
                 let attackerGuild = b.attacker?.guild;
                 let defenderGuild = b.defender?.guild;
-                
+
                 if (attackerGuild === '?') attackerGuild = null;
                 if (defenderGuild === '?') defenderGuild = null;
-                
+
                 if (attackerGuild && !seenGuilds.has(attackerGuild)) {
                     seenGuilds.add(attackerGuild);
                     uniqueGuilds.push(attackerGuild);
@@ -237,14 +238,14 @@ function updateUI() {
                 }
             });
         });
-        
+
         let guildsHtml = '<div class="guilds-grid" style="padding: 15px; text-align: left; line-height: 2;">';
         if (uniqueGuilds.length === 0) {
             guildsHtml += `<div class="skeleton-loader" style="background: none; width: 100%;"><i class="fas fa-ban"></i> No unique guilds found.</div>`;
         } else {
             // Sort guilds alphabetically
-            uniqueGuilds.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
-            
+            uniqueGuilds.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
             // Group by first character
             const grouped = {};
             uniqueGuilds.forEach(guild => {
@@ -255,23 +256,23 @@ function updateUI() {
                 } else if (/[0-9]/.test(firstChar)) {
                     group = firstChar; // Separate section for each number
                 }
-                
+
                 if (!grouped[group]) grouped[group] = [];
                 grouped[group].push(guild);
             });
-            
+
             // Render groups in order: 0-9 individually, A-Z, #
             const groupsOrder = [
-                ...Array.from({length: 10}, (_, i) => i.toString()),
-                ...Array.from({length: 26}, (_, i) => String.fromCharCode(65 + i)), 
+                ...Array.from({ length: 10 }, (_, i) => i.toString()),
+                ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)),
                 '#'
             ];
-            
+
             groupsOrder.forEach(group => {
                 if (grouped[group] && grouped[group].length > 0) {
                     // Group separator header
                     guildsHtml += `<div style="width: 100%; display: block; border-bottom: 2px solid rgba(76, 175, 80, 0.3); margin-top: 25px; margin-bottom: 15px; padding-bottom: 5px; font-weight: bold; color: #4CAF50; font-size: 1.3em; letter-spacing: 2px;"><i class="fas fa-folder" style="margin-right: 8px; font-size: 0.8em;"></i>${group}</div>`;
-                    
+
                     // Guild badges for this group
                     grouped[group].forEach(guild => {
                         const isException = EXCEPTION_GUILDS.includes(guild);
@@ -279,30 +280,30 @@ function updateUI() {
                         const baseColor = isException ? '#ff4d4d' : '#ffffff';
                         const baseBorder = isException ? '1px solid #ff4d4d' : '1px solid rgba(255,255,255,0.2)';
                         const title = isException ? 'Exception Guild - Click to copy' : 'Click to copy';
-                        
+
                         guildsHtml += `<span class="guild-badge" onclick="copyText(this, '${guild.replace(/'/g, "\\'")}')" style="display: inline-block; cursor: pointer; padding: 6px 14px; margin: 4px; background: ${baseBg}; border-radius: 6px; border: ${baseBorder}; color: ${baseColor}; font-family: monospace; font-size: 1.1em; transition: all 0.2s; vertical-align: middle;" title="${title}">[${escapeHtml(guild)}]</span>`;
                     });
                 }
             });
         }
         guildsHtml += '</div>';
-        
+
         battlesContainer.innerHTML = guildsHtml;
         battleCountBadge.innerText = `${uniqueGuilds.length} unique guilds`;
-        
+
         // Return early since we already rendered
         // Update filter buttons styling
         if (filterAllBtn) filterAllBtn.style.opacity = currentFilterMode === 'all' ? '1' : '0.6';
         if (filterLeadersBtn) filterLeadersBtn.style.opacity = currentFilterMode === 'leaders' ? '1' : '0.6';
         if (filterDefendersBtn) filterDefendersBtn.style.opacity = currentFilterMode === 'defenders' ? '1' : '0.6';
         if (filterGuildsBtn) filterGuildsBtn.style.opacity = currentFilterMode === 'guilds' ? '1' : '0.6';
-        
+
         // Enable/disable buttons visually
         prevBtn.disabled = (currentKingdomIndex === 0);
         nextBtn.disabled = (currentKingdomIndex === allKingdoms.length - 1);
         prevBtn.style.opacity = prevBtn.disabled ? '0.5' : '1';
         nextBtn.style.opacity = nextBtn.disabled ? '0.5' : '1';
-        
+
         return;
     }
 
@@ -310,13 +311,13 @@ function updateUI() {
     const battlesHtml = renderBattles(battlesToRender);
     battlesContainer.innerHTML = battlesHtml;
     battleCountBadge.innerText = `${battlesToRender.length} battles`;
-    
+
     // Update filter buttons styling
     if (filterAllBtn) filterAllBtn.style.opacity = currentFilterMode === 'all' ? '1' : '0.6';
     if (filterLeadersBtn) filterLeadersBtn.style.opacity = currentFilterMode === 'leaders' ? '1' : '0.6';
     if (filterDefendersBtn) filterDefendersBtn.style.opacity = currentFilterMode === 'defenders' ? '1' : '0.6';
     if (filterGuildsBtn) filterGuildsBtn.style.opacity = currentFilterMode === 'guilds' ? '1' : '0.6';
-    
+
     // Enable/disable buttons visually
     prevBtn.disabled = (currentKingdomIndex === 0);
     nextBtn.disabled = (currentKingdomIndex === allKingdoms.length - 1);
@@ -350,14 +351,14 @@ async function loadData() {
         const data = await response.json();
         kingdomsData = data;
         allKingdoms = data.kingdoms || [];
-        
-        
+
+
         if (!allKingdoms.length) {
             statsArea.innerHTML = '<div class="skeleton-loader">⚠️ No kingdoms available in the JSON file.</div>';
             battlesContainer.innerHTML = '<div class="skeleton-loader">No data</div>';
             return;
         }
-        
+
         // Pre-clean data and compute global first appearances
         allKingdoms.forEach(k => {
             if (!k.battles) return;
@@ -383,7 +384,7 @@ async function loadData() {
                 } else {
                     b.defender.guild = cleanDefenderGuild;
                 }
-                
+
                 const finalAttackerName = b.attacker?.name;
                 const finalDefenderName = b.defender?.name;
 
@@ -400,7 +401,7 @@ async function loadData() {
         if (data.scraped_at) scrapedDateSpan.innerText = new Date(data.scraped_at).toLocaleString();
         if (data.range) rangeInfoSpan.innerText = data.range;
         metaInfoSpan.innerHTML = `<i class="fas fa-database"></i> ${data.total_success || 0} active kingdoms · Scanned: ${data.scraped_at ? data.scraped_at.split('T')[0] : '—'}`;
-        
+
         // Initialize first kingdom
         currentKingdomIndex = 0;
         updateUI();
