@@ -30,31 +30,31 @@ function formatNumber(numStr) {
 
 // Renderizar estadísticas del reino activo
 function renderKingdomStats(kingdom) {
-    if (!kingdom) return '<div class="skeleton-loader">Reino no disponible</div>';
+    if (!kingdom) return '<div class="skeleton-loader">Kingdom not available</div>';
     const stats = kingdom.stats || {};
     const carto = stats["View on Cartography"] || null;
     
     return `
         <div class="stats-grid">
             <div class="stat-item">
-                <div class="stat-label"><i class="fas fa-flag-checkered"></i> REINO</div>
+                <div class="stat-label"><i class="fas fa-flag-checkered"></i> KINGDOM</div>
                 <div class="stat-value">${kingdom.kingdom_name} (ID ${kingdom.kingdom_id})</div>
             </div>
             <div class="stat-item">
-                <div class="stat-label"><i class="fas fa-chart-simple"></i> RALLIES (Últ. semana)</div>
+                <div class="stat-label"><i class="fas fa-chart-simple"></i> RALLIES (Last week)</div>
                 <div class="stat-value">${stats["Rallies last week"] || '—'}</div>
             </div>
             <div class="stat-item">
-                <div class="stat-label"><i class="fas fa-skull"></i> TROPAS PERDIDAS</div>
+                <div class="stat-label"><i class="fas fa-skull"></i> TROOPS LOST</div>
                 <div class="stat-value">${stats["Troops loss last week"] || '—'}</div>
             </div>
             <div class="stat-item">
-                <div class="stat-label"><i class="fas fa-tower-broadcast"></i> MIGHT PERDIDO</div>
+                <div class="stat-label"><i class="fas fa-tower-broadcast"></i> MIGHT LOST</div>
                 <div class="stat-value">${stats["Might loss last week"] || '—'}</div>
             </div>
             ${carto ? `<div class="stat-item">
-                <div class="stat-label"><i class="fas fa-map"></i> CARTOGRAFÍA</div>
-                <div class="stat-value"><a href="${carto.href || '#'}" target="_blank" rel="noopener noreferrer" class="cartography-link"><i class="fas fa-external-link-alt"></i> ${carto.text || 'Ver Mapa'}</a></div>
+                <div class="stat-label"><i class="fas fa-map"></i> CARTOGRAPHY</div>
+                <div class="stat-value"><a href="${carto.href || '#'}" target="_blank" rel="noopener noreferrer" class="cartography-link"><i class="fas fa-external-link-alt"></i> ${carto.text || 'View Map'}</a></div>
             </div>` : ''}
         </div>
     `;
@@ -84,36 +84,36 @@ window.copyText = function(element, text) {
 // Renderizar la tabla de batallas (reportes)
 function renderBattles(battles) {
     if (!battles || !battles.length) {
-        return `<div class="skeleton-loader" style="background: none;"><i class="fas fa-ban"></i> No hay reportes de combate que mostrar.</div>`;
+        return `<div class="skeleton-loader" style="background: none;"><i class="fas fa-ban"></i> No battle reports to show.</div>`;
     }
     
     let tableHtml = `
         <table class="battle-table">
             <thead>
-                <tr><th>Fecha/Hora</th><th>Resultado</th><th>Pérdida Might</th><th>Pérdida Tropas</th><th>Atacante (Gremio)</th><th>Defensor (Gremio)</th><th>ID Batalla</th></tr>
+                <tr><th>Date/Time</th><th>Outcome</th><th>Might Loss</th><th>Troops Loss</th><th>Attacker (Guild)</th><th>Defender (Guild)</th><th>Battle ID</th></tr>
             </thead>
             <tbody>
     `;
     
     battles.forEach(b => {
-        const outcomeClass = b.outcome === 'burned' ? '🔥 Quemado' : (b.outcome || '—');
+        const outcomeClass = b.outcome === 'burned' ? '🔥 Burned' : (b.outcome || '—');
         
         const attackerGuild = b.attacker?.guild || '?';
         const defenderGuild = b.defender?.guild || '?';
 
         const attackerGuildHtml = EXCEPTION_GUILDS.includes(attackerGuild) 
-            ? `<span class="guild-name" onclick="copyText(this, '${attackerGuild.replace(/'/g, "\\'")}')" style="color: #ff4d4d; font-weight: bold; cursor: pointer;" title="Gremio Excepción - Click para copiar">[${attackerGuild}]</span>`
-            : `<span class="guild-name" onclick="copyText(this, '${attackerGuild.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click para copiar">[${attackerGuild}]</span>`;
+            ? `<span class="guild-name" onclick="copyText(this, '${attackerGuild.replace(/'/g, "\\'")}')" style="color: #ff4d4d; font-weight: bold; cursor: pointer;" title="Exception Guild - Click to copy">[${attackerGuild}]</span>`
+            : `<span class="guild-name" onclick="copyText(this, '${attackerGuild.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click to copy">[${attackerGuild}]</span>`;
             
         const defenderGuildHtml = EXCEPTION_GUILDS.includes(defenderGuild)
-            ? `<span class="guild-name" onclick="copyText(this, '${defenderGuild.replace(/'/g, "\\'")}')" style="color: #ff4d4d; font-weight: bold; cursor: pointer;" title="Gremio Excepción - Click para copiar">[${defenderGuild}]</span>`
-            : `<span class="guild-name" onclick="copyText(this, '${defenderGuild.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click para copiar">[${defenderGuild}]</span>`;
+            ? `<span class="guild-name" onclick="copyText(this, '${defenderGuild.replace(/'/g, "\\'")}')" style="color: #ff4d4d; font-weight: bold; cursor: pointer;" title="Exception Guild - Click to copy">[${defenderGuild}]</span>`
+            : `<span class="guild-name" onclick="copyText(this, '${defenderGuild.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click to copy">[${defenderGuild}]</span>`;
 
         const attackerName = b.attacker?.name || '?';
         const defenderName = b.defender?.name || '?';
         
-        const attackerNameHtml = `<span onclick="copyText(this, '${attackerName.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click para copiar nombre">${attackerName}</span>`;
-        const defenderNameHtml = `<span onclick="copyText(this, '${defenderName.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click para copiar nombre">${defenderName}</span>`;
+        const attackerNameHtml = `<span onclick="copyText(this, '${attackerName.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click to copy name">${attackerName}</span>`;
+        const defenderNameHtml = `<span onclick="copyText(this, '${defenderName.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click to copy name">${defenderName}</span>`;
 
         const attackerText = `${attackerNameHtml} ${attackerGuildHtml}`;
         const defenderText = `${defenderNameHtml} ${defenderGuildHtml}`;
@@ -140,7 +140,7 @@ function updateUI() {
     if (!kingdom) return;
     
     // Actualizar contador y navegación
-    kingdomCounterSpan.innerHTML = `<i class="fas fa-crown"></i> Reino ${currentKingdomIndex+1} de ${allKingdoms.length} · ID ${kingdom.kingdom_id}`;
+    kingdomCounterSpan.innerHTML = `<i class="fas fa-crown"></i> Kingdom ${currentKingdomIndex+1} of ${allKingdoms.length} · ID ${kingdom.kingdom_id}`;
     
     // Render stats
     statsArea.innerHTML = renderKingdomStats(kingdom);
@@ -170,7 +170,7 @@ function updateUI() {
     // Render battles
     const battlesHtml = renderBattles(battlesToRender);
     battlesContainer.innerHTML = battlesHtml;
-    battleCountBadge.innerText = `${battlesToRender.length} batallas`;
+    battleCountBadge.innerText = `${battlesToRender.length} battles`;
     
     // Update filter buttons styling
     if (filterAllBtn) filterAllBtn.style.opacity = currentFilterMode === 'all' ? '1' : '0.6';
@@ -188,12 +188,12 @@ function updateUI() {
 function goToKingdomById(id) {
     const targetId = Number(id);
     if (isNaN(targetId)) {
-        alert("Ingresa un número de reino válido (ej: 1400)");
+        alert("Enter a valid kingdom ID (e.g. 1400)");
         return false;
     }
     const foundIndex = allKingdoms.findIndex(k => k.kingdom_id === targetId);
     if (foundIndex === -1) {
-        alert(`Reino con ID ${targetId} no encontrado en los datos.`);
+        alert(`Kingdom with ID ${targetId} not found in the data.`);
         return false;
     }
     currentKingdomIndex = foundIndex;
@@ -204,7 +204,7 @@ function goToKingdomById(id) {
 // Cargar datos desde kingdoms.json
 async function loadData() {
     try {
-        metaInfoSpan.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Cargando reportes...';
+        metaInfoSpan.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Loading reports...';
         const response = await fetch('kingdoms.json');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
@@ -212,24 +212,24 @@ async function loadData() {
         allKingdoms = data.kingdoms || [];
         
         if (!allKingdoms.length) {
-            statsArea.innerHTML = '<div class="skeleton-loader">⚠️ No hay reinos disponibles en el archivo JSON.</div>';
-            battlesContainer.innerHTML = '<div class="skeleton-loader">Sin datos</div>';
+            statsArea.innerHTML = '<div class="skeleton-loader">⚠️ No kingdoms available in the JSON file.</div>';
+            battlesContainer.innerHTML = '<div class="skeleton-loader">No data</div>';
             return;
         }
         
         // Configurar metadatos
         if (data.scraped_at) scrapedDateSpan.innerText = new Date(data.scraped_at).toLocaleString();
         if (data.range) rangeInfoSpan.innerText = data.range;
-        metaInfoSpan.innerHTML = `<i class="fas fa-database"></i> ${data.total_success || 0} reinos activos · Escaneado: ${data.scraped_at ? data.scraped_at.split('T')[0] : '—'}`;
+        metaInfoSpan.innerHTML = `<i class="fas fa-database"></i> ${data.total_success || 0} active kingdoms · Scanned: ${data.scraped_at ? data.scraped_at.split('T')[0] : '—'}`;
         
         // Inicializar primer reino
         currentKingdomIndex = 0;
         updateUI();
     } catch (error) {
         console.error("Error cargando JSON:", error);
-        statsArea.innerHTML = `<div class="skeleton-loader" style="color:#ff9f7c;"><i class="fas fa-exclamation-triangle"></i> Error al cargar kingdoms.json. Asegúrate de que el archivo exista y sea válido.</div>`;
-        battlesContainer.innerHTML = '<div class="skeleton-loader">No se pudieron obtener los reportes.</div>';
-        metaInfoSpan.innerHTML = 'Error de conexión con los datos';
+        statsArea.innerHTML = `<div class="skeleton-loader" style="color:#ff9f7c;"><i class="fas fa-exclamation-triangle"></i> Error loading kingdoms.json. Make sure the file exists and is valid.</div>`;
+        battlesContainer.innerHTML = '<div class="skeleton-loader">Could not fetch reports.</div>';
+        metaInfoSpan.innerHTML = 'Data connection error';
     }
 }
 
