@@ -3,6 +3,8 @@ let kingdomsData = null;
 let currentKingdomIndex = 0;
 let allKingdoms = [];
 let currentFilterMode = 'all'; // 'all', 'leaders', 'defenders'
+let firstSeenLeader = new Map();
+let firstSeenDefender = new Map();
 
 // DOM Elements
 const prevBtn = document.getElementById('prevKingdomBtn');
@@ -22,6 +24,7 @@ const filterAllBtn = document.getElementById('filterAllBtn');
 const filterLeadersBtn = document.getElementById('filterLeadersBtn');
 const filterDefendersBtn = document.getElementById('filterDefendersBtn');
 const filterGuildsBtn = document.getElementById('filterGuildsBtn');
+const globalUniqueCheckbox = document.getElementById('globalUniqueCheckbox');
 
 // Helper: Escape HTML to prevent broken tags
 function escapeHtml(unsafe) {
@@ -131,24 +134,10 @@ function renderBattles(battles) {
     battles.forEach(b => {
         const outcomeClass = b.outcome === 'burned' ? '🔥 Burned' : (b.outcome || '—');
         
-        let rawAttackerGuild = b.attacker?.guild || '?';
-        let rawDefenderGuild = b.defender?.guild || '?';
-        let attackerName = b.attacker?.name || '?';
-        let defenderName = b.defender?.name || '?';
-
-        let cleanAttackerGuild = rawAttackerGuild.replace(/[\[\]]/g, '');
-        let cleanDefenderGuild = rawDefenderGuild.replace(/[\[\]]/g, '');
-
-        // Fix scraper mistake: if guild is not 3 chars, it's not a valid tag. 
-        // If it's longer, it might actually be the player name.
-        if (cleanAttackerGuild !== '?' && cleanAttackerGuild.length !== 3) {
-            if (attackerName === '?' || attackerName === '') attackerName = cleanAttackerGuild;
-            cleanAttackerGuild = '?';
-        }
-        if (cleanDefenderGuild !== '?' && cleanDefenderGuild.length !== 3) {
-            if (defenderName === '?' || defenderName === '') defenderName = cleanDefenderGuild;
-            cleanDefenderGuild = '?';
-        }
+        const cleanAttackerGuild = b.attacker?.guild || '?';
+        const cleanDefenderGuild = b.defender?.guild || '?';
+        const attackerName = b.attacker?.name || '?';
+        const defenderName = b.defender?.name || '?';
 
         const displayAttackerGuild = cleanAttackerGuild !== '?' ? `[${escapeHtml(cleanAttackerGuild)}]` : '?';
         const displayDefenderGuild = cleanDefenderGuild !== '?' ? `[${escapeHtml(cleanDefenderGuild)}]` : '?';
@@ -196,12 +185,18 @@ function updateUI() {
 
     // Apply filters
     let battlesToRender = kingdom.battles || [];
+    const isGlobal = globalUniqueCheckbox ? globalUniqueCheckbox.checked : false;
+
     if (currentFilterMode === 'leaders') {
         const seenLeaders = new Set();
         battlesToRender = battlesToRender.filter(b => {
             const leaderName = b.attacker?.name;
-            if (!leaderName) return true; // Keep if unknown
+            if (!leaderName || leaderName === '?') return true; // Keep if unknown
             if (seenLeaders.has(leaderName)) return false;
+            
+            // If global unique is enabled, only show them in their very first appearance kingdom
+            if (isGlobal && firstSeenLeader.get(leaderName) !== kingdom.kingdom_id) return false;
+            
             seenLeaders.add(leaderName);
             return true;
         });
@@ -209,8 +204,12 @@ function updateUI() {
         const seenDefenders = new Set();
         battlesToRender = battlesToRender.filter(b => {
             const defenderName = b.defender?.name;
-            if (!defenderName) return true; // Keep if unknown
+            if (!defenderName || defenderName === '?') return true; // Keep if unknown
             if (seenDefenders.has(defenderName)) return false;
+            
+            // If global unique is enabled, only show them in their very first appearance kingdom
+            if (isGlobal && firstSeenDefender.get(defenderName) !== kingdom.kingdom_id) return false;
+            
             seenDefenders.add(defenderName);
             return true;
         });
@@ -222,12 +221,11 @@ function updateUI() {
         allKingdoms.forEach(k => {
             let battlesToProcess = k.battles || [];
             battlesToProcess.forEach(b => {
-                let attackerGuild = b.attacker?.guild ? b.attacker.guild.replace(/[\[\]]/g, '') : null;
-                let defenderGuild = b.defender?.guild ? b.defender.guild.replace(/[\[\]]/g, '') : null;
+                let attackerGuild = b.attacker?.guild;
+                let defenderGuild = b.defender?.guild;
                 
-                // Only accept exactly 3 characters for a valid guild tag
-                if (attackerGuild && attackerGuild.length !== 3) attackerGuild = null;
-                if (defenderGuild && defenderGuild.length !== 3) defenderGuild = null;
+                if (attackerGuild === '?') attackerGuild = null;
+                if (defenderGuild === '?') defenderGuild = null;
                 
                 if (attackerGuild && !seenGuilds.has(attackerGuild)) {
                     seenGuilds.add(attackerGuild);
@@ -240,21 +238,51 @@ function updateUI() {
             });
         });
         
-        let guildsHtml = '<div class="guilds-grid" style="padding: 15px; text-align: left; line-height: 3;">';
+        let guildsHtml = '<div class="guilds-grid" style="padding: 15px; text-align: left; line-height: 2;">';
         if (uniqueGuilds.length === 0) {
             guildsHtml += `<div class="skeleton-loader" style="background: none; width: 100%;"><i class="fas fa-ban"></i> No unique guilds found.</div>`;
         } else {
-            // Sort guilds alphabetically for easier scanning
-            uniqueGuilds.sort((a, b) => a.localeCompare(b));
+            // Sort guilds alphabetically
+            uniqueGuilds.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
             
+            // Group by first character
+            const grouped = {};
             uniqueGuilds.forEach(guild => {
-                const isException = EXCEPTION_GUILDS.includes(guild);
-                const baseBg = isException ? 'rgba(255,77,77,0.1)' : 'rgba(0,0,0,0.3)';
-                const baseColor = isException ? '#ff4d4d' : '#ffffff';
-                const baseBorder = isException ? '1px solid #ff4d4d' : '1px solid rgba(255,255,255,0.2)';
-                const title = isException ? 'Exception Guild - Click to copy' : 'Click to copy';
+                const firstChar = guild.charAt(0).toUpperCase();
+                let group = '#'; // Default for symbols
+                if (/[A-Z]/.test(firstChar)) {
+                    group = firstChar;
+                } else if (/[0-9]/.test(firstChar)) {
+                    group = firstChar; // Separate section for each number
+                }
                 
-                guildsHtml += `<span class="guild-badge" onclick="copyText(this, '${guild.replace(/'/g, "\\'")}')" style="display: inline-block; cursor: pointer; padding: 6px 14px; margin: 4px; background: ${baseBg}; border-radius: 6px; border: ${baseBorder}; color: ${baseColor}; font-family: monospace; font-size: 1.1em; transition: all 0.2s; vertical-align: middle;" title="${title}">[${escapeHtml(guild)}]</span>`;
+                if (!grouped[group]) grouped[group] = [];
+                grouped[group].push(guild);
+            });
+            
+            // Render groups in order: 0-9 individually, A-Z, #
+            const groupsOrder = [
+                ...Array.from({length: 10}, (_, i) => i.toString()),
+                ...Array.from({length: 26}, (_, i) => String.fromCharCode(65 + i)), 
+                '#'
+            ];
+            
+            groupsOrder.forEach(group => {
+                if (grouped[group] && grouped[group].length > 0) {
+                    // Group separator header
+                    guildsHtml += `<div style="width: 100%; display: block; border-bottom: 2px solid rgba(76, 175, 80, 0.3); margin-top: 25px; margin-bottom: 15px; padding-bottom: 5px; font-weight: bold; color: #4CAF50; font-size: 1.3em; letter-spacing: 2px;"><i class="fas fa-folder" style="margin-right: 8px; font-size: 0.8em;"></i>${group}</div>`;
+                    
+                    // Guild badges for this group
+                    grouped[group].forEach(guild => {
+                        const isException = EXCEPTION_GUILDS.includes(guild);
+                        const baseBg = isException ? 'rgba(255,77,77,0.1)' : 'rgba(0,0,0,0.3)';
+                        const baseColor = isException ? '#ff4d4d' : '#ffffff';
+                        const baseBorder = isException ? '1px solid #ff4d4d' : '1px solid rgba(255,255,255,0.2)';
+                        const title = isException ? 'Exception Guild - Click to copy' : 'Click to copy';
+                        
+                        guildsHtml += `<span class="guild-badge" onclick="copyText(this, '${guild.replace(/'/g, "\\'")}')" style="display: inline-block; cursor: pointer; padding: 6px 14px; margin: 4px; background: ${baseBg}; border-radius: 6px; border: ${baseBorder}; color: ${baseColor}; font-family: monospace; font-size: 1.1em; transition: all 0.2s; vertical-align: middle;" title="${title}">[${escapeHtml(guild)}]</span>`;
+                    });
+                }
             });
         }
         guildsHtml += '</div>';
@@ -323,12 +351,51 @@ async function loadData() {
         kingdomsData = data;
         allKingdoms = data.kingdoms || [];
         
+        
         if (!allKingdoms.length) {
             statsArea.innerHTML = '<div class="skeleton-loader">⚠️ No kingdoms available in the JSON file.</div>';
             battlesContainer.innerHTML = '<div class="skeleton-loader">No data</div>';
             return;
         }
         
+        // Pre-clean data and compute global first appearances
+        allKingdoms.forEach(k => {
+            if (!k.battles) return;
+            k.battles.forEach(b => {
+                let rawAttackerGuild = b.attacker?.guild || '?';
+                let rawDefenderGuild = b.defender?.guild || '?';
+                let attackerName = b.attacker?.name || '?';
+                let defenderName = b.defender?.name || '?';
+
+                let cleanAttackerGuild = rawAttackerGuild.replace(/[\[\]]/g, '');
+                let cleanDefenderGuild = rawDefenderGuild.replace(/[\[\]]/g, '');
+
+                if (cleanAttackerGuild !== '?' && cleanAttackerGuild.length !== 3) {
+                    if (attackerName === '?' || attackerName === '') b.attacker.name = cleanAttackerGuild;
+                    b.attacker.guild = '?';
+                } else {
+                    b.attacker.guild = cleanAttackerGuild;
+                }
+
+                if (cleanDefenderGuild !== '?' && cleanDefenderGuild.length !== 3) {
+                    if (defenderName === '?' || defenderName === '') b.defender.name = cleanDefenderGuild;
+                    b.defender.guild = '?';
+                } else {
+                    b.defender.guild = cleanDefenderGuild;
+                }
+                
+                const finalAttackerName = b.attacker?.name;
+                const finalDefenderName = b.defender?.name;
+
+                if (finalAttackerName && finalAttackerName !== '?' && !firstSeenLeader.has(finalAttackerName)) {
+                    firstSeenLeader.set(finalAttackerName, k.kingdom_id);
+                }
+                if (finalDefenderName && finalDefenderName !== '?' && !firstSeenDefender.has(finalDefenderName)) {
+                    firstSeenDefender.set(finalDefenderName, k.kingdom_id);
+                }
+            });
+        });
+
         // Configure metadata
         if (data.scraped_at) scrapedDateSpan.innerText = new Date(data.scraped_at).toLocaleString();
         if (data.range) rangeInfoSpan.innerText = data.range;
@@ -388,6 +455,11 @@ if (filterDefendersBtn) {
 if (filterGuildsBtn) {
     filterGuildsBtn.addEventListener('click', () => {
         currentFilterMode = 'guilds';
+        updateUI();
+    });
+}
+if (globalUniqueCheckbox) {
+    globalUniqueCheckbox.addEventListener('change', () => {
         updateUI();
     });
 }
