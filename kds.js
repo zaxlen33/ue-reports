@@ -21,6 +21,7 @@ const rangeInfoSpan = document.getElementById('rangeInfo');
 const filterAllBtn = document.getElementById('filterAllBtn');
 const filterLeadersBtn = document.getElementById('filterLeadersBtn');
 const filterDefendersBtn = document.getElementById('filterDefendersBtn');
+const filterGuildsBtn = document.getElementById('filterGuildsBtn');
 
 // Helper: Formatear números grandes con M/B
 function formatNumber(numStr) {
@@ -165,6 +166,15 @@ function updateUI() {
             seenDefenders.add(defenderName);
             return true;
         });
+    } else if (currentFilterMode === 'guilds') {
+        const seenGuilds = new Set();
+        battlesToRender = battlesToRender.filter(b => {
+            const attackerGuild = b.attacker?.guild;
+            if (!attackerGuild) return true; // Keep if unknown
+            if (seenGuilds.has(attackerGuild)) return false;
+            seenGuilds.add(attackerGuild);
+            return true;
+        });
     }
 
     // Render battles
@@ -176,6 +186,7 @@ function updateUI() {
     if (filterAllBtn) filterAllBtn.style.opacity = currentFilterMode === 'all' ? '1' : '0.6';
     if (filterLeadersBtn) filterLeadersBtn.style.opacity = currentFilterMode === 'leaders' ? '1' : '0.6';
     if (filterDefendersBtn) filterDefendersBtn.style.opacity = currentFilterMode === 'defenders' ? '1' : '0.6';
+    if (filterGuildsBtn) filterGuildsBtn.style.opacity = currentFilterMode === 'guilds' ? '1' : '0.6';
     
     // Habilitar/deshabilitar botones visualmente
     prevBtn.disabled = (currentKingdomIndex === 0);
@@ -270,6 +281,12 @@ if (filterLeadersBtn) {
 if (filterDefendersBtn) {
     filterDefendersBtn.addEventListener('click', () => {
         currentFilterMode = 'defenders';
+        updateUI();
+    });
+}
+if (filterGuildsBtn) {
+    filterGuildsBtn.addEventListener('click', () => {
+        currentFilterMode = 'guilds';
         updateUI();
     });
 }
