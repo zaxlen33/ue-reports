@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Lords Mobile - Kingdom Battle Reports Viewer</title>
+    <title>Lords Mobile - Visor de Reportes de Reinos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
@@ -14,48 +14,53 @@
     <div class="app-container">
         <header class="hero-header">
             <div class="header-content">
-                <h1><i class="fas fa-scroll"></i> Battle Chronicles</h1>
-                <p>Unified kingdom reports • Era 1400–1700</p>
-                <div class="meta-badge" id="metaInfo">Loading data...</div>
+                <h1><i class="fas fa-scroll"></i> Crónicas de Batalla</h1>
+                <p>Reportes unificados de reinos • Era 1400–1700</p>
+                <div class="meta-badge" id="metaInfo">Cargando datos...</div>
             </div>
         </header>
 
         <main class="main-panel">
-            <!-- Kingdom navigation panel -->
+            <!-- Panel de navegación entre reinos -->
             <div class="card nav-card">
                 <div class="nav-controls">
-                    <button id="prevKingdomBtn" class="nav-btn"><i class="fas fa-chevron-left"></i> Previous Kingdom</button>
+                    <button id="prevKingdomBtn" class="nav-btn"><i class="fas fa-chevron-left"></i> Reino anterior</button>
                     <div class="kingdom-jump">
-                        <input type="number" id="kingdomInput" placeholder="Kingdom ID (e.g. 1400)" class="kingdom-input">
-                        <button id="goKingdomBtn" class="go-btn"><i class="fas fa-location-dot"></i> Go</button>
+                        <input type="number" id="kingdomInput" placeholder="ID Reino (ej: 1400)" class="kingdom-input">
+                        <button id="goKingdomBtn" class="go-btn"><i class="fas fa-location-dot"></i> Ir</button>
                     </div>
-                    <button id="nextKingdomBtn" class="nav-btn">Next Kingdom <i class="fas fa-chevron-right"></i></button>
+                    <button id="nextKingdomBtn" class="nav-btn">Reino siguiente <i class="fas fa-chevron-right"></i></button>
                 </div>
                 <div class="kingdom-counter" id="kingdomCounter">
                     <span>—</span>
                 </div>
             </div>
 
-            <!-- Detailed current kingdom info -->
+            <!-- Información detallada del reino actual -->
             <div class="card kingdom-stats-card" id="kingdomStatsArea">
-                <div class="skeleton-loader">Loading kingdom information...</div>
+                <div class="skeleton-loader">Cargando información del reino...</div>
             </div>
 
-            <!-- Battles section -->
+            <!-- Sección de batallas (reportes) -->
             <div class="card battles-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-dragon"></i> Combat Reports</h2>
-                    <span class="battle-count" id="battleCountBadge">0 battles</span>
+                <div class="section-header" style="flex-wrap: wrap; gap: 10px;">
+                    <h2><i class="fas fa-dragon"></i> Reportes de Combate</h2>
+                    <div class="filter-controls" style="display: flex; gap: 8px;">
+                        <button id="filterAllBtn" class="nav-btn" style="font-size: 0.85em; padding: 5px 10px; opacity: 1;">Todos</button>
+                        <button id="filterLeadersBtn" class="nav-btn" style="font-size: 0.85em; padding: 5px 10px; opacity: 0.6;">Líderes Únicos</button>
+                        <button id="filterDefendersBtn" class="nav-btn" style="font-size: 0.85em; padding: 5px 10px; opacity: 0.6;">Defensores Únicos</button>
+                    </div>
+                    <span class="battle-count" id="battleCountBadge">0 batallas</span>
                 </div>
                 <div class="battle-table-wrapper" id="battlesListContainer">
-                    <div class="skeleton-loader">Loading battles...</div>
+                    <div class="skeleton-loader">Cargando enfrentamientos...</div>
                 </div>
             </div>
         </main>
 
         <footer class="app-footer">
-            <p><i class="far fa-calendar-alt"></i> Data synced: <span id="scrapedDate">—</span> | <i class="fas fa-chart-line"></i> Historical range: <span id="rangeInfo">1400–1700</span></p>
-            <p class="footer-note">Report viewer · Kingdom navigation</p>
+            <p><i class="far fa-calendar-alt"></i> Datos sincronizados: <span id="scrapedDate">—</span> | <i class="fas fa-chart-line"></i> Rango histórico: <span id="rangeInfo">1400–1700</span></p>
+            <p class="footer-note">Visualización de reportes · Navegación por reinos</p>
         </footer>
     </div>
 
