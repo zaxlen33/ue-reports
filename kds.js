@@ -60,6 +60,15 @@ function renderKingdomStats(kingdom) {
     `;
 }
 
+// Lista de gremios que son excepciones (familia, aliados, o no reclutables)
+const EXCEPTION_GUILDS = [
+    "KCL", "CSK", "MOP", "CWS", "Sup", "KxQ", "VLY", "RR!", "AUF", "30B", "YES", "S:E", "YYP", "CCC", "YYY", "ZXX", "XMY", "SVF", "FEM", "Rzr",
+    "PBB", "HrP", "Ich",
+    "DC", "M/J", "SDV", "CHV", "DtC", "msy", "-p-", "YMT", "VWI", "R~V", "D'w", "U|E", "HxT", "IWG", "(W)", "FxA", "OoO",
+    "-b-", "EMP", "BMW", "I:W", "SIS", "ggi", "~NB", "VFS", "Ph9",
+    "OkM", "Egu", "ReJ"
+];
+
 // Renderizar la tabla de batallas (reportes)
 function renderBattles(battles) {
     if (!battles || !battles.length) {
@@ -76,8 +85,20 @@ function renderBattles(battles) {
     
     battles.forEach(b => {
         const outcomeClass = b.outcome === 'burned' ? '🔥 Quemado' : (b.outcome || '—');
-        const attackerText = `${b.attacker?.name || '?'} <span class="guild-name">[${b.attacker?.guild || '?'}]</span>`;
-        const defenderText = `${b.defender?.name || '?'} <span class="guild-name">[${b.defender?.guild || '?'}]</span>`;
+        
+        const attackerGuild = b.attacker?.guild || '?';
+        const defenderGuild = b.defender?.guild || '?';
+
+        const attackerGuildHtml = EXCEPTION_GUILDS.includes(attackerGuild) 
+            ? `<span class="guild-name" style="color: #ff4d4d; font-weight: bold;" title="Gremio Excepción">[${attackerGuild}]</span>`
+            : `<span class="guild-name">[${attackerGuild}]</span>`;
+            
+        const defenderGuildHtml = EXCEPTION_GUILDS.includes(defenderGuild)
+            ? `<span class="guild-name" style="color: #ff4d4d; font-weight: bold;" title="Gremio Excepción">[${defenderGuild}]</span>`
+            : `<span class="guild-name">[${defenderGuild}]</span>`;
+
+        const attackerText = `${b.attacker?.name || '?'} ${attackerGuildHtml}`;
+        const defenderText = `${b.defender?.name || '?'} ${defenderGuildHtml}`;
         tableHtml += `
             <tr>
                 <td>${b.timestamp || '—'}</td>
